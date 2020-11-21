@@ -1,0 +1,49 @@
+cbsa,cbsa_name,Region_Name,rank,total_dif,total_ratio,cv,gini,dif,ratio,sii,rii
+32820,"Memphis, TN-MS-AR",South,1,10.7,1.15,21.4%,3.04,10.6,1.15,1.20,0.016
+17140,"Cincinnati, OH-KY-IN",Midwest,2,10.2,1.14,21.9%,2.97,11.6,1.16,1.23,0.016
+31140,"Louisville/Jefferson County, KY-IN",South,3,10.7,1.15,21.3%,2.96,11.4,1.16,1.18,0.015
+12580,"Baltimore-Columbia-Towson, MD",South,4,10.3,1.14,21.9%,2.91,11.8,1.17,1.16,0.015
+13820,"Birmingham-Hoover, AL",South,5,10.3,1.15,22.0%,3.06,10.5,1.15,1.14,0.015
+26900,"Indianapolis-Carmel-Anderson, IN",Midwest,6, 9.9,1.14,21.0%,2.90,11.5,1.16,1.22,0.016
+18140,"Columbus, OH",Midwest,7, 9.7,1.13,21.5%,2.92,11.0,1.16,1.21,0.016
+19820,"Detroit-Warren-Dearborn, MI",Midwest,8,10.7,1.15,21.7%,3.01, 9.8,1.14,1.16,0.015
+41180,"St. Louis, MO-IL",Midwest,9, 9.5,1.13,19.0%,2.77,10.9,1.15,1.15,0.015
+17460,"Cleveland-Elyria, OH",Midwest,10,10.0,1.14,18.5%,2.74,10.4,1.14,1.16,0.015
+27260,"Jacksonville, FL",South,11, 9.5,1.13,18.9%,2.77,10.7,1.15,1.04,0.013
+34980,"Nashville-Davidson--Murfreesboro--Franklin, TN",South,12,10.0,1.14,17.8%,2.70,10.2,1.14,1.02,0.013
+37980,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",Northeast,13, 9.9,1.14,19.7%,2.82,10.0,1.14,1.00,0.013
+35380,"New Orleans-Metairie, LA",South,14,9.1,1.13,17.5%,2.69,10.3,1.15,1.08,0.014
+28140,"Kansas City, MO-KS",Midwest,15,9.2,1.13,17.7%,2.64,10.0,1.14,1.12,0.014
+40060,"Richmond, VA",South,16,9.4,1.13,17.9%,2.66,9.4,1.13,1.07,0.014
+36420,"Oklahoma City, OK",South,17,9.2,1.13,17.7%,2.73, 9.6,1.13,0.95,0.012
+15380,"Buffalo-Cheektowaga-Niagara Falls, NY",Northeast,18,9.0,1.12,17.9%,2.61,9.4,1.13,1.09,0.014
+38300,"Pittsburgh, PA",Northeast,19,8.5,1.12,15.0%,2.41,10.0,1.14,0.95,0.012
+16740,"Charlotte-Concord-Gastonia, NC-SC",South,20,9.2,1.13,15.8%,2.56,8.7,1.12,0.95,0.012
+40380,"Rochester, NY",Northeast,21,9.2,1.12,16.9%,2.57,8.5,1.11,0.98,0.012
+47260,"Virginia Beach-Norfolk-Newport News, VA-NC",South,22,8.6,1.12,16.3%,2.54,8.5,1.12,0.97,0.013
+47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV",South,23,8.6,1.11,16.7%,2.47,8.9,1.12,0.76,0.0095
+45300,"Tampa-St. Petersburg-Clearwater, FL",South,24,8.8,1.12,15.7%,2.51,7.9,1.11,0.87,0.011
+12060,"Atlanta-Sandy Springs-Roswell, GA",South,25,8.3,1.11,13.2%,2.31,8.5,1.12,0.87,0.011
+33100,"Miami-Fort Lauderdale-West Palm Beach, FL",South,26, 9.7,1.13,17.8%,2.64,6.6,1.09,0.69,0.0086
+41860,"San Francisco-Oakland-Hayward, CA",West,27,8.7,1.11,14.1%,2.32,7.6,1.10,0.70,0.0086
+19740,"Denver-Aurora-Lakewood, CO",West,28,8.4,1.11,13.1%,2.27,6.8,1.09,0.77,0.0096
+40900,"Sacramento--Roseville--Arden-Arcade, CA",West,29,8.1,1.11,13.5%,2.31,7.1,1.09,0.75,0.0095
+26420,"Houston-The Woodlands-Sugar Land, TX",South,30,7.9,1.11,13.6%,2.32,6.5,1.09,0.75,0.0095
+36740,"Orlando-Kissimmee-Sanford, FL",South,31,8.2,1.11,12.9%,2.25,6.7,1.09,0.69,0.0086
+19100,"Dallas-Fort Worth-Arlington, TX",South,32,7.4,1.10,11.8%,2.16,7.4,1.10,0.74,0.0095
+41700,"San Antonio-New Braunfels, TX",South,33,7.6,1.10,12.1%,2.22,7.1,1.10,0.74,0.0094
+35620,"New York-Newark-Jersey City, NY-NJ-PA",Northeast,34,8.7,1.11,14.6%,2.37,6.3,1.08,0.58,0.0071
+42660,"Seattle-Tacoma-Bellevue, WA",West,35,8.3,1.11,12.8%,2.24,6.0,1.08,0.67,0.0083
+40140,"Riverside-San Bernardino-Ontario, CA",West,36,8.0,1.11,12.0%,2.21,6.2,1.08,0.67,0.0085
+38060,"Phoenix-Mesa-Scottsdale, AZ",West,37,7.3,1.10,12.4%,2.20,6.5,1.09,0.70,0.0089
+29820,"Las Vegas-Henderson-Paradise, NV",West,38,7.6,1.10,13.0%,2.26,5.6,1.08,0.68,0.0088
+25540,"Hartford-West Hartford-East Hartford, CT",Northeast,39,7.4,1.10,10.5%,2.00,6.4,1.09,0.75,0.0094
+39580,"Raleigh, NC",South,40,7.7,1.10,10.5%,2.04,5.9,1.08,0.66,0.0082
+31080,"Los Angeles-Long Beach-Anaheim, CA",West,41,8.0,1.10,12.0%,2.17,5.8,1.07,0.57,0.007
+14460,"Boston-Cambridge-Newton, MA-NH",Northeast,42,7.5,1.10,10.7%,2.03,6.4,1.08,0.59,0.0073
+41620,"Salt Lake City, UT",West,43,7.4,1.10,11.0%,2.05,5.9,1.08,0.65,0.0082
+12420,"Austin-Round Rock, TX",South,44,7.2,1.09,10.7%,2.04,5.9,1.08,0.58,0.0073
+38900,"Portland-Vancouver-Hillsboro, OR-WA",West,45,6.8,1.09,10.7%,2.04,6.2,1.08,0.58,0.0072
+41740,"San Diego-Carlsbad, CA",West,46,7.3,1.09,11.0%,2.04,4.8,1.06,0.55,0.0068
+39300,"Providence-Warwick, RI-MA",Northeast,47,7.1,1.09,10.2%,1.98,5.7,1.08,0.65,0.0082
+41940,"San Jose-Sunnyvale-Santa Clara, CA",West,48,6.6,1.08,7.7%,1.71,4.2,1.05,0.34,0.0041
