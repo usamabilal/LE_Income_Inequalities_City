@@ -1,0 +1,134 @@
+---
+title: "Analysis_RL"
+author: "Ran"
+date: "1/11/2021"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+load("cleaned_bundle.rdata")
+library(tidyverse)
+library(cowplot)
+library(GGally)
+library(sf)
+```
+
+## Figure 1: LE Inequities
+
+```{r cars}
+
+f1a<-ggplot(absolute_ineq_long,aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  facet_wrap(~type, scales="free_y")+
+  guides(color=F, fill=F, size=F)+
+  labs(x="",
+       y="Value",
+       title="Total Inequalities in Life Expectancy by MSA")+
+  #scale_y_continuous(sec.axis=dup_axis(name = ylab2), limits=ylim)+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=14, color="black"),
+        axis.text.y=element_text(size=12, color="black"),
+        axis.title.y=element_text(face="bold", size=20),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(face="bold", size=25))
+
+
+f1b<-ggplot(income_ineq_long,aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  facet_wrap(~type, scales="free_y")+
+  guides(color=F, fill=F, size=F)+
+  labs(x="",
+       y="Value",
+       title="Income Inequalities in Life Expectancy by MSA")+
+  #scale_y_continuous(sec.axis=dup_axis(name = ylab2), limits=ylim)+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=14, color="black"),
+        axis.text.y=element_text(size=12, color="black"),
+        axis.title.y=element_text(face="bold", size=20),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(face="bold", size=25))
+
+
+plot_grid(f1a, f1b, ncol=2)
+
+```
+
+## Figure 2: Correlelogram
+
+```{r}
+cols<-c("Total: Abs. Difference", "Total: Rel. Difference",
+        "Total: Coefficient of Variation", "Total: Gini",
+        "Income: Abs. Difference", "Income: Rel. Difference",
+        "Income: SII", "Income: RII")
+ggpairs(data=full_dta_fig2, 
+        columns = cols, upper = list(continuous = wrap("cor", size=6, color="black"))) +
+  theme_bw() +
+  theme(strip.background=element_blank(),
+        strip.text = element_text(color="black", size=12, face="bold"),
+        axis.text=element_text(color="black"))
+```
+
+
+## Figure 3: Map
+
+```{r}
+ggplot()+
+  geom_sf(data=shp_with_data, size=0,
+          aes(geometry=geometry, color=rank, fill=rank))+
+  geom_sf(data=regions, size=0.5, color="black",
+          fill=NA,
+          aes(geometry=geometry))+
+  scale_fill_binned(name="Rank", type="gradient",
+                    show.limits=T,n.breaks=5,labels=round,
+                    low="red", high="white")+
+  scale_color_binned(name="Rank", type="gradient",
+                    show.limits=T,n.breaks=5,labels=round,
+                    low="red", high="white")+
+  coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
+           ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T) +
+  guides(alpha=F, size=F, color=F)+
+  #labs(title="Renta media por hogar") +
+  facet_wrap(~type2, nrow=2)+
+  theme_void()+
+  theme(plot.title = element_text(size=20, face="bold", hjust=.5),
+        strip.text = element_text(size=10, face="bold", hjust=.5),
+        panel.background = element_rect(fill = "white", color=NA),
+        legend.position="bottom")
+
+```
+
+
+
+## Table
+
+```{r}
+library(DT)
+DT::datatable(table1)
+```
+
+
