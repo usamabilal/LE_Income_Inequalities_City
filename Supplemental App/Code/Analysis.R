@@ -248,8 +248,24 @@ fwrite(table1, file="results/table1.csv")
 
 
 # Save Data -----
-save(income_ineq_long,absolute_ineq_long,
+
+absolute_ineq_long=absolute_ineq_long %>% ungroup()%>% 
+  mutate(outcome = "total")
+income_ineq_long=income_ineq_long %>% ungroup() %>% 
+  mutate(outcome = "income")
+tidy_ineq = bind_rows(absolute_ineq_long,
+                    income_ineq_long)
+
+save(tidy_ineq,
      full_dta_fig2,
      regions,shp_with_data,bbox_temp,
      table1,
-     file= "cleaned_bundle.rdata")
+     file= "../App (Dev)/cleaned_bundle.rdata")
+
+# save(income_ineq_long ,
+#      absolute_ineq_long ,
+#      tidy_ineq
+#      full_dta_fig2,
+#      regions,shp_with_data,bbox_temp,
+#      table1,
+#      file= "cleaned_bundle.rdata")
