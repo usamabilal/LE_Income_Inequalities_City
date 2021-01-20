@@ -106,7 +106,13 @@ full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>%
 
 shp<-read_sf("data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
   mutate(cbsa=as.numeric(GEOID))
+
+
+###  Regions bug _--------
 regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
+library(rgdal)
+states = read_sf("Data/Census State Shape Files/tl_2019_us_state.shp")
+sf_states = st_as_sf( readOGR("Data/Census State Shape Files/tl_2019_us_state.shp"))
 shp_with_data<-inner_join(shp, full_dta)
 bbox_temp<-st_bbox(shp_with_data)
  
@@ -244,7 +250,7 @@ table1<-full_join(absolute_ineq %>% rename(total_dif=dif,
          ratio=format(ratio, digits=2, nsmall=2),
          sii=format(sii, digits=2, nsmall=2),
          rii=format(rii, digits=2, nsmall=2))
-fwrite(table1, file="results/table1.csv")
+# fwrite(table1, file="results/table1.csv")
 
 
 # Save Data -----
@@ -258,7 +264,7 @@ tidy_ineq = bind_rows(absolute_ineq_long,
 
 save(tidy_ineq,
      full_dta_fig2,
-     regions,shp_with_data,bbox_temp,
+     states,sf_states, regions,shp_with_data,bbox_temp,
      table1,
      file= "../App (Dev)/cleaned_bundle.rdata")
 

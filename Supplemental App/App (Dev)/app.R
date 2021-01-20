@@ -1,43 +1,49 @@
-load("cleaned_bundle.rdata")
-source("global.R", local = T)
 library(shiny)
 library(tidyverse)
 library(cowplot)
 library(GGally)
 library(sf)
+library(leaflet)
 library(shinyWidgets)
+library(DT)
 
-ui_tab1 = sidebarLayout(
+load("cleaned_bundle.rdata")
+source("global.R", local = T)
+
+## Figure 3 (Map) ----
+ui_figure3 = sidebarLayout(
     sidebarPanel(width = 3,
-        pickerInput(
-            inputId = "fig1_outcome",
-            label = "Inequalities" ,
-            choices = c("Total Inequalities" ="total",
-                        "Income Inequalities"="income")),
-        uiOutput("fig1_ui_input")
+                 pickerInput(
+                     inputId = "fig3_ineq",
+                     label = "Inequalities" ,
+                     choices = c("Total Inequalities" ="total",
+                                 "Income Inequalities"="income")),
+                 uiOutput("fig3_ui_input")
     ),
-    mainPanel(plotOutput("plot_fig1"))
+    mainPanel(leafletOutput("plot_fig3"))
 )
-
 
 ui <- function(){
     fluidPage(
         navbarPage(
             title = "LE Paper",
             tabPanel("Home",ui_home),
-            tabPanel("Figure 1",ui_tab1)
+            tabPanel("Figure 1",ui_figure1),
+            tabPanel("Figure 3",ui_figure3),
+            tabPanel("Table 1",ui_table1)
         )
     )
 }
 
 
 
+
 server <- function(input, output) {
-    ## Fig1 ----
+    ## Figure 1 ----
     ## __UI ----
     output$fig1_ui_input = renderUI({
         choices_tmp = tidy_ineq %>% 
-            filter(outcome == input$fig1_outcome) %>% 
+            filter(outcome == input$fig1_ineq) %>% 
             count(type) %>% 
             pull(type) %>% 
             as.character()
@@ -49,13 +55,13 @@ server <- function(input, output) {
     ## __Outputs ----
     output$plot_fig1 = renderPlot({
         # input = list()
-        # input$fig1_outcome ="total"
+        # input$fig1_ineq ="total"
         # input$fig1_type = 
         req(input$fig1_type)
         df_tmp = tidy_ineq %>% 
-            filter(outcome == input$fig1_outcome) %>% 
+            filter(outcome == input$fig1_ineq) %>% 
             filter(type==input$fig1_type)
-        title_tmp = ifelse(input$fig1_outcome =="total",
+        title_tmp = ifelse(input$fig1_ineq =="total",
                            "Total Inequalities in Life Expectancy by MSA",
                            "Income Inequalities in Life Expectancy by MSA")
         yaxis_tmp = input$fig1_type
@@ -84,6 +90,71 @@ server <- function(input, output) {
                   plot.title=element_text(face="bold", size=25))
         
     })
+    
+    
+    ## Figure 3 ----
+    ## __UI ----
+    output$fig3_ui_input = renderUI({
+        choices_tmp = tidy_ineq %>%
+            filter(outcome == input$fig3_ineq) %>%
+            count(type) %>%
+            pull(type) %>%
+            as.character()
+        pickerInput(
+            inputId = "fig3_type",
+            label = "Type" ,
+            choices = choices_tmp)
+    })
+    ## __Outputs ----
+    output$plot_fig3 = renderLeaflet({
+        # input = list()
+        # input$fig3_ineq ="total"
+        # input$fig3_type = "Abs. Difference"
+        # req(input$fig3_type)
+        # sf_tmp = shp_with_data %>%
+        #     filter(ineq == ifelse(input$fig3_ineq=="total","Total","Income")) %>%
+        #     filter(type == input$fig3_type)
+        
+        
+        leaflet() %>% 
+            addPolygons(data = slice(sf_states,1))
+        
+        # ggplot()+
+            # geom_sf(data=sf_tmp, size=0,
+            #         aes(geometry=geometry, color=rank, fill=rank))+
+            # geom_sf(data=sf_states, size=0.5, color="black",
+            #         fill=NA,
+            #         aes(geometry=geometry))+
+            # geom_sf(data=regions, size=0.5, color="black",
+            #         fill=NA,
+            #         aes(geometry=geometry))+
+            # scale_fill_binned(name="Rank", type="gradient",
+            #                   show.limits=T,n.breaks=5,labels=round,
+            #                   low="red", high="white")+
+            # scale_color_binned(name="Rank", type="gradient",
+            #                    show.limits=T,n.breaks=5,labels=round,
+            #                    low="red", high="white")+
+            # coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
+            #          ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T)# +
+            # guides(alpha=F, size=F, color=F)+
+            # #labs(title="Renta media por hogar") +
+            # facet_wrap(~type2, nrow=2)+
+            # theme_void()+
+            # theme(plot.title = element_text(size=20, face="bold", hjust=.5),
+            #       strip.text = element_text(size=10, face="bold", hjust=.5),
+            #       panel.background = element_rect(fill = "white", color=NA),
+            #       legend.position="bottom")
+            # 
+    })
+    
+    
+    ## Table 1 ----
+    ## __Outputs ----
+    
+    output$table1 = renderDT({ 
+        table1
+    })
+    
 }
 
 
