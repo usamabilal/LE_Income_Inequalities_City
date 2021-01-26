@@ -4,6 +4,7 @@ library(cowplot)
 library(GGally)
 library(sf)
 library(leaflet)
+
 library(shinyWidgets)
 library(DT)
 
@@ -20,11 +21,23 @@ ui_figure3 = sidebarLayout(
                                  "Income Inequalities"="income")),
                  uiOutput("fig3_ui_input")
     ),
-    mainPanel(leafletOutput("plot_fig3"))
+    mainPanel(
+        fluidRow(
+            uiOutput("header_fig3")
+        ),
+        fluidRow(
+            leafletOutput("plot_fig3", 
+                          height = '500px', 
+                          width = "800px")
+        )
+    )
 )
 
 ui <- function(){
     fluidPage(
+        tags$head(
+            tags$style(HTML(".leaflet-container { background: #FFFFFF; }"))
+        ),
         navbarPage(
             title = "LE Paper",
             tabPanel("Home",ui_home),
@@ -105,46 +118,88 @@ server <- function(input, output) {
             label = "Type" ,
             choices = choices_tmp)
     })
+    
+    output$header_fig3 = renderUI({
+       ineq_tmp = ifelse(input$fig3_ineq=="total","Total","Income")
+       type_tmp = input$fig3_type
+       h3(paste0(ineq_tmp,": ",type_tmp), align = 'center')
+    
+            
+        
+    })
+    
+    
     ## __Outputs ----
     output$plot_fig3 = renderLeaflet({
         # input = list()
         # input$fig3_ineq ="total"
         # input$fig3_type = "Abs. Difference"
-        # req(input$fig3_type)
-        # sf_tmp = shp_with_data %>%
-        #     filter(ineq == ifelse(input$fig3_ineq=="total","Total","Income")) %>%
-        #     filter(type == input$fig3_type)
+        req(input$fig3_type)
+        sf_tmp = shp_with_data %>%
+            filter(ineq == ifelse(input$fig3_ineq=="total","Total","Income")) %>%
+            filter(type == input$fig3_type) %>% 
+            mutate(label = str_c("<b>",NAME,"</b><br>",
+                                 "<b>",ineq," ",type," :</b>", round(value,2),"<br>",
+                                 "<b>Rank :</b>",rank
+                                 ) %>% 
+                       map(~HTML(.x)))
         
+        pal <- colorBin(
+            reverse = T,
+            palette = "Reds",
+            bins = 4,
+            domain = sf_tmp$rank)
         
-        leaflet() %>% 
-            addPolygons(data = slice(sf_states,1))
-        
+        bbox = c(-126, 24, -67,50)
+        zoom_tmp  = 3.5
+        leaflet(options = leafletOptions(minZoom = 3.5)) %>% 
+            # addTiles(options = providerTileOptions(minZoom = 3, maxZoom = 10) )%>%
+            setView(-100,41, zoom = zoom_tmp) %>% 
+            addPolygons(data =sf_tmp,
+                        color = ~pal(rank),
+                        fillOpacity = 1,
+                        weight = 1,
+                        highlightOptions = highlightOptions(color = "black", weight = 1,bringToFront = TRUE),
+                        opacity = 1,
+                        label = ~label)  %>% 
+            addPolylines (data =regions,
+                        weight = 3,
+                        fillOpacity = 0,
+                        opacity = 1,
+                        color = "black")  %>%
+            setMaxBounds(bbox[1], bbox[2], bbox[3], bbox[4]) %>%
+            addLegend("bottomright", pal = pal, values = sf_tmp$rank,
+                      title = "Rank",
+                    
+                      opacity = 1
+            )
+
         # ggplot()+
-            # geom_sf(data=sf_tmp, size=0,
-            #         aes(geometry=geometry, color=rank, fill=rank))+
-            # geom_sf(data=sf_states, size=0.5, color="black",
-            #         fill=NA,
-            #         aes(geometry=geometry))+
-            # geom_sf(data=regions, size=0.5, color="black",
-            #         fill=NA,
-            #         aes(geometry=geometry))+
-            # scale_fill_binned(name="Rank", type="gradient",
-            #                   show.limits=T,n.breaks=5,labels=round,
-            #                   low="red", high="white")+
-            # scale_color_binned(name="Rank", type="gradient",
-            #                    show.limits=T,n.breaks=5,labels=round,
-            #                    low="red", high="white")+
-            # coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
-            #          ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T)# +
-            # guides(alpha=F, size=F, color=F)+
-            # #labs(title="Renta media por hogar") +
-            # facet_wrap(~type2, nrow=2)+
-            # theme_void()+
-            # theme(plot.title = element_text(size=20, face="bold", hjust=.5),
-            #       strip.text = element_text(size=10, face="bold", hjust=.5),
-            #       panel.background = element_rect(fill = "white", color=NA),
-            #       legend.position="bottom")
-            # 
+        # geom_sf(data=sf_tmp, size=0,
+        #         aes(geometry=geometry, color=rank, fill=rank))+
+        # geom_sf(data=sf_states, size=0.5, color="black",
+        #         fill=NA,
+        #         aes(geometry=geometry))+
+        # geom_sf(data=regions, size=0.5, color="black",
+        #         fill=NA,
+        #         aes(geometry=geometry))+
+        # scale_fill_binned(name="Rank", type="gradient",
+        #                   show.limits=T,n.breaks=5,labels=round,
+        #                   low="red", high="white")+
+        # scale_color_binned(name="Rank", type="gradient",
+        #                    show.limits=T,n.breaks=5,labels=round,
+        #                    low="red", high="white")+
+        # coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
+        #          ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T)# +
+        # guides(alpha=F, size=F, color=F)+
+        # #labs(title="Renta media por hogar") +
+        # facet_wrap(~type2, nrow=2)+
+        # theme_void()+
+        # theme(plot.title = element_text(size=20, face="bold", hjust=.5),
+        #       strip.text = element_text(size=10, face="bold", hjust=.5),
+        #       panel.background = element_rect(fill = "white", color=NA),
+        #       legend.position="bottom")
+        # 
     })
     
     
