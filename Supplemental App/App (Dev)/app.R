@@ -120,11 +120,12 @@ server <- function(input, output) {
     })
     
     output$header_fig3 = renderUI({
-       ineq_tmp = ifelse(input$fig3_ineq=="total","Total","Income")
-       type_tmp = input$fig3_type
-       h3(paste0(ineq_tmp,": ",type_tmp), align = 'center')
-    
-            
+        req(input$fig3_type)
+        ineq_tmp = ifelse(input$fig3_ineq=="total","Total","Income")
+        type_tmp = input$fig3_type
+        h3(paste0(ineq_tmp,": ",type_tmp), align = 'center')
+        
+        
         
     })
     
@@ -141,8 +142,8 @@ server <- function(input, output) {
             mutate(label = str_c("<b>",NAME,"</b><br>",
                                  "<b>",ineq," ",type," :</b>", round(value,2),"<br>",
                                  "<b>Rank :</b>",rank
-                                 ) %>% 
-                       map(~HTML(.x)))
+            ) %>% 
+                map(~HTML(.x)))
         
         pal <- colorBin(
             reverse = T,
@@ -163,17 +164,17 @@ server <- function(input, output) {
                         opacity = 1,
                         label = ~label)  %>% 
             addPolylines (data =regions,
-                        weight = 3,
-                        fillOpacity = 0,
-                        opacity = 1,
-                        color = "black")  %>%
+                          weight = 3,
+                          fillOpacity = 0,
+                          opacity = 1,
+                          color = "black")  %>%
             setMaxBounds(bbox[1], bbox[2], bbox[3], bbox[4]) %>%
             addLegend("bottomright", pal = pal, values = sf_tmp$rank,
                       title = "Rank",
-                    
+                      
                       opacity = 1
             )
-
+        
         # ggplot()+
         # geom_sf(data=sf_tmp, size=0,
         #         aes(geometry=geometry, color=rank, fill=rank))+
