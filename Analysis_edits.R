@@ -1,4 +1,3 @@
-#Changes to Figures 
 
 rm(list=ls())
 library(data.table)
@@ -11,17 +10,21 @@ library(GGally)
 library(broom)
 library(grid)
 library(gridExtra)
+library(plotly)
+library(dineq)
+library(car)
+
 load("data/clean_data.rdata")
 total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>% 
   summarise(total_pop=sum(pop))
 
-
-# first, lets calculate absolute ineq indicators by city
+# first, calculate absolute ineq indicators by city
 # Gap and ratio: need .9 and .1 weighted quantiles
 # CV
-# GINI from reldist package
+# GINI from reldist package and mean log deviation from dineq
 
 #we'll run all of this, but then limit to our two measures of interest, absolute and relative 
+
 absolute_ineq<-dta %>% group_by(cbsa) %>% 
   group_modify(~{
     #.x<-dta %>% filter(cbsa==25940)
@@ -32,35 +35,47 @@ absolute_ineq<-dta %>% group_by(cbsa) %>%
     data.frame(dif=quants[2]-quants[1],
                ratio=quants[2]/quants[1],
                cv=wtd.sd/wtd.mean*100,
-               gini=gini) %>% as_tibble
+               gini=gini,
+               mld.wt=mld.wtd(.x$le, weights=.x$pop)) %>% as_tibble
   }) %>% left_join(region)
 absolute_ineq_long<-absolute_ineq %>% gather(type, value, -cbsa, -Region, -Region_Name) %>% 
-  mutate(type=factor(type, levels=c("dif", "ratio", "cv", "gini"),
-                     labels=c("Abs. Difference", "Rel. Difference",
-                              "Coefficient of Variation", "Gini")),
+  mutate(type=factor(type, levels=c("dif", "ratio", "cv", "gini", "mld.wt"),
+                     labels=c("Abs. Disparity", "Rel. Disparity",
+                              "Coefficient of Variation", "Gini", "Mean Log Deviation")),
          Region_Name=sub(" Region", "", Region_Name)) %>% 
   left_join(total_pop_msa)
 
 absolute_rel_ineq_long<-absolute_ineq_long%>%
-  filter(type %in% c("Abs. Difference", "Rel. Difference"))
+  filter(type %in% c("Abs. Disparity", "Rel. Disparity"))%>%
+  mutate(Region_Name=factor(Region_Name), 
+         Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
+ 
+absolute_rel_ineq_long1<-absolute_rel_ineq_long%>%
+  arrange(value)
 
+str(absolute_rel_ineq_long)
+#find Coefficient of variation (CV) for each region and measure 
+cv<-absolute_rel_ineq_long%>%
+  group_by(type, Region_Name)%>%
+summarize(cv=sd(value) / mean(value) * 100)
 
+#FIGURE 1
 f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
   geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
   geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
               width=0.1, height=0, alpha=1,
               color="black", pch=21) +
-  facet_wrap(~type, scales="free_y")+
+facet_wrap(~type, scales="free_y")+
   guides(color=F, fill=F, size=F)+
   labs(x="",
        y="Value",
-       title="Total Inequalities in Life Expectancy by MSA")+
+       title="Total Disparities in Life Expectancy by MSA")+
   #scale_y_continuous(sec.axis=dup_axis(name = ylab2), limits=ylim)+
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
         panel.grid.major.x = element_blank(),
-        axis.text.x=element_text(size=14, color="black"),
+        axis.text.x=element_text(size=18, color="black"),
         axis.text.y=element_text(size=12, color="black"),
         axis.title.y=element_text(face="bold", size=20),
         strip.text =element_text(face="bold", size=20),
@@ -68,6 +83,9 @@ f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
         plot.title=element_text(face="bold", size=25, hjust=0.5))
 f1a
 ggsave("results/figure1_ASM.pdf", f1a, width=20, height=7.5)
+
+#view specific MSAs
+ggplotly(f1a)
 
 #Table 1 
 summary_absolute<-absolute_ineq_long %>% 
@@ -79,6 +97,32 @@ summary_absolute<-absolute_ineq_long %>%
   arrange(desc(rank)) %>% 
   ungroup() %>% 
   mutate(rank=row_number())
+
+
+income_ineq<-dta %>% group_by(cbsa) %>% 
+  group_modify(~{
+    #.x<-dta %>% filter(cbsa==25940)
+    .x<-.x %>% 
+      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
+    decile_le<-.x %>% group_by(decile_income) %>% 
+      summarise(le=weighted.mean(le, w=pop)) %>% 
+      filter(decile_income%in%c(1, 10)) %>% pull(le)
+    mean_le<-weighted.mean(.x$le, w=.x$pop)
+    model<-lm(le~decile_income, data=.x) %>% tidy
+    sii<-model %>% filter(term=="decile_income") %>% pull(estimate)
+    rii<-sii/mean_le
+    data.frame(dif=decile_le[2]-decile_le[1],
+               ratio=decile_le[2]/decile_le[1],
+               sii=sii, 
+               rii=rii) %>% as_tibble
+  }) %>% left_join(region)
+
+income_ineq_long<-income_ineq %>% gather(type, value, -cbsa, -Region, -Region_Name) %>% 
+  mutate(type=factor(type, levels=c("dif", "ratio", "sii", "rii"),
+                     labels=c("Abs. Disparity", "Rel. Disparity",
+                              "Slope Index of Inequality", "Relative Index of Inequality")),
+         Region_Name=sub(" Region", "", Region_Name)) %>% 
+  left_join(total_pop_msa)
 summary_income<-income_ineq_long %>% 
   arrange(type, value) %>% 
   group_by(type) %>% 
@@ -110,15 +154,8 @@ summary_income_large<-income_ineq_long %>%
   ungroup() %>% 
   mutate(rank=row_number())
 
-
-
-
-
-
-
-
 summary_large_abs<-absolute_ineq_long %>% 
-  filter(total_pop>=1000000 & type=="Abs. Difference") %>% 
+  filter(total_pop>=1000000 & type=="Abs. Disparity") %>% 
   arrange(desc(value)) %>% 
   group_by(type) %>% 
   mutate(rank=row_number())%>%
@@ -129,7 +166,7 @@ mutate(Region_Name=sub(" Region", "", Region_Name))%>%
 mutate(total_dif=format(total_dif, digits=1, nsmall=1))
 
 summary_large_rel<-absolute_ineq_long %>% 
-  filter(total_pop>=1000000 & type=="Rel. Difference") %>% 
+  filter(total_pop>=1000000 & type=="Rel. Disparity") %>% 
   arrange(desc(value)) %>% 
   group_by(type) %>% 
   mutate(rank=row_number())%>%
@@ -142,21 +179,22 @@ summary_large_rel<-absolute_ineq_long %>%
 table1<-cbind(summary_large_abs, summary_large_rel)
 fwrite(table1, file="results/table1_ASM.csv")
 
+
 #Figure 2
 full_dta<-absolute_ineq_long %>% select(cbsa, type, value) %>% 
-  filter(type %in% c("Abs. Difference", "Rel. Difference"))%>%
+  filter(type %in% c("Abs. Disparity"))%>%
                       mutate(ineq="Total") %>% 
   mutate(type2=paste0(ineq, ": ", type)) %>% 
   arrange(desc(value)) %>% 
   group_by(type2) %>% 
   mutate(rank=row_number()) %>% 
-  mutate(type2=factor(type2, levels=c("Total: Abs. Difference", "Total: Rel. Difference")))
+  mutate(type2=factor(type2, levels="Total: Abs. Disparity"))
 shp<-read_sf("data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
   mutate(cbsa=as.numeric(GEOID))
 regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
 shp_with_data<-inner_join(shp, full_dta)
 bbox_temp<-st_bbox(shp_with_data)
-m<-ggplot()+
+figure2<-ggplot()+
   geom_sf(data=shp_with_data, size=0,
           aes(geometry=geometry, color=rank, fill=rank))+
   geom_sf(data=regions, size=0.5, color="black", 
@@ -178,10 +216,15 @@ m<-ggplot()+
         strip.text = element_text(size=10, face="bold", hjust=.5),
         panel.background = element_rect(fill = "white", color=NA),
         legend.position="bottom")
-m
-ggsave("results/figure3_ASM.pdf", width=16, height=5)
+figure2
+ggsave("results/figure2_ASM.pdf", width=16, height=5)
 
-#figure 4
+#just to view which areas have largest disparities 
+absolute_ineq_long1<-absolute_ineq_long%>%
+arrange(type, value)
+
+
+#figure 3
 le_by_decile<-dta %>% group_by(cbsa) %>% 
   group_modify(~{
     #.x<-dta %>% filter(cbsa==25940)
@@ -193,7 +236,7 @@ le_by_decile<-dta %>% group_by(cbsa) %>%
   }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
   filter(total_pop>=1000000)
 
-ggplot(le_by_decile, 
+figure3<-ggplot(le_by_decile, 
        aes(x=decile_income, y=le, group=cbsa)) +
   geom_line(data=le_by_decile %>% mutate(Region_Name="Midwest Region"), 
             color="gray", alpha=1)+
@@ -220,35 +263,147 @@ ggplot(le_by_decile,
         axis.title=element_text(color="black", face="bold", size=16),
         strip.text=element_text(color="black", face="bold", size=16),
         strip.background = element_blank())
-ggsave("results/figure4.pdf", width=10, height=7.5)
+figure3
+ggsave("results/figure3_ASM.pdf", width=10, height=7.5)
+
+ggplotly(figure3)
+#view highest and lowest disp by region and level 
+view<-le_by_decile%>%
+  arrange(Region, decile_income, le)
+
+#Table 2- Analysis examining Pop size and MHI as predictors of disparities 
+
+#join the cbsa dataset (pop & MHI w/ absolute, relative inequities measure)
+#the total_pop and pop differ-- more likely to trust pop since it's from tidycensus rather than sum of CT
+
+cbsa_inequities<-absolute_rel_ineq_long%>%
+  rename(GEOID=cbsa)%>%
+  left_join(cbsa, by="GEOID")%>%
+  mutate(poplog=log(pop),
+         mhilog=log(pop),
+         mhi_cat=as.numeric(cut(mhi, breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000,100000), right=T, labels=c(1, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000))))
+str(cbsa_inequities)
+
+cbsa_abs<-cbsa_inequities%>%
+  filter(type=="Abs. Disparity")
+summary(cbsa_abs$mhi)
+summary(cbsa_abs)
+
+#exploratory visualization (scatter plots)
+absmhi<-ggplot(cbsa_abs, aes(x=mhi, y=value))+geom_point()
+absmhi
+logmhi<-ggplot(cbsa_abs, aes(x=mhilog, y=value))+geom_point()
+logmhi
+abspop<-ggplot(cbsa_abs, aes(x=poplog, y=value))+geom_point()
+abspop
+
+#regress inequities on absolute disparities
+#model 1- pop (log)
+summary(abspop<-lm(value~log(pop), data=cbsa_abs))
+confint(abspop,level=0.95)
+
+#model 2 - MHI (log) 
+summary(abs_mhi<-lm(value~log(mhi), data=cbsa_abs))
+confint(abs_mhi,level=0.95)
+
+plot(abs_mhi, which = 3)
+crPlots(abs_mhi, variable = "log(mhi)")
+
+#Model 3- MHI+ Pop
+summary(abs<-lm(value~log(mhi) +log(pop), data=cbsa_abs))
+confint(abs, level=0.95)
+#percent change (coef*log(1.1) where .1=10% change
+coef(abs)*log(1.1)
+confint(abs, level=0.95)*log(1.1)
+
+################################################################################
+#descriptives: 
+
+   #CT's & MSAs
+sapply(dta, function(x) length(unique(x))
 
 
+#for conclusion-- find 10% and 90th percentile for AMES iowa
+ames<-dta%>%
+  filter(cbsa==11180)
 
+wtd.quantile(ames$le, q = c(.1, .9), weight = ames$pop)
+
+quantile(ames$le, probs = seq(.1, .9, by = .1))
+
+#for results - find years of gap for san jose
+sj<-dta%>%
+  filter(cbsa==41940)%>%
+  arrange(le)
+
+wtd.quantile(sj$le, q = c(.1, .9), weight = sj$pop)
+
+quantile(sj$le, probs = seq(.1, .9, by = .1))
 ###############################################################
-####### Appendix Figure 1 
+####### Appendix FIgure 1
+#Figure 2 but for relative disparities
+full_dta<-absolute_ineq_long %>% select(cbsa, type, value) %>% 
+  filter(type %in% c("Rel. Disparity"))%>%
+  mutate(ineq="Total") %>% 
+  mutate(type2=paste0(ineq, ": ", type)) %>% 
+  arrange(desc(value)) %>% 
+  group_by(type2) %>% 
+  mutate(rank=row_number()) %>% 
+  mutate(type2=factor(type2, levels="Total: Rel. Disparity"))
+shp<-read_sf("data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
+  mutate(cbsa=as.numeric(GEOID))
+regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
+shp_with_data<-inner_join(shp, full_dta)
+bbox_temp<-st_bbox(shp_with_data)
+appendixfig1<-ggplot()+
+  geom_sf(data=shp_with_data, size=0,
+          aes(geometry=geometry, color=rank, fill=rank))+
+  geom_sf(data=regions, size=0.5, color="black", 
+          fill=NA,
+          aes(geometry=geometry))+
+  scale_fill_binned(name="Rank", type="gradient",
+                    show.limits=T,n.breaks=5,labels=round,
+                    low="red", high="white")+
+  scale_color_binned(name="Rank", type="gradient",
+                     show.limits=T,n.breaks=5,labels=round,
+                     low="red", high="white")+
+  coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
+           ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T) +
+  guides(alpha=F, size=F, color=F)+
+  #labs(title="Renta media por hogar") +
+  facet_wrap(~type2)+
+  theme_void()+
+  theme(plot.title = element_text(size=20, face="bold", hjust=.5),
+        strip.text = element_text(size=10, face="bold", hjust=.5),
+        panel.background = element_rect(fill = "white", color=NA),
+        legend.position="bottom")
+appendixfig1
+ggsave("results/appendixFig1_ASM.pdf", width=16, height=5)
+
+####### Appendix Figure 2 
 ## correlation between indicators
 full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
                       mutate(ineq="Total"),
                     income_ineq_long %>% select(cbsa, type, value) %>% 
                       mutate(ineq="Income")) %>% 
   mutate(type2=paste0(ineq, ": ", type)) %>% 
-  arrange(desc(value)) %>% 
-  group_by(type2) %>% 
+  arrange(desc(value)) %>%
+  group_by(type2) %>%
   mutate(rank=row_number()) %>% 
-  mutate(type2=factor(type2, levels=c("Total: Abs. Difference", "Total: Rel. Difference",
-                                      "Total: Coefficient of Variation", "Total: Gini",
-                                      "Income: Abs. Difference", "Income: Rel. Difference",
+  mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
+                                      "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Deviation",
+                                      "Income: Abs. Disparity", "Income: Rel. Disparity",
                                       "Income: Slope Index of Inequality", "Income: Relative Index of Inequality"),
-                      labels=c("Total: Abs. Difference", "Total: Rel. Difference",
-                               "Total: Coefficient of Variation", "Total: Gini",
-                               "Income: Abs. Difference", "Income: Rel. Difference",
-                               "Income: SII", "Income: RII"))) %>% 
+                      labels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
+                               "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
+                               "Income: Abs. Disparity", "Income: Rel. Disparity",
+                               "Income: SII", "Income: RII"))) %>%
   left_join(region) %>% 
   select(cbsa, type2, value, Region_Name) %>% 
   spread(type2, value)
-cols<-c("Total: Abs. Difference", "Total: Rel. Difference",
-        "Total: Coefficient of Variation", "Total: Gini",
-        "Income: Abs. Difference", "Income: Rel. Difference",
+cols<-c("Total: Abs. Disparity", "Total: Rel. Disparity",
+        "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.", 
+        "Income: Abs. Disparity", "Income: Rel. Disparity",
         "Income: SII", "Income: RII")
 corrs<-ggpairs(data=full_dta, 
                columns = cols, upper = list(continuous = wrap("cor", size=6, color="black"))) +
@@ -256,6 +411,6 @@ corrs<-ggpairs(data=full_dta,
   theme(strip.background=element_blank(),
         strip.text = element_text(color="black", size=12, face="bold"),
         axis.text=element_text(color="black"))
-ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
+ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
 
 

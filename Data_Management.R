@@ -4,6 +4,7 @@ library(tidyverse)
 library(readxl)
 library(tidycensus)
 library(lubridate)
+library(bit64)
 # life expectancy
 
 le<-fread("https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/US_A.CSV")
@@ -38,6 +39,30 @@ ct_data<-map_dfr(states, function(state){
   temp
 })
 
+
+#obtain CBSA level census data
+# obtain a census api key https://api.census.gov/data/key_signup.html
+# census_api_key(key="xxx", install = T)
+
+
+  cbsa<-get_acs(geography = "metropolitan statistical area/micropolitan statistical area",
+                variables=c(
+                  #pop
+                  "B01001_001", 
+                  # hh
+                  "B08201_001",
+                  # mhi
+                  "B19013_001"),
+                survey="acs5",year=2015) %>% 
+    select(GEOID, variable, estimate) %>% 
+    spread(variable, estimate) %>% 
+    mutate(GEOID=as.numeric(GEOID)) %>% 
+    rename(pop=B01001_001,
+           hh=B08201_001,
+           mhi=B19013_001) %>% 
+    select(GEOID, pop, hh, mhi)
+  cbsa
+
 # 2013 delineations from https://www.census.gov/geographies/reference-files/time-series/demo/metro-micro/delineation-files.html
 cw<-read_excel("data/list1.xls", skip=2) %>% 
   filter(grepl("Metropolitan", `Metropolitan/Micropolitan Statistical Area`)) %>% 
@@ -58,6 +83,7 @@ cw<-cw %>% filter(county!=51515) %>% select(-state)
 ct_data<-ct_data %>% 
   mutate(county=floor(GEOID/1000000),
          state=floor(county/1000))
+
 # get census regions
 region<-read_excel("data/state-geocodes-v2014-1.xls", skip=5)
 names<-region %>% filter(Division=="0") %>% select(Region, Name) %>% rename(Region_Name=Name)
@@ -88,5 +114,5 @@ summary(dta)
 
 
 
-save(dta, ct_data, le, cw, region, file="data/clean_data.rdata")
+save(dta, ct_data, le, cw, region, cbsa, file="data/clean_data.rdata")
 
