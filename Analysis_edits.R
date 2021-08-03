@@ -280,7 +280,7 @@ cbsa_inequities<-absolute_rel_ineq_long%>%
   rename(GEOID=cbsa)%>%
   left_join(cbsa, by="GEOID")%>%
   mutate(poplog=log(pop),
-         mhilog=log(pop),
+         mhilog=log(mhi),
          mhi_cat=as.numeric(cut(mhi, breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000,100000), right=T, labels=c(1, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000))))
 str(cbsa_inequities)
 
@@ -306,8 +306,6 @@ confint(abspop,level=0.95)
 summary(abs_mhi<-lm(value~log(mhi), data=cbsa_abs))
 confint(abs_mhi,level=0.95)
 
-plot(abs_mhi, which = 3)
-crPlots(abs_mhi, variable = "log(mhi)")
 
 #Model 3- MHI+ Pop
 summary(abs<-lm(value~log(mhi) +log(pop), data=cbsa_abs))
