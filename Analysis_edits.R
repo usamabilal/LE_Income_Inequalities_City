@@ -59,7 +59,7 @@ cv<-absolute_rel_ineq_long%>%
   group_by(type, Region_Name)%>%
 summarize(cv=sd(value) / mean(value) * 100)
 
-#FIGURE 1
+#Figure 1-----
 f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
   geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
   geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
@@ -87,7 +87,7 @@ ggsave("results/figure1_ASM.pdf", f1a, width=20, height=7.5)
 #view specific MSAs
 ggplotly(f1a)
 
-#Table 1 
+#Table 1 -------
 summary_absolute<-absolute_ineq_long %>% 
   arrange(type, value) %>% 
   group_by(type) %>% 
@@ -180,7 +180,7 @@ table1<-cbind(summary_large_abs, summary_large_rel)
 fwrite(table1, file="results/table1_ASM.csv")
 
 
-#Figure 2
+#Figure 2----
 full_dta<-absolute_ineq_long %>% select(cbsa, type, value) %>% 
   filter(type %in% c("Abs. Disparity"))%>%
                       mutate(ineq="Total") %>% 
@@ -224,7 +224,7 @@ absolute_ineq_long1<-absolute_ineq_long%>%
 arrange(type, value)
 
 
-#figure 3
+#Figure 3 ----
 le_by_decile<-dta %>% group_by(cbsa) %>% 
   group_modify(~{
     #.x<-dta %>% filter(cbsa==25940)
@@ -314,11 +314,10 @@ confint(abs, level=0.95)
 coef(abs)*log(1.1)
 confint(abs, level=0.95)*log(1.1)
 
-################################################################################
-#descriptives: 
+#Descriptives:  -----
 
    #CT's & MSAs
-sapply(dta, function(x) length(unique(x))
+sapply(dta, function(x) length(unique(x)))
 
 
 #for conclusion-- find 10% and 90th percentile for AMES iowa
@@ -337,8 +336,7 @@ sj<-dta%>%
 wtd.quantile(sj$le, q = c(.1, .9), weight = sj$pop)
 
 quantile(sj$le, probs = seq(.1, .9, by = .1))
-###############################################################
-####### Appendix FIgure 1
+####### Appendix FIgure 1 -----
 #Figure 2 but for relative disparities
 full_dta<-absolute_ineq_long %>% select(cbsa, type, value) %>% 
   filter(type %in% c("Rel. Disparity"))%>%
@@ -378,7 +376,7 @@ appendixfig1<-ggplot()+
 appendixfig1
 ggsave("results/appendixFig1_ASM.pdf", width=16, height=5)
 
-####### Appendix Figure 2 
+####### Appendix Figure 2 -----
 ## correlation between indicators
 full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
                       mutate(ineq="Total"),
@@ -412,3 +410,102 @@ corrs<-ggpairs(data=full_dta,
 ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
 
 
+
+# App Data----
+
+
+# ___Table 1 ----
+{
+  top1<-summary_absolute %>% arrange(rank) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
+  bottom1<-summary_absolute %>% arrange(desc(rank)) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
+  top2<-summary_income %>% arrange(rank) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
+  bottom2<-summary_income %>% arrange(desc(rank)) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
+  table1<-bind_cols(bind_rows(top1%>% arrange(rank), 
+                              data.frame(cbsa_name="...", Region_Name="...", rank=NA),
+                              bottom1 %>% arrange(rank)) ,
+                    bind_rows(top2%>% arrange(rank), 
+                              data.frame(cbsa_name="...", Region_Name="...", rank=NA),
+                              bottom2 %>% arrange(rank)) )
+  
+  summary_large<-bind_rows(absolute_ineq_long, income_ineq_long) %>% 
+    # filter(total_pop>=1000000) %>% 
+    arrange(type, value) %>% 
+    group_by(type) %>% 
+    mutate(rank=row_number()) %>% 
+    group_by(cbsa_name, cbsa, total_pop, Region, Region_Name) %>% 
+    summarise(rank=mean(rank)) %>% 
+    arrange(desc(rank)) %>% 
+    ungroup() %>% 
+    mutate(rank=row_number())
+  df_table1<-full_join(absolute_ineq %>% 
+                         ungroup() %>%
+                         rename(total_dif=dif,
+                                total_ratio=ratio), 
+                       income_ineq) %>% left_join(total_pop_msa) %>% 
+    # filter(total_pop>=1000000) %>% 
+    left_join(summary_large %>% select(cbsa, rank)) %>% 
+    select(cbsa_name, Region_Name, rank, 
+           total_dif, total_ratio, cv, gini,mld.wt,
+           dif, ratio, sii, rii) %>% arrange(rank) %>% 
+    mutate(Region_Name=sub(" Region", "", Region_Name)) %>% 
+    mutate(total_dif=format(total_dif, digits=1, nsmall=1),
+           total_ratio=format(total_ratio, digits=2, nsmall=2),
+           cv=paste0(format(cv, digits=1, nsmall=1), "%"),
+           gini=format(gini, digits=2, nsmall=2),
+           dif=format(dif, digits=1, nsmall=1),
+           ratio=format(ratio, digits=2, nsmall=2),
+           sii=format(sii, digits=2, nsmall=2),
+           rii=format(rii, digits=2, nsmall=2))
+}
+
+
+# ___Figure 1 ----
+{
+  df_absolute_ineq_long=absolute_ineq_long %>% ungroup()%>% 
+    mutate(outcome = "total")
+  df_income_ineq_long=income_ineq_long %>% ungroup() %>% 
+    mutate(outcome = "income")
+  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)
+}
+
+# ___Figure 2 ----
+{
+  ## Shapes Files
+  sf_cbsa_raw<-read_sf("data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
+    mutate(cbsa=as.numeric(GEOID))
+  sf_cbsa = sf_cbsa_raw %>% 
+    select(cbsa) %>% 
+    filter(cbsa%in%(full_dta %>% ungroup() %>% pull(cbsa)))
+  sf_regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
+  ## Data for map
+  library(shiny)
+  df_fig2 = full_dta %>% 
+    ungroup() %>% 
+    left_join(sf_cbsa_raw %>%as.data.frame() %>%  select(cbsa, NAME) %>% distinct()) %>% 
+    mutate(label = str_c("<b>",NAME,"</b><br>",
+                         "<b>",ineq," ",type," :</b>", round(value,2),"<br>",
+                         "<b>Rank :</b>",rank
+    ) %>% 
+      map(~HTML(.x)))
+}
+
+# ___Figure 3 ----
+df_fig3<-dta %>% group_by(cbsa) %>% 
+  group_modify(~{
+    #.x<-dta %>% filter(cbsa==25940)
+    .x<-.x %>% 
+      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))
+    decile_le<-.x %>% group_by(decile_income) %>% 
+      summarise(le=weighted.mean(le, w=pop))
+    decile_le
+  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
+  ungroup()
+
+###  Save processed data for App
+save(
+  df_table1,   ## Table 1 
+  df_fig1,     ## Figure 1
+  df_fig2,     ## Figure 2
+  df_fig3,     ## Figure 3
+  sf_regions,sf_cbsa, ## Shape Files
+  file= "Supplemental App/App (Dev)/cleaned_bundle.rdata")
