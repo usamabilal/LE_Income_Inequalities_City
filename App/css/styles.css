@@ -1,0 +1,86 @@
+:root {
+  --bchcLightBlue: #ccdfe8;
+  --bchcLighterBlue: #f0f8fc;
+  --bchcGray: #faf9f6;
+  --uhcBlue: #07294d;
+  --uhcBrightBlue: #006298;
+  --uhcGreenTone: #bac5b9;
+  --uhcLightBlue: #6cace4;
+  --uhcYellow: #ffc600;
+  --uhcOrange: #de7c00;
+  --uhcGray: #f3f3f3;
+  --uhcLime: #b7bf10;
+  --uhcGray2: #a7a8aa;
+}
+
+/* Header */
+.headerContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-gap: 10px;
+  padding: 10px;
+  align-items: center;
+}
+
+.headerLogo {
+  height: 80px;
+}
+
+.headerBrand {
+  color: var(--uhcBlue);
+  text-align: right;
+  font-size: 21px;
+  font-weight: 800;
+  height: auto;
+  padding-right: 20px;
+}
+
+.leaflet-container {
+  background: #ffffff;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--uhcBlue);
+  color: #ffffff;
+  font-family: 'Helvetica Neue', Helvetica;
+  font-weight: 600;
+  border-radius: 10px;
+  font-size: 15px;
+  display: grid;
+}
+
+.navbar-brand {
+  display: none;
+}
+
+.navbar-default .navbar-nav > li {
+  padding-right: 15px;
+}
+/*Navbar Items Inactive*/
+.navbar-default .navbar-nav > li > a {
+  color: #ffffff;
+}
+.navbar-default .navbar-nav > li > a:hover {
+  color: var(--uhcYellow);
+  background-color: var(--uhcBlue);
+}
+
+/*Navbar Items Active*/
+.navbar-default .navbar-nav > .active > a {
+  color: var(--uhcYellow);
+  background-color: var(--uhcBlue);
+}
+.navbar-default .navbar-nav > .active > a:hover {
+  color: var(--uhcYellow);
+  background-color: var(--uhcBlue);
+}
+.navbar-default .navbar-nav > .active > a:focus {
+  color: var(--uhcYellow);
+  background-color: var(--uhcBlue);
+}
+
+/*Foot details*/
+.salurbal_hr {
+  border-top: 1px dashed var(--uhcBlue);
+}
