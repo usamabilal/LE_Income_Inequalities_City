@@ -3,8 +3,10 @@ ui <- function(){
     use_waiter(include_js = F),
     tags$head(includeCSS("css/styles.css")),
     tags$head(includeCSS("css/footer.css")),
+    tags$head(includeCSS("css/home.css")),
+    tags$head(includeCSS("css/figures.css")),
     tags$head(includeHTML("html/headScripts.html")),
-    includeHTML("html/customUHCHeader.html"),
+    includeHTML("html/footerUHC2.html"),
     navbarPage(
       title = "Heterogeneity in Disparities in Life Expectancy across US Metropolitan Areas",
       tabPanel("Home",ui_home),
@@ -37,32 +39,36 @@ loading_screen = tagList(
 
 ## Home ----
 ui_home = (
-  column(12, align = 'center',
-         tagList(
-           h1("INTRO TO PAPER")
-         ))
+  tagList(
+    includeHTML("html/homePaperIntro.html")
+  )
 )
 
 ## Table 1 ----
-ui_table1 =  sidebarLayout(
-  sidebarPanel(width = 3
-               
-  ),
-  mainPanel(DTOutput("table1"))
-)
+ui_table1 = div(class = "figureTabContainer",
+                div(class = "figureTitle", "Table 1: Absolute and Relative in life expectancy in US MSAs"),
+                HTML('<button class="tourButton"><i class="fas fa-route"> Table 1 Guide</i></button>'),
+                div(class = "figureContainer",
+                    reactableOutput("table1")))
+
 
 ## Figure 1  ----
-ui_figure1 = sidebarLayout(
-  sidebarPanel(width = 3,
-               pickerInput(
-                 inputId = "fig1_ineq",
-                 label = "Inequalities" ,
-                 choices = c("Total Inequalities" ="total",
-                             "Income Inequalities"="income")),
-               uiOutput("fig1_ui_input")
-  ),
-  mainPanel(plotOutput("plot_fig1"))
-)
+ui_figure1 =  div(class = "figureTabContainer",
+                  div(class = "figureTitle", "Figure 1: Total and Income-Based Life Expectancy Inequality Indicators in US MSAs"),
+                  HTML('<button class="tourButton"><i class="fas fa-route"> Figure 2 Guide</i></button>'),
+                  div(
+                    class = "figureContainer",
+                    sidebarLayout(
+                      sidebarPanel(width = 3,
+                                   pickerInput(
+                                     inputId = "fig1_ineq",
+                                     label = "Inequalities" ,
+                                     choices = c("Total Inequalities" ="total",
+                                                 "Income Inequalities"="income")),
+                                   uiOutput("fig1_ui_input")),
+                      mainPanel(plotOutput("plot_fig1")) ) ) )
+
+
 
 
 

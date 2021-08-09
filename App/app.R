@@ -3,15 +3,16 @@
   library(cowplot)
   library(GGally)
   ## min packages
-  library(waiter)
   library(shiny)
+  library(shinyWidgets)
+  library(waiter)
   library(dplyr)
   library(DT)
-  library(shinyWidgets)
+  library(reactable)
   library(sf)
   library(leaflet)
   ### Load UI Components
-  source("appGlobal.R", local = T)
+  source("appUI.R", local = T)
 }
 
 
@@ -21,13 +22,12 @@
 server <- function(input, output) {
   # Loading Screen ----
   load("cleaned_le_income_cities_appBundle.rdata")
-  source("appGlobal.R", local = T)
   source("appHelperFunctions.R", local = T)
   waiter_hide()
   
   # Table 1 ----
-  output$table1 = renderDT({ 
-    df_table1
+  output$table1 = renderReactable({ 
+    table1_plotter(df_table1)
   })
   
   # Figure 1 ----

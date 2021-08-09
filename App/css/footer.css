@@ -2,7 +2,8 @@
   /* background-color: var(--uhcGray); */
   display: grid;
   grid-template-rows: 1fr 1fr;
-  padding: 30px;
+
+  height: 120px;
 }
 
 /* Title Card */
@@ -19,8 +20,36 @@
   color: var(--uhcGray2);
 }
 
+/* Learn More */
+.BCHC_top_row {
+  padding: 5px;
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  align-items: center;
+}
+.BCHC_top_row img {
+  grid-column: 1/2;
+  height: 75px;
+}
+.BCHC_learn_more {
+  grid-column: 3/4;
+  padding: 23px;
+  justify-self: start;
+}
+.BCHC_learn_more_text {
+  color: var(--uhcGray2);
+  font-size: 11px;
+}
+.BCHC_learn_more_link {
+  color: var(--uhcBlue);
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
 /* Socials */
 .footerSocials {
+  padding: 15px;
   display: grid;
   grid-template-rows: repeat (1fr, 8);
   grid-gap: 5px;
@@ -28,7 +57,7 @@
 
 .footerSocials img {
   grid-column: 1/5;
-  height: 100px;
+  height: 75px;
 }
 .footerSocials .twitter {
   display: grid;
@@ -56,9 +85,10 @@
   display: grid;
   justify-content: center;
   align-content: center;
-  width: 75px;
-  height: 75px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  font-size: 30px;
 }
 .footerSocials i:hover {
   background-color: var(--uhcYellow);

@@ -448,14 +448,30 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
            total_dif, total_ratio, cv, gini,mld.wt,
            dif, ratio, sii, rii) %>% arrange(rank) %>% 
     mutate(Region_Name=sub(" Region", "", Region_Name)) %>% 
-    mutate(total_dif=format(total_dif, digits=1, nsmall=1),
-           total_ratio=format(total_ratio, digits=2, nsmall=2),
-           cv=paste0(format(cv, digits=1, nsmall=1), "%"),
-           gini=format(gini, digits=2, nsmall=2),
-           dif=format(dif, digits=1, nsmall=1),
-           ratio=format(ratio, digits=2, nsmall=2),
-           sii=format(sii, digits=2, nsmall=2),
-           rii=format(rii, digits=2, nsmall=2))
+    ### Formatting for dashboard table
+    rename(Name=cbsa_name,
+           Region=Region_Name,
+           Rank=rank,
+           abs_diff=total_dif,
+           abs_ratio=total_ratio,
+           abs_cv=cv,
+           abs_gini=gini,
+           abs_mld=mld.wt,
+           income_diff = dif,
+           income_ratio = ratio,
+           income_sii= sii,
+           income_rii = rii
+    ) %>% 
+    mutate(abs_mld =round(abs_mld,5),
+           income_rii = round(income_rii,3)) %>% 
+    mutate_at(vars(abs_diff,
+                   abs_ratio,
+                   abs_cv, abs_gini,
+                   income_diff, income_ratio,
+                   income_sii),
+              ~round(.x,2)) %>% 
+    select(-Rank)
+  df_table1
 }
 
 
@@ -479,9 +495,28 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
   sf_regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
   ## Data for map
   library(shiny)
-  df_fig2 = full_dta %>% 
+  df_fig2 = bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
+                        mutate(ineq="Total"),
+                      income_ineq_long %>% select(cbsa, type, value) %>% 
+                        mutate(ineq="Income")) %>% 
+    mutate(type2=paste0(ineq, ": ", type)) %>% 
+    arrange(desc(value)) %>%
+    group_by(type2) %>%
+    mutate(rank=row_number()) %>% 
+    mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
+                                        "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Deviation",
+                                        "Income: Abs. Disparity", "Income: Rel. Disparity",
+                                        "Income: Slope Index of Inequality", "Income: Relative Index of Inequality"),
+                        labels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
+                                 "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
+                                 "Income: Abs. Disparity", "Income: Rel. Disparity",
+                                 "Income: SII", "Income: RII"))) %>%
+    left_join(region) %>% 
     ungroup() %>% 
-    left_join(sf_cbsa_raw %>%as.data.frame() %>%  select(cbsa, NAME) %>% distinct()) %>% 
+    left_join(sf_cbsa_raw %>%
+                as.data.frame() %>% 
+                select(cbsa, NAME) %>% 
+                distinct()) %>% 
     mutate(label = str_c("<b>",NAME,"</b><br>",
                          "<b>",ineq," ",type," :</b>", round(value,2),"<br>",
                          "<b>Rank :</b>",rank
@@ -509,3 +544,4 @@ save(
   df_fig3,     ## Figure 3
   sf_regions,sf_cbsa, ## Shape Files
   file= "App/cleaned_le_income_cities_appBundle.rdata")
+
