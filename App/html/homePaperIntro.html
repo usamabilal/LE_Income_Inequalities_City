@@ -24,11 +24,11 @@
 <div class="homeAbstractContainer">
   <h3>Supplemental App</h3>
   <p>
-    Our paper highlights key disparities in Life Expectancy in US MSAs wiht > 1
+    Our paper highlights key disparities in Life Expectancy in US MSAs with > 1
     million people. This app does two key things: 1) translate the figures in
     the paper into interactive visualizations which allow more granular
     exploration of the data presented 2) Delimits visualizations to all MSAs
-    including those with population of less than 1 millions residents.
+    including those with population of less than 1 million residents.
   </p>
   <h3>Abstract</h3>
   <p>
@@ -47,4 +47,74 @@
     local-level health-promoting social policies may reduce disparities in life
     expectancy.
   </p>
+  <h3>Appendix Table 1 Disparity Measures: Type, name, and calculation</h3>
+
+  <table class="tg">
+    <thead>
+      <tr>
+        <th class="tg-0lax">
+          <span style="color: black">Measure Type </span>
+        </th>
+        <th class="tg-0lax">
+          <span style="color: black">Measure Name</span>
+        </th>
+        <th class="tg-0lax">
+          <span style="color: black">Calculation </span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tg-0lax" rowspan="4">Absolute Disparities</td>
+        <td class="tg-0lax"><br />Absolute/Relative Ratiosdifferences</td>
+        <td class="tg-0lax">
+          <br />Difference/Ratio between 90thand 10th population-weighted
+          percentiles of life expectancy foreach city
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0lax"><br />Coefficient of variation(CV)</td>
+        <td class="tg-0lax">
+          <br />Standard deviation of lifeexpectancy/mean, all weighted
+          population
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0lax"><br />Gini Coefficient</td>
+        <td class="tg-0lax">
+          <br />Calculated using thereldist package in R[Handcock, 2016 #4218]
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0lax"><br />Mean log deviation</td>
+        <td class="tg-0lax">
+          <br />Calculated using the dineqpackage in R [Schulenberg, 2018 #4217]
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0lax" rowspan="3">Income-related Disparities</td>
+        <td class="tg-0lax"><br />Top-bottom gaps/ratios</td>
+        <td class="tg-0lax">
+          <br />Differences/ratios betweenthe population-weighted average life
+          expectancy in census tracts in the topand bottom deciles of income
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0lax"><br />Slope index of inequality</td>
+        <td class="tg-0lax">
+          <br />For each city run separatelinear model with life expectancy at
+          the census tract level as the outcome,and income decile as a
+          continuous (ordinal) variable. SII is the regressioncoefficient for
+          each income decile and represents the average change in lifeexpectancy
+          per 1-decile increase in income.
+        </td>
+      </tr>
+      <tr>
+        <td class="tg-0lax"><br />Relative index of inequality (RII)</td>
+        <td class="tg-0lax">
+          <br />Divided the SII over theaverage LE at the city level.
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

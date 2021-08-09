@@ -16,3 +16,23 @@
 .homeAbstractContainer p {
   padding-left: 5px;
 }
+
+/* Appendix Table */
+.tg {
+}
+
+.tg td {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
+.tg th {
+  background-color: var(--uhcGray2);
+  font-weight: 800;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
+.tg .tg-0lax {
+  padding: 3px;
+}

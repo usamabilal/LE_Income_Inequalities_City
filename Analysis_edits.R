@@ -525,7 +525,7 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
 }
 
 # ___Figure 3 ----
-df_fig3<-dta %>% group_by(cbsa) %>% 
+df_fig3_raw<-dta %>% group_by(cbsa) %>% 
   group_modify(~{
     #.x<-dta %>% filter(cbsa==25940)
     .x<-.x %>% 
@@ -534,9 +534,31 @@ df_fig3<-dta %>% group_by(cbsa) %>%
       summarise(le=weighted.mean(le, w=pop))
     decile_le
   }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
-  ungroup()
+  ungroup() %>% 
+  mutate(Region_Name = Region_Name %>% str_remove("Region") %>% str_trim())
 
-###  Save processed data for App
+df_fig3=df_fig3_raw %>% 
+  mutate(popGrp = case_when(
+    total_pop<120*10^3~"<120,000",
+    total_pop<150*10^3~"120,000-150,000",
+    total_pop<220*10^3~"150,000-220,000",
+    total_pop<400*10^3~"220,000-400,000",
+    total_pop<800*10^3~"400,000-800,000",
+    TRUE~">800,000"
+  ))
+# ___UI elements -----
+df_fig1_choices_type = df_fig1 %>% 
+  count(outcome,type) %>% 
+  mutate(type = as.character(type)) %>% 
+  select(-n)
+
+df_fig1_choices_type = df_fig1 %>% 
+  count(outcome,type) %>% 
+  mutate(type = as.character(type)) %>% 
+  select(-n)
+###  Save data for App
+save(df_fig1_choices_type,
+     file= "App/cleaned_le_income_cities_UIelements.rdata" )
 save(
   df_table1,   ## Table 1 
   df_fig1,     ## Figure 1

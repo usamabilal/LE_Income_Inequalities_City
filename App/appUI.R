@@ -49,13 +49,16 @@ ui_table1 = div(class = "figureTabContainer",
                 div(class = "figureTitle", "Table 1: Absolute and Relative in life expectancy in US MSAs"),
                 HTML('<button class="tourButton"><i class="fas fa-route"> Table 1 Guide</i></button>'),
                 div(class = "figureContainer",
-                    reactableOutput("table1")))
+                    reactableOutput("table1"),
+                    div(class = "Footnote",
+                        HTML("<u>Footnote: </u> Absolute disparity was calculated as the difference between the 90th and 10th population-weighted percentiles of life expectancy for each city. Relative disparity was calculated as the ratio between the 90th and 10th population-weighted percentiles of life expectancy for each city. "))
+                ))
 
 
 ## Figure 1  ----
 ui_figure1 =  div(class = "figureTabContainer",
-                  div(class = "figureTitle", "Figure 1: Total and Income-Based Life Expectancy Inequality Indicators in US MSAs"),
-                  HTML('<button class="tourButton"><i class="fas fa-route"> Figure 2 Guide</i></button>'),
+                  div(class = "figureTitle", "Figure 1: Total and Income-Based Life Expectancy Disparities Indicators in US MSAs"),
+                  HTML('<button class="tourButton"><i class="fas fa-route"> Figure 1 Guide</i></button>'),
                   div(
                     class = "figureContainer",
                     sidebarLayout(
@@ -63,10 +66,10 @@ ui_figure1 =  div(class = "figureTabContainer",
                                    pickerInput(
                                      inputId = "fig1_ineq",
                                      label = "Inequalities" ,
-                                     choices = c("Total Inequalities" ="total",
-                                                 "Income Inequalities"="income")),
+                                     choices = c("Total" ="total",
+                                                 "Income-based"="income")),
                                    uiOutput("fig1_ui_input")),
-                      mainPanel(plotOutput("plot_fig1")) ) ) )
+                      mainPanel(plotlyOutput("plot_fig1")) ) ) )
 
 
 
@@ -75,26 +78,59 @@ ui_figure1 =  div(class = "figureTabContainer",
 
 
 ## Figure 2 ----
-ui_figure2 = sidebarLayout(
-  sidebarPanel(width = 3,
-               pickerInput(
-                 inputId = "fig2_ineq",
-                 label = "Inequalities" ,
-                 choices = c("Total Inequalities" ="total",
-                             "Income Inequalities"="income")),
-               uiOutput("fig2_ui_input")
-  ),
-  mainPanel(
-    fluidRow(
-      uiOutput("header_fig2")
-    ),
-    fluidRow(
-      leafletOutput("plot_fig2", 
-                    height = '500px', 
-                    width = "800px")
-    )
-  )
-)
+ui_figure2 = div(class = "figureTabContainer",
+                 div(class = "figureTitle", "Figure 2: Spatial distribution of Disparities by MSA in the US."),
+                 HTML('<button class="tourButton"><i class="fas fa-route"> Figure 2 Guide</i></button>'),
+                 div(
+                   class = "figureContainer",
+                   sidebarLayout(
+                     sidebarPanel(width = 3,
+                                  pickerInput(
+                                    inputId = "fig2_ineq",
+                                    label = "Inequalities" ,
+                                    choices = c("Total" ="total",
+                                                "Income-based"="income")),
+                                  uiOutput("fig2_ui_input")
+                     ),
+                     mainPanel(
+                       fluidRow(
+                         uiOutput("header_fig2")
+                       ),
+                       fluidRow(
+                         leafletOutput("plot_fig2")
+                       ),
+                       div(class = "Footnote",
+                           HTML("<u>Footnote: </u> Rank indicates the widest (1) to narrowest (499) disparities. "))
+        
+                     )
+                   )) )
+
+
+
 
 ## Figure 3  ----
-ui_figure3 = "FIGURE 4 Content"
+ui_figure3  =  div(class = "figureTabContainer",
+                   div(class = "figureTitle", "Figure 3: Life expectancy by median household income decile for each US MSA by region"),
+                   HTML('<button class="tourButton"><i class="fas fa-route"> Figure 3 Guide</i></button>'),
+                   div(
+                     class = "figureContainer",
+                     sidebarLayout(
+                       sidebarPanel(width = 2,
+                                    pickerInput(
+                                      inputId = "fig3_MSAsize",
+                                      label = "MSA Size" ,
+                                      choices = c("<120,000",
+                                                  "120,000-150,000",
+                                                  "150,000-220,000",
+                                                  "220,000-400,000",
+                                                  "400,000-800,000",
+                                                  ">800,000"))),
+                       mainPanel(
+                         fluidRow(
+                           uiOutput("header_fig3")
+                         ),
+                         plotlyOutput("plot_fig3")
+                         
+                         ) ) ) )
+
+
