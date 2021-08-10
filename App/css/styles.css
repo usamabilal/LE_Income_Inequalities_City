@@ -13,6 +13,15 @@
   --uhcGray2: #a7a8aa;
   --uhcGray1: #c7c7c7;
 }
+.loadingScreenUHCDark {
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  grid-gap: 30px;
+}
+
+.figureLoadingScreen {
+}
 
 /* Header */
 .headerContainer {

@@ -68,3 +68,8 @@
   margin-bottom: 20px;
   border-color: black;
 }
+
+/* Figure 2 */
+.leaflet-container {
+  background-color: white !important;
+}

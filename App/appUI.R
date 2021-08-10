@@ -1,6 +1,7 @@
 ui <- function(){
   fluidPage(
-    use_waiter(include_js = F),
+    useWaiter(),
+    # autoWaiter(c("plot_fig1", "plot_fig3")),
     tags$head(includeCSS("css/styles.css")),
     tags$head(includeCSS("css/footer.css")),
     tags$head(includeCSS("css/home.css")),
@@ -26,16 +27,21 @@ ui <- function(){
 
 
 # ---- Loading
-loading_screen = tagList(
+loading_screen = div(
+  class = "loadingScreenUHCDark",
   tags$img(
     src="urban-health-collaborative-logo.svg",
     height=100,
-    id = "loadingScreen" # set id
-  ),br(),br(),
-  spin_ring(),
-  br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+    id = "loadingScreen" 
+  ),
+  spin_ring()
+  
 )
 
+figure_loading_screen = div(
+  class = "figureLoadingScreen",
+  spin_ring()
+)
 
 ## Home ----
 ui_home = (
@@ -69,7 +75,7 @@ ui_figure1 =  div(class = "figureTabContainer",
                                      choices = c("Total" ="total",
                                                  "Income-based"="income")),
                                    uiOutput("fig1_ui_input")),
-                      mainPanel(plotlyOutput("plot_fig1")) ) ) )
+                      mainPanel(uiOutput("plot_fig1_ui")) ) ) )
 
 
 
@@ -93,15 +99,7 @@ ui_figure2 = div(class = "figureTabContainer",
                                   uiOutput("fig2_ui_input")
                      ),
                      mainPanel(
-                       fluidRow(
-                         uiOutput("header_fig2")
-                       ),
-                       fluidRow(
-                         leafletOutput("plot_fig2")
-                       ),
-                       div(class = "Footnote",
-                           HTML("<u>Footnote: </u> Rank indicates the widest (1) to narrowest (499) disparities. "))
-        
+                       uiOutput("plot_fig2_ui")
                      )
                    )) )
 
@@ -115,7 +113,7 @@ ui_figure3  =  div(class = "figureTabContainer",
                    div(
                      class = "figureContainer",
                      sidebarLayout(
-                       sidebarPanel(width = 2,
+                       sidebarPanel(width = 3,
                                     pickerInput(
                                       inputId = "fig3_MSAsize",
                                       label = "MSA Size" ,
@@ -126,11 +124,7 @@ ui_figure3  =  div(class = "figureTabContainer",
                                                   "400,000-800,000",
                                                   ">800,000"))),
                        mainPanel(
-                         fluidRow(
-                           uiOutput("header_fig3")
-                         ),
                          plotlyOutput("plot_fig3")
-                         
-                         ) ) ) )
+                       ) ) ) )
 
 

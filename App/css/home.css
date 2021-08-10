@@ -16,7 +16,10 @@
 .homeAbstractContainer p {
   padding-left: 5px;
 }
-
+.homeAbstractContainer table {
+  margin-left: 5px;
+  margin-right: 5px;
+}
 /* Appendix Table */
 .tg {
 }
@@ -27,7 +30,7 @@
   border-width: 1px;
 }
 .tg th {
-  background-color: var(--uhcGray2);
+  background-color: var(--uhcGray);
   font-weight: 800;
   border-color: black;
   border-style: solid;
