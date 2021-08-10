@@ -12,6 +12,8 @@
   library(sf)
   library(leaflet)
   library(plotly)
+  library(rintrojs)
+  library(shinyjs)
   ### Load UI Components
   source("appUI.R", local = T)
   load("cleaned_le_income_cities_UIelements.rdata")
@@ -21,20 +23,30 @@
 
 
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   # Loading Screen ----
   load("cleaned_le_income_cities_appBundle.rdata")
   source("appPlotterTable1.R", local = T)
   source("appPlotterFigure1.R", local = T)
   source("appPlotterFigure2.R", local = T)
   source("appPlotterFigure3.R", local = T)
+  source("appJS.R", local = T)
   w <- Waiter$new(id = c("plot_fig1",
-                    "plot_fig2_ui",
-                    "plot_fig3"),
+                         "plot_fig2_ui",
+                         "plot_fig3"),
                   html = figure_loading_screen,
                   color = 'rgb(201, 201, 201,0.5)')
   Sys.sleep(1)
   waiter_hide()
+  # IntroJS -----
+  observeEvent("", {showModal(introModal)})
+  observeEvent(input$intro,{ removeModal() })
+  observeEvent(input$intro,{ home_intro(session, df_intro_home) })
+  observeEvent(input$tourButtonHome,{ home_intro(session, df_intro_home) })
+  observeEvent(input$tourButtonTable1,{ figure_intro(session, df_intro_table1) })
+  observeEvent(input$tourButtonFigure1,{ figure_intro(session, df_intro_figure1) })
+  observeEvent(input$tourButtonFigure2,{ figure_intro(session, df_intro_figure2) })
+  observeEvent(input$tourButtonFigure3,{ figure_intro(session, df_intro_figure3) })
   
   # Table 1 ----
   output$table1 = renderReactable({ 

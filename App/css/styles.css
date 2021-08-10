@@ -20,7 +20,24 @@
   grid-gap: 30px;
 }
 
-.figureLoadingScreen {
+/* Modals */
+.introModalContainer {
+  display: grid;
+  padding: 5%;
+  grid-gap: 10px;
+  justify-items: center;
+  grid-auto-flow: row;
+  text-align: center;
+}
+.introModalTitle {
+  font-size: large;
+  font-weight: 700;
+}
+.introModalText {
+}
+.introImg {
+  width: 80%;
+  border: var(--uhcGray2) solid 1px;
 }
 
 /* Header */

@@ -12,8 +12,8 @@ table1_plotter = function(data){
     columns = list(
       Name = colDef(minWidth = 150),
       Region = colDef(minWidth = 80,
-                      style = list(borderRight = "1px solid #000000"),
-                      headerStyle = list(borderRight = "1px solid #000000")),
+                      style = list(borderRight = "1px solid #c7c7c7"),
+                      headerStyle = list(borderRight = "1px solid #c7c7c7")),
       abs_diff = colDef(name = "Abs Dif",
                         minWidth = 60,
                         headerClass = "reactableMetricHeader",
@@ -30,8 +30,8 @@ table1_plotter = function(data){
                         headerClass = "reactableMetricHeader",
                         align = 'center'),
       abs_mld = colDef(name = "Mean log deviation",
-                       style = list(borderRight = "1px solid #000000"),
-                       headerStyle = list(borderRight = "1px solid #000000"),
+                       style = list(borderRight = "1px solid #c7c7c7"),
+                       headerStyle = list(borderRight = "1px solid #c7c7c7"),
                        headerClass = "reactableMetricHeader",
                        align = 'center'),
       income_diff = colDef(name = "Abs Dif",
@@ -50,16 +50,16 @@ table1_plotter = function(data){
                           minWidth = 120,
                           headerClass = "reactableMetricHeader",
                           align = 'center',
-                          style = list(borderRight = "1px solid #000000"),
-                          headerStyle = list(borderRight = "1px solid #000000"))
+                          style = list(borderRight = "1px solid #c7c7c7"),
+                          headerStyle = list(borderRight = "1px solid #c7c7c7"))
     ),
     columnGroups = list(
       colGroup(name = "Life Expectancy Disparities", 
-               headerClass = "reactableTopTierTitle",
-               headerStyle =  "border-left: black solid 1px;",
+               headerClass = "reactableTopTierTitle reactableTopTierTitle1",
+               headerStyle =  "border-left: #c7c7c7 solid 1px;",
                columns = c("abs_diff", "abs_ratio", "abs_cv","abs_gini","abs_mld")),
       colGroup(name = "Income-related Disparities", 
-               headerClass = "reactableTopTierTitle", 
+               headerClass = "reactableTopTierTitle reactableTopTierTitle2", 
                columns = c("income_diff", "income_ratio","income_sii","income_rii"))
     ))
 }

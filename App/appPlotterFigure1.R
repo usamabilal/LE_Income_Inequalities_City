@@ -1,20 +1,14 @@
 figure1_plotter = function(outcomeTmp,typeTmp){
   df_tmp = df_fig1 %>% 
     filter(outcome == outcomeTmp) %>% 
-    filter(type==typeTmp) %>% 
-    select(Region_Name, value, cbsa, cbsa_name,total_pop ) %>% 
-    mutate(value = round(value,2)) %>% 
-    group_by(Region_Name) %>% 
-    mutate(median = median(value)) %>% 
-    ungroup() %>% 
-    arrange(desc(median))
+    filter(type==typeTmp) 
   levelsTmp = unique(df_tmp$Region_Name)
   df_tmp = df_tmp %>% mutate(Region_Name=factor(Region_Name, levels = levelsTmp))
   title_tmp = ifelse(outcomeTmp =="total","Total Life Expectancy Disparities by MSA","Income-based Life Expectancy Disparities by MSA")
   yaxis_tmp = typeTmp
   plot1 = ggplot(df_tmp,aes(x=Region_Name, y=value))+
     geom_boxplot(aes(group=(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
-    geom_jitter(aes(fill=(Region_Name), size=total_pop), 
+    geom_jitter(aes(fill=(Region_Name), size=total_pop, text = tooltip), 
                 width=0.1, height=0, alpha=1,
                 color="black", pch=21) +
     # facet_wrap(~type, scales="free_y")+
@@ -29,6 +23,7 @@ figure1_plotter = function(outcomeTmp,typeTmp){
           axis.text.y=element_text(size=10, color="black"),
           axis.title.y=element_text(face="bold", size=12),
           plot.title=element_text(face="bold", size=13))
-  ggplotly(plot1) %>% 
+  ggplotly(p = plot1,
+           tooltip = c("text")) %>% 
     config(displayModeBar = F)
 }

@@ -1,0 +1,4 @@
+"","element","intro","position"
+"1","#plot_fig3","Figure 3 shows life expectancy plotted against decile of median household income for all MSAs. You can hover over the dots for details on each city.
+<img src=""snipFigure3.PNG"" class = ""introImg"" alt=""""> ","left"
+"2",".wellFigure3","You can select which size of MSA to visualize. There are 359 MSAs and plotting them all together was too noisy therefore we divided them into 6 size groups with approximately equal MSA per group.","right"

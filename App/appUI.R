@@ -1,12 +1,15 @@
 ui <- function(){
   fluidPage(
     useWaiter(),
+    introjsUI(),
+    useShinyjs(),
     # autoWaiter(c("plot_fig1", "plot_fig3")),
     tags$head(includeCSS("css/styles.css")),
     tags$head(includeCSS("css/footer.css")),
     tags$head(includeCSS("css/home.css")),
     tags$head(includeCSS("css/figures.css")),
     tags$head(includeHTML("html/headScripts.html")),
+    # tags$script(src = "introModal.js"),
     includeHTML("html/footerUHC2.html"),
     navbarPage(
       title = "Heterogeneity in Disparities in Life Expectancy across US Metropolitan Areas",
@@ -47,13 +50,14 @@ figure_loading_screen = div(
 ui_home = (
   tagList(
     includeHTML("html/homePaperIntro.html")
+    # actionButton("btn","Press me")
   )
 )
 
 ## Table 1 ----
 ui_table1 = div(class = "figureTabContainer",
                 div(class = "figureTitle", "Table 1: Absolute and Relative in life expectancy in US MSAs"),
-                HTML('<button class="tourButton"><i class="fas fa-route"> Table 1 Guide</i></button>'),
+                HTML(' <button id="tourButtonTable1" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Table 1 Tour</i> </button>'),
                 div(class = "figureContainer",
                     reactableOutput("table1"),
                     div(class = "Footnote",
@@ -64,7 +68,7 @@ ui_table1 = div(class = "figureTabContainer",
 ## Figure 1  ----
 ui_figure1 =  div(class = "figureTabContainer",
                   div(class = "figureTitle", "Figure 1: Total and Income-Based Life Expectancy Disparities Indicators in US MSAs"),
-                  HTML('<button class="tourButton"><i class="fas fa-route"> Figure 1 Guide</i></button>'),
+                  HTML(' <button id="tourButtonFigure1" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 1 Tour</i> </button>'),
                   div(
                     class = "figureContainer",
                     sidebarLayout(
@@ -86,11 +90,12 @@ ui_figure1 =  div(class = "figureTabContainer",
 ## Figure 2 ----
 ui_figure2 = div(class = "figureTabContainer",
                  div(class = "figureTitle", "Figure 2: Spatial distribution of Disparities by MSA in the US."),
-                 HTML('<button class="tourButton"><i class="fas fa-route"> Figure 2 Guide</i></button>'),
+                 HTML(' <button id="tourButtonFigure2" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 2 Tour</i> </button>'),
                  div(
                    class = "figureContainer",
                    sidebarLayout(
                      sidebarPanel(width = 3,
+                                  class = "wellFigure2",
                                   pickerInput(
                                     inputId = "fig2_ineq",
                                     label = "Inequalities" ,
@@ -109,11 +114,12 @@ ui_figure2 = div(class = "figureTabContainer",
 ## Figure 3  ----
 ui_figure3  =  div(class = "figureTabContainer",
                    div(class = "figureTitle", "Figure 3: Life expectancy by median household income decile for each US MSA by region"),
-                   HTML('<button class="tourButton"><i class="fas fa-route"> Figure 3 Guide</i></button>'),
+                   HTML(' <button id="tourButtonFigure3" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 3 Tour</i> </button>'),
                    div(
                      class = "figureContainer",
                      sidebarLayout(
                        sidebarPanel(width = 3,
+                                    class = "wellFigure3",
                                     pickerInput(
                                       inputId = "fig3_MSAsize",
                                       label = "MSA Size" ,

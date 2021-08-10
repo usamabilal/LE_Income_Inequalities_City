@@ -1,0 +1,7 @@
+"","element","intro"
+"1",".figureTitle","Table 1 is an interactive table that shows the disparities measures for all MSAs; users can search by MSA or Region Name as well or sort by various measures."
+"2",".rt-tr-group","Each row is a MSA that has associated columns containing various disparity measures for that MSA."
+"3",".reactableTopTierTitle1","These columns contain disparity measures that relate to Absolute Disparities and Life Expectancy. See Appendix table 1 for details."
+"4",".reactableTopTierTitle2","These columns contain disparity measures that are income-related. See Appendix table 1 for details."
+"5",".-header","You can click the column names to sort the table based on the selected disparity measure."
+"6",".rt-search","You can search the table by either MSA or Region Name."

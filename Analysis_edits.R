@@ -49,7 +49,7 @@ absolute_rel_ineq_long<-absolute_ineq_long%>%
   filter(type %in% c("Abs. Disparity", "Rel. Disparity"))%>%
   mutate(Region_Name=factor(Region_Name), 
          Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
- 
+
 absolute_rel_ineq_long1<-absolute_rel_ineq_long%>%
   arrange(value)
 
@@ -57,7 +57,7 @@ str(absolute_rel_ineq_long)
 #find Coefficient of variation (CV) for each region and measure 
 cv<-absolute_rel_ineq_long%>%
   group_by(type, Region_Name)%>%
-summarize(cv=sd(value) / mean(value) * 100)
+  summarize(cv=sd(value) / mean(value) * 100)
 
 #Figure 1-----
 f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
@@ -65,7 +65,7 @@ f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
   geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
               width=0.1, height=0, alpha=1,
               color="black", pch=21) +
-facet_wrap(~type, scales="free_y")+
+  facet_wrap(~type, scales="free_y")+
   guides(color=F, fill=F, size=F)+
   labs(x="",
        y="Value",
@@ -162,8 +162,8 @@ summary_large_abs<-absolute_ineq_long %>%
   ungroup()%>%
   select(cbsa_name, Region_Name, rank, value )%>%
   rename(total_dif=value)%>%
-mutate(Region_Name=sub(" Region", "", Region_Name))%>%
-mutate(total_dif=format(total_dif, digits=1, nsmall=1))
+  mutate(Region_Name=sub(" Region", "", Region_Name))%>%
+  mutate(total_dif=format(total_dif, digits=1, nsmall=1))
 
 summary_large_rel<-absolute_ineq_long %>% 
   filter(total_pop>=1000000 & type=="Rel. Disparity") %>% 
@@ -183,7 +183,7 @@ fwrite(table1, file="results/table1_ASM.csv")
 #Figure 2----
 full_dta<-absolute_ineq_long %>% select(cbsa, type, value) %>% 
   filter(type %in% c("Abs. Disparity"))%>%
-                      mutate(ineq="Total") %>% 
+  mutate(ineq="Total") %>% 
   mutate(type2=paste0(ineq, ": ", type)) %>% 
   arrange(desc(value)) %>% 
   group_by(type2) %>% 
@@ -221,7 +221,7 @@ ggsave("results/figure2_ASM.pdf", width=16, height=5)
 
 #just to view which areas have largest disparities 
 absolute_ineq_long1<-absolute_ineq_long%>%
-arrange(type, value)
+  arrange(type, value)
 
 
 #Figure 3 ----
@@ -237,7 +237,7 @@ le_by_decile<-dta %>% group_by(cbsa) %>%
   filter(total_pop>=1000000)
 
 figure3<-ggplot(le_by_decile, 
-       aes(x=decile_income, y=le, group=cbsa)) +
+                aes(x=decile_income, y=le, group=cbsa)) +
   geom_line(data=le_by_decile %>% mutate(Region_Name="Midwest Region"), 
             color="gray", alpha=1)+
   geom_line(data=le_by_decile %>% mutate(Region_Name="Northeast Region"), 
@@ -316,7 +316,7 @@ confint(abs, level=0.95)*log(1.1)
 
 #Descriptives:  -----
 
-   #CT's & MSAs
+#CT's & MSAs
 sapply(dta, function(x) length(unique(x)))
 
 
@@ -477,11 +477,27 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
 
 # ___Figure 1 ----
 {
+  library(glue)
   df_absolute_ineq_long=absolute_ineq_long %>% ungroup()%>% 
     mutate(outcome = "total")
   df_income_ineq_long=income_ineq_long %>% ungroup() %>% 
     mutate(outcome = "income")
-  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)
+  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)%>% 
+    group_by(outcome,type) %>% 
+    group_modify(~.x %>% 
+                   mutate(value = round(value,2)) %>% 
+                   group_by(Region_Name) %>% 
+                   mutate(median = median(value)) %>% 
+                   ungroup() %>% 
+                   arrange(desc(median)) ) %>% 
+    ungroup() %>% 
+    mutate(tooltip = glue(
+      '<b>{cbsa_name}</b>
+      {type}: {value} 
+      Population: {format(total_pop, big.mark = ",")} 
+      ',
+    ) %>% as.character()) %>% 
+    select(outcome, type,Region_Name, value,total_pop, tooltip ) 
 }
 
 # ___Figure 2 ----
@@ -545,7 +561,16 @@ df_fig3=df_fig3_raw %>%
     total_pop<400*10^3~"220,000-400,000",
     total_pop<800*10^3~"400,000-800,000",
     TRUE~">800,000"
-  ))
+  ))%>% 
+  mutate(tooltip = glue(
+    '<b>{cbsa_name}</b>
+      Life Expectancy: {round(le,1)} years 
+      Income Decile: {decile_income}
+      Population: {format(total_pop, big.mark = ",")} 
+      ',
+  ) %>% as.character()) 
+
+
 # ___UI elements -----
 df_fig1_choices_type = df_fig1 %>% 
   count(outcome,type) %>% 
@@ -556,6 +581,8 @@ df_fig1_choices_type = df_fig1 %>%
   count(outcome,type) %>% 
   mutate(type = as.character(type)) %>% 
   select(-n)
+
+df_intro_home = read.csv("App/introJS/df_intro_home.csv") %>% as.data.frame() %>% select(-X)
 ###  Save data for App
 save(df_fig1_choices_type,
      file= "App/cleaned_le_income_cities_UIelements.rdata" )
