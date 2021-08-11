@@ -5,9 +5,9 @@ account: drexel-uhc
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3477280
-bundleId: 4908400
+bundleId: 4911990
 url: https://drexel-uhc.shinyapps.io/LE_Income_Inequalities_City_dev/
-when: 1628615000.8271
-lastSyncTime: 1628615000.8271
+when: 1628694310.80361
+lastSyncTime: 1628694310.80361
 asMultiple: FALSE
 asStatic: FALSE
