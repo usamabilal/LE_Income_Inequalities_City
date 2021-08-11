@@ -1,35 +1,33 @@
 <!--  Paper TItle -->
 <div class="titleContainer">
   <h2 style="padding-left: 5%; padding-right: 5%">
-    Heterogeneity in Disparities in Life Expectancy across US Metropolitan Areas
+    Heterogeneity in Disparities in Life Expectancy Across US Metropolitan Areas
   </h2>
   <div style="padding-bottom: 5px">
     <b>
       Alina S. Schnake-Mahl<sup>1</sup>, Pricila Mullachery<sup>1</sup>,
-      Jonathan Purtle<sup>?</sup>, Ran Li <sup>1</sup>, Ana V. Diez
+      Jonathan Purtle<sup>1,3</sup>, Ran Li <sup>1</sup>, Ana V. Diez
       Roux<sup>1,2</sup>, Usama Bilal<sup>1,2</sup></b
     >
   </div>
   <div class="academicOrigin">
     <div>
-      1. Urban Health Collaborative, Drexel Dornsife School of Public Health,
+      1. Urban Health Collaborative, Dornsife School of Public Health, Drexel University,
       Philadelphia, PA, USA
     </div>
     <div>
-      2. Department of Epidemiology and Biostatistics, Drexel Dornsife School of
-      Public Health, Philadelphia, PA, USA
+      2. Department of Epidemiology and Biostatistics,Dornsife School of Public Health, Drexel University, 
+      Philadelphia, PA, USA
     </div>
   </div>
+  3-	Department of Health Management and Policy, Dornsife School of Public Health, Drexel University, 
+  Philadelphia, PA
 </div>
 <div class="homeAbstractContainer">
   <h3>Supplemental App</h3>
 
   <p>
-    Our paper highlights key disparities in Life Expectancy in US MSAs with > 1
-    million people. This app does two key things: 1) translate the figures in
-    the paper into interactive visualizations which allow more granular
-    exploration of the data presented 2) Delimits visualizations to all MSAs
-    including those with population of less than 1 million residents.
+    Our article highlights key disparities in life expectancy in US MSAs with > 1 million people. This app does two key things: 1) translates the article figures into interactive visualizations, allowing more granular exploration of the article analysis, and 2) extends visualizations to all US MSAs including those with populations of less than 1 million residents.
   </p>
 
   <button
@@ -79,54 +77,53 @@
       <tbody>
         <tr>
           <td class="tg-0lax" rowspan="4">Absolute Disparities</td>
-          <td class="tg-0lax"><br />Absolute/Relative Ratiosdifferences</td>
+          <td class="tg-0lax"><br />Absolute/Relative Ratios/Differences</td>
           <td class="tg-0lax">
-            <br />Difference/Ratio between 90thand 10th population-weighted
+            <br />Difference/Ratio between 90th and 10th population-weighted
             percentiles of life expectancy foreach city
           </td>
         </tr>
         <tr>
-          <td class="tg-0lax"><br />Coefficient of variation(CV)</td>
+          <td class="tg-0lax"><br />Coefficient of Variation (CV)</td>
           <td class="tg-0lax">
-            <br />Standard deviation of lifeexpectancy/mean, all weighted
+            <br />Standard deviation of life expectancy/mean, all weighted
             population
           </td>
         </tr>
         <tr>
           <td class="tg-0lax"><br />Gini Coefficient</td>
           <td class="tg-0lax">
-            <br />Calculated using thereldist package in R[Handcock, 2016 #4218]
+            <br />Calculated using the reldist package in R
           </td>
         </tr>
         <tr>
-          <td class="tg-0lax"><br />Mean log deviation</td>
+          <td class="tg-0lax"><br />Mean Log Deviation</td>
           <td class="tg-0lax">
-            <br />Calculated using the dineqpackage in R [Schulenberg, 2018
-            #4217]
+            <br />Calculated using the dineq package in R
           </td>
         </tr>
         <tr>
-          <td class="tg-0lax" rowspan="3">Income-related Disparities</td>
+          <td class="tg-0lax" rowspan="3">Income-Related Disparities</td>
           <td class="tg-0lax"><br />Top-bottom gaps/ratios</td>
           <td class="tg-0lax">
-            <br />Differences/ratios betweenthe population-weighted average life
-            expectancy in census tracts in the topand bottom deciles of income
+            <br />Differences/ratios between the population-weighted average life
+            expectancy in census tracts in the top and bottom deciles of income
           </td>
         </tr>
         <tr>
-          <td class="tg-0lax"><br />Slope index of inequality</td>
+          <td class="tg-0lax"><br />Slope Index of Inequality (SII)</td>
           <td class="tg-0lax">
             <br />For each city run separatelinear model with life expectancy at
             the census tract level as the outcome,and income decile as a
-            continuous (ordinal) variable. SII is the regressioncoefficient for
+            continuous (ordinal) variable. SII is the regression coefficient for
             each income decile and represents the average change in
-            lifeexpectancy per 1-decile increase in income.
+            life expectancy per 1-decile increase in income.
           </td>
         </tr>
         <tr>
-          <td class="tg-0lax"><br />Relative index of inequality (RII)</td>
+          <td class="tg-0lax"><br />Relative Index of Inequality (RII)</td>
           <td class="tg-0lax">
-            <br />Divided the SII over theaverage LE at the city level.
+            <br />Divide the SII over the average LE at the city level.
           </td>
         </tr>
       </tbody>

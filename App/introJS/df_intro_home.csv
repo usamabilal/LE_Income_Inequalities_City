@@ -2,7 +2,7 @@
 "1",".navbar","Use this navigation bar to switch between tabs/figures.","left"
 "2","[data-value=""Home""]","We are currently on the Home tab. It contains an introduction to this application, manuscript abstract and Appendix Table 1.","left"
 "3","#appendixTable1","Appendix Table 1 displays a full list of computed disparity measures and how they were calculated.","left"
-"4","[data-value=""Table 1""]","Table 1 is an interactive table that shows the disparities measures for all MSAs; users can search by MSA or Region Name as well or sort by various measures.","left"
+"4","[data-value=""Table 1""]","Table 1 is an interactive table that shows the disparities measures for all MSAs; users can search by MSA or Region Name or sort by various measures.","left"
 "5","[data-value=""Fig 1""]","Figure 1 shows the distribution of disparity measures within census regions and between cities; users can select measures of interest and hover over the visualization for details on each MSA.","left"
 "6","[data-value=""Fig 2""]","Figure 2 shows the spatial distribution of disparity measures across the U.S.; users can select measures of interest and hover over the visualization for details on each MSA.","left"
 "7","[data-value=""Fig 3""]","Figure 3 shows life expectancy plotted against decile of median household income for all MSAs; users can select MSA size categories and hover over the visualization for details on each MSA ","left"
