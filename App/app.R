@@ -14,6 +14,8 @@
   library(plotly)
   library(rintrojs)
   library(shinyjs)
+  
+  library(htmlwidgets)
   ### Load UI Components
   source("appUI.R", local = T)
   load("cleaned_le_income_cities_UIelements.rdata")
@@ -33,7 +35,7 @@ server <- function(input, output, session) {
   source("appJS.R", local = T)
   w <- Waiter$new(id = c("plot_fig1",
                          "plot_fig2_ui",
-                         "plot_fig3"),
+                         "plot_fig3_ui"),
                   html = figure_loading_screen,
                   color = 'rgb(201, 201, 201,0.5)')
   Sys.sleep(1)
@@ -71,29 +73,29 @@ server <- function(input, output, session) {
   
   # Figure 2 ----
   output$fig2_ui_input = renderUI({
-    choices_tmp = df_fig1_choices_type %>% filter(outcome == input$fig2_ineq) %>% pull(type)
+    df_tmp = df_fig1_choices_type %>% filter(outcome == input$fig2_ineq)
+    choices_tmp = df_tmp$type2
+    names(choices_tmp) <- df_tmp$type 
     pickerInput( inputId = "fig2_type",label = "Type" , choices = choices_tmp)
   })
   
   output$header_fig2 = renderUI({
     req(input$fig2_type)
-    ineq_tmp = ifelse(input$fig2_ineq=="total","Total","Income")
     type_tmp = input$fig2_type
-    h3(paste0(ineq_tmp,": ",type_tmp), align = 'center')
+    h3(type_tmp, align = 'center')
   })
   
   output$plot_fig2 = renderLeaflet({
     req(input$fig2_type)
-    ineqTmp = input$fig2_ineq
     typeTmp = input$fig2_type
+    ineqTmp = isolate(input$fig2_ineq)
     figure2_plotter(ineqTmp,typeTmp)
   })
   
   output$plot_fig2_ui = renderUI({
     w$show()
-    ineqTmp = input$fig2_ineq
     typeTmp = input$fig2_type
-    
+
     div(
       fluidRow(
         uiOutput("header_fig2")
@@ -109,11 +111,36 @@ server <- function(input, output, session) {
   })
   
   # Figure 3 ----
+  
+  output$header_fig3 = renderUI({
+    sizeTmp = input$fig3_MSAsize
+    title_tmp =   paste0("MSA with ",sizeTmp, " people")
+    h3(title_tmp, align = 'center')
+  })
+  
   output$plot_fig3 = renderPlotly({
-    w$show()
     sizeTmp = input$fig3_MSAsize
     figure3_plotter(sizeTmp)
   })
+  
+  output$plot_fig3_ui = renderUI({
+    w$show()
+    sizeTmp = input$fig3_MSAsize
+    
+    div(
+      fluidRow(
+        uiOutput("header_fig3")
+      ),
+      fluidRow(
+        plotlyOutput("plot_fig3")
+      ),
+      div(class = "Footnote",
+          HTML("<u>Footnote: </u> Grayed lines in the background represent all cities."))
+      
+    )
+    
+  })
+  
 }
 
 

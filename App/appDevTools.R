@@ -1,6 +1,8 @@
 outcomeTmp = "total"
 typeTmp = "Abs. Disparity"
 sizeTmp ="<120,000"
+ineqTmp ="total"
+typeTmp = "Abs. Disparity"
 
 # Figure 1 Scr -----
 outcomeTmp = input$fig1_ineq

@@ -9,6 +9,7 @@ ui <- function(){
     tags$head(includeCSS("css/home.css")),
     tags$head(includeCSS("css/figures.css")),
     tags$head(includeHTML("html/headScripts.html")),
+    tags$head(tags$script(src="fig3Unhover.js")),
     # tags$script(src = "introModal.js"),
     includeHTML("html/footerUHC2.html"),
     navbarPage(
@@ -76,8 +77,8 @@ ui_figure1 =  div(class = "figureTabContainer",
                                    pickerInput(
                                      inputId = "fig1_ineq",
                                      label = "Inequalities" ,
-                                     choices = c("Total" ="total",
-                                                 "Income-based"="income")),
+                                     choices = c("Total" ="Total",
+                                                 "Income-based"="Income")),
                                    uiOutput("fig1_ui_input")),
                       mainPanel(uiOutput("plot_fig1_ui")) ) ) )
 
@@ -99,8 +100,8 @@ ui_figure2 = div(class = "figureTabContainer",
                                   pickerInput(
                                     inputId = "fig2_ineq",
                                     label = "Inequalities" ,
-                                    choices = c("Total" ="total",
-                                                "Income-based"="income")),
+                                    choices = c("Total" ="Total",
+                                                "Income-based"="Income")),
                                   uiOutput("fig2_ui_input")
                      ),
                      mainPanel(
@@ -130,7 +131,7 @@ ui_figure3  =  div(class = "figureTabContainer",
                                                   "400,000-800,000",
                                                   ">800,000"))),
                        mainPanel(
-                         plotlyOutput("plot_fig3")
+                         uiOutput("plot_fig3_ui")
                        ) ) ) )
 
 

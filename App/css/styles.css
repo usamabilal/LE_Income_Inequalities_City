@@ -31,7 +31,7 @@
 }
 .introModalTitle {
   font-size: large;
-  font-weight: 700;
+  font-weight: 600;
 }
 .introModalText {
 }
@@ -39,7 +39,10 @@
   width: 80%;
   border: var(--uhcGray2) solid 1px;
 }
-
+.emailText {
+  color: var(--uhcBlue);
+  font-weight: 700;
+}
 /* Header */
 .headerContainer {
   display: grid;

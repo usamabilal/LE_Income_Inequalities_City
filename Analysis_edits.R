@@ -444,7 +444,7 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
                        income_ineq) %>% left_join(total_pop_msa) %>% 
     # filter(total_pop>=1000000) %>% 
     left_join(summary_large %>% select(cbsa, rank)) %>% 
-    select(cbsa_name, Region_Name, rank, 
+    select(cbsa_name,total_pop, Region_Name, rank, 
            total_dif, total_ratio, cv, gini,mld.wt,
            dif, ratio, sii, rii) %>% arrange(rank) %>% 
     mutate(Region_Name=sub(" Region", "", Region_Name)) %>% 
@@ -470,7 +470,8 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
                    income_diff, income_ratio,
                    income_sii),
               ~round(.x,2)) %>% 
-    select(-Rank)
+    select(-Rank) %>% 
+    arrange(desc(total_pop))
   df_table1
 }
 
@@ -485,7 +486,8 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
   df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)%>% 
     group_by(outcome,type) %>% 
     group_modify(~.x %>% 
-                   mutate(value = round(value,2)) %>% 
+                   mutate(value_rounded = round(value,3)) %>% 
+                   mutate(value = round(value,4)) %>% 
                    group_by(Region_Name) %>% 
                    mutate(median = median(value)) %>% 
                    ungroup() %>% 
@@ -493,15 +495,17 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
     ungroup() %>% 
     mutate(tooltip = glue(
       '<b>{cbsa_name}</b>
-      {type}: {value} 
+      {type}: {value_rounded} 
       Population: {format(total_pop, big.mark = ",")} 
       ',
     ) %>% as.character()) %>% 
-    select(outcome, type,Region_Name, value,total_pop, tooltip ) 
+    select(outcome, type,Region_Name, value,total_pop, tooltip ) %>% 
+    mutate(outcome = str_to_title(outcome)) 
 }
 
 # ___Figure 2 ----
 {
+  library(HatchedPolygons)
   ## Shapes Files
   sf_cbsa_raw<-read_sf("data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
     mutate(cbsa=as.numeric(GEOID))
@@ -509,6 +513,23 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
     select(cbsa) %>% 
     filter(cbsa%in%(full_dta %>% ungroup() %>% pull(cbsa)))
   sf_regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
+  sf_states<-read_sf("Data/cb_2013_us_state_20m/cb_2013_us_state_20m.shp") %>% mutate(state = STUSPS )
+  get_hatch_holes = function(sf_state_tmp){
+    state_tmp = unique(sf_state_tmp$state)
+    sf_polygon_missing_all=st_cast(sf_state_tmp, "POLYGON")
+    sf_polygon_missing = sf_polygon_missing_all %>% 
+      mutate(area = st_area(sf_polygon_missing_all)) %>% 
+      filter(area == max(area)) %>% 
+      mutate(state = state_tmp)
+    spa = as(sf_polygon_missing, "Spatial")
+    res = HatchedPolygons::hatched.SpatialPolygons(spa,density = 2) 
+    res %>% st_as_sf()
+  }
+  sf_ME_hatch = get_hatch_holes(sf_states %>% filter(STUSPS == "ME"))
+  sf_WI_hatch = get_hatch_holes( sf_states %>% filter(STUSPS == "WI"))
+  sf_fig2_missing_hatched =  bind_rows(sf_ME_hatch,sf_WI_hatch)
+  sf_fig2_states_missing = sf_states %>% filter(STUSPS%in%c("ME","WI"))
+
   ## Data for map
   library(shiny)
   df_fig2 = bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
@@ -537,7 +558,9 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
                          "<b>",ineq," ",type," :</b>", round(value,2),"<br>",
                          "<b>Rank :</b>",rank
     ) %>% 
-      map(~HTML(.x)))
+      map(~HTML(.x))) %>% 
+    mutate(type2 = paste0(ineq,": ", type))  
+
 }
 
 # ___Figure 3 ----
@@ -573,12 +596,9 @@ df_fig3=df_fig3_raw %>%
 
 # ___UI elements -----
 df_fig1_choices_type = df_fig1 %>% 
-  count(outcome,type) %>% 
-  mutate(type = as.character(type)) %>% 
-  select(-n)
-
-df_fig1_choices_type = df_fig1 %>% 
-  count(outcome,type) %>% 
+  count(outcome,type)%>% 
+  mutate(outcome = str_to_title(outcome)) %>% 
+  mutate(type2 = paste0(outcome,": ", type)) %>% 
   mutate(type = as.character(type)) %>% 
   select(-n)
 
@@ -590,7 +610,7 @@ save(
   df_table1,   ## Table 1 
   df_fig1,     ## Figure 1
   df_fig2,     ## Figure 2
-  df_fig3,     ## Figure 3
+  df_fig3,sf_fig2_missing_hatched,sf_fig2_states_missing,     ## Figure 3
   sf_regions,sf_cbsa, ## Shape Files
   file= "App/cleaned_le_income_cities_appBundle.rdata")
 

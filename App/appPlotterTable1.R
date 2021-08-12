@@ -1,7 +1,7 @@
-table1_plotter = function(data){
+table1_plotter = function(df_table1){
   
   reactable(
-    data,
+    df_table1,
     minRows = 15,
     defaultPageSize = 15,
     searchable  = TRUE,
@@ -11,6 +11,9 @@ table1_plotter = function(data){
     ),
     columns = list(
       Name = colDef(minWidth = 150),
+      total_pop  = colDef(name = "Population",
+                          minWidth = 100,
+                          format =colFormat(separators = T)),
       Region = colDef(minWidth = 80,
                       style = list(borderRight = "1px solid #c7c7c7"),
                       headerStyle = list(borderRight = "1px solid #c7c7c7")),

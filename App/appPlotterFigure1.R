@@ -4,7 +4,7 @@ figure1_plotter = function(outcomeTmp,typeTmp){
     filter(type==typeTmp) 
   levelsTmp = unique(df_tmp$Region_Name)
   df_tmp = df_tmp %>% mutate(Region_Name=factor(Region_Name, levels = levelsTmp))
-  title_tmp = ifelse(outcomeTmp =="total","Total Life Expectancy Disparities by MSA","Income-based Life Expectancy Disparities by MSA")
+  title_tmp = ifelse(outcomeTmp =="Total","Total Life Expectancy Disparities by MSA","Income-based Life Expectancy Disparities by MSA")
   yaxis_tmp = typeTmp
   plot1 = ggplot(df_tmp,aes(x=Region_Name, y=value))+
     geom_boxplot(aes(group=(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+

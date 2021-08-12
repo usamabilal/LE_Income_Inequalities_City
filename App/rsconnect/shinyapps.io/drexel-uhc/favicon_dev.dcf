@@ -1,0 +1,13 @@
+name: favicon_dev
+title: favicon_dev
+username:
+account: drexel-uhc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4480991
+bundleId: 4912141
+url: https://drexel-uhc.shinyapps.io/favicon_dev/
+when: 1628695847.25797
+lastSyncTime: 1628695847.25797
+asMultiple: FALSE
+asStatic: FALSE
