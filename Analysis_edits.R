@@ -18,6 +18,7 @@ load("data/clean_data.rdata")
 total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>% 
   summarise(total_pop=sum(pop))
 
+
 # first, calculate absolute ineq indicators by city
 # Gap and ratio: need .9 and .1 weighted quantiles
 # CV
@@ -119,7 +120,7 @@ income_ineq<-dta %>% group_by(cbsa) %>%
 
 income_ineq_long<-income_ineq %>% gather(type, value, -cbsa, -Region, -Region_Name) %>% 
   mutate(type=factor(type, levels=c("dif", "ratio", "sii", "rii"),
-                     labels=c("Abs. Disparity", "Rel. Disparity",
+                     labels=c("Top/Bottom Difference", "Top/Bottom Ratio",
                               "Slope Index of Inequality", "Relative Index of Inequality")),
          Region_Name=sub(" Region", "", Region_Name)) %>% 
   left_join(total_pop_msa)
@@ -319,9 +320,13 @@ confint(abs, level=0.95)*log(1.1)
 #CT's & MSAs
 sapply(dta, function(x) length(unique(x)))
 
+## MSA per region 
+
+prop.table(table(region$Region_Name))
+
 
 #for conclusion-- find 10% and 90th percentile for AMES iowa
-ames<-dta%>%
+ames<-dta%%
   filter(cbsa==11180)
 
 wtd.quantile(ames$le, q = c(.1, .9), weight = ames$pop)
@@ -388,11 +393,11 @@ full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>%
   mutate(rank=row_number()) %>% 
   mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
                                       "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Deviation",
-                                      "Income: Abs. Disparity", "Income: Rel. Disparity",
+                                      "Income: Top/Bottom Difference", "Income: Top/Bottom Ratio",
                                       "Income: Slope Index of Inequality", "Income: Relative Index of Inequality"),
                       labels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
                                "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
-                               "Income: Abs. Disparity", "Income: Rel. Disparity",
+                               "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio",
                                "Income: SII", "Income: RII"))) %>%
   left_join(region) %>% 
   select(cbsa, type2, value, Region_Name) %>% 
@@ -542,11 +547,11 @@ ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
     mutate(rank=row_number()) %>% 
     mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
                                         "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Deviation",
-                                        "Income: Abs. Disparity", "Income: Rel. Disparity",
+                                        "Income: Top/Bottom Difference", "Income: Top/Bottom Ratio",
                                         "Income: Slope Index of Inequality", "Income: Relative Index of Inequality"),
                         labels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
                                  "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
-                                 "Income: Abs. Disparity", "Income: Rel. Disparity",
+                                 "Income: Top/Bottom Difference", "Income: Top/Bottom Ratio",
                                  "Income: SII", "Income: RII"))) %>%
     left_join(region) %>% 
     ungroup() %>% 

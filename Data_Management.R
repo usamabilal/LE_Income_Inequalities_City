@@ -95,7 +95,7 @@ region<-full_join(ct_data, region) %>%
   filter(!is.na(cbsa)) %>% 
   group_by(cbsa, Region) %>% 
   summarise(pop=sum(pop)) %>% 
-  arrange(cbsa, desc(pop)) %>% 
+  arrange(cbsa, desc(pop)) %>%  
   filter(!duplicated(cbsa)) %>% 
   select(cbsa, Region) %>% left_join(names)
   
