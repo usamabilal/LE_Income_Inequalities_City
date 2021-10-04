@@ -1,7 +1,7 @@
-outcomeTmp = "total"
+outcomeTmp = "Total"
 typeTmp = "Abs. Disparity"
 sizeTmp ="<120,000"
-ineqTmp ="total"
+ineqTmp ="Total"
 typeTmp = "Abs. Disparity"
 
 # Figure 1 Scr -----

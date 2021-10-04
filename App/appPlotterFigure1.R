@@ -23,7 +23,13 @@ figure1_plotter = function(outcomeTmp,typeTmp){
           axis.text.y=element_text(size=10, color="black"),
           axis.title.y=element_text(face="bold", size=12),
           plot.title=element_text(face="bold", size=13))
-  ggplotly(p = plot1,
+  ggp = ggplotly(p = plot1,
            tooltip = c("text")) %>% 
     config(displayModeBar = F)
+  ggp$x$data[[1]]$marker$outliercolor ="rgba(0,0,0,0)"
+  ggp$x$data[[1]]$marker$color ="rgba(0,0,0,0)"# When creating plot p with ggplot if you specify fill = cut use x$fill$color instead $line$color
+  ggp$x$data[[1]]$marker$line = "rgba(0,0,0,0)" # When creating plot p with ggplot if you specify fill = cut use x$fill$color instead $line$color
+  ggp$x$data[[1]]$marker$size = 0.00001 # When creating plot p with ggplot if you specify fill = cut use x$fill$color instead $line$color
+  ggp
+  
 }
