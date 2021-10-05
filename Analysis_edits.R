@@ -247,6 +247,7 @@ figure3<-ggplot(le_by_decile,
             color="gray", alpha=1)+
   geom_line(data=le_by_decile %>% mutate(Region_Name="West Region"), 
             color="gray", alpha=1)+
+  geom_line(data=mean, aes(x=decile_income, y=mean))+
   geom_line(aes(color=Region_Name))+
   geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)+
   # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
@@ -316,9 +317,20 @@ coef(abs)*log(1.1)
 confint(abs, level=0.95)*log(1.1)
 
 #Descriptives:  -----
+#mean differences by income 
+mean<-le_by_decile%>%
+group_by(Region_Name, decile_income)%>%
+  summarize(mean=mean(le), 
+            sd=sd(le))
 
-#CT's & MSAs
-sapply(dta, function(x) length(unique(x)))
+figure4<- ggplot()+ 
+  geom_line(data=mean, aes(x=decile_income, y=mean))+
+  geom_point(data=mean, aes(x=decile_income, y=mean))+
+  facet_wrap(~Region_Name)
+
+figure4  
+
+
 
 ## MSA per region 
 
@@ -414,7 +426,69 @@ corrs<-ggpairs(data=full_dta,
         axis.text=element_text(color="black"))
 ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
 
+#Appendix FIgure 3
+#HAVING TROUBLE GETTING THIS TO WORK
+hist(dta$mhi)
+le_by_decile<-dta %>% group_by(cbsa) %>% 
+  group_modify(~{
+    #.x<-dta %>% filter(cbsa==25940)
+    .x<-.x %>% 
+      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))
+    decile_le<-.x %>% group_by(decile_income) %>% 
+      summarise(le=weighted.mean(le, w=pop))
+    decile_le
+  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
+  filter(total_pop>=1000000)
 
+summary(dta$mhi)
+
+test<- dta%>%
+  group_by(cbsa)%>%
+  income_20k=cut(mhi, breaks= seq(20000, 250000, by=20000), include.lowest = T, 
+labels=c("20,000", "40,000", "60,000", "80,000", "100,000", "120,000", "140,000", "160,000", "180,000", "200,000"))
+
+le_by_decile1<-dta %>% group_by(cbsa) %>% 
+  group_modify(~{
+    #.x<-dta %>% filter(cbsa==25940)
+    .x<-.x %>% 
+      mutate(income_20k=cut(mhi, breaks= seq(20000, 250000, by=20000), include.lowest = T))
+    decile_le<-.x %>% group_by(income_20k) %>% 
+      summarise(le=weighted.mean(le, w=pop))
+    decline_le
+  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
+  filter(total_pop>=1000000)
+
+figure3<-ggplot(le_by_decile1, 
+                aes(x=income_20k, y=le, group=cbsa)) +
+  geom_line(data=le_by_decile %>% mutate(Region_Name="Midwest Region"), 
+            color="gray", alpha=1)+
+  geom_line(data=le_by_decile %>% mutate(Region_Name="Northeast Region"), 
+            color="gray", alpha=1)+
+  geom_line(data=le_by_decile %>% mutate(Region_Name="South Region"), 
+            color="gray", alpha=1)+
+  geom_line(data=le_by_decile %>% mutate(Region_Name="West Region"), 
+            color="gray", alpha=1)+
+  geom_line(aes(color=Region_Name))+
+  geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)+
+  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
+  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
+  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
+  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  labs(x="Median Household Income",
+       y="Life Expectancy (years)")+
+  scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
+  scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=2))+
+  facet_wrap(~Region_Name)+
+  guides(color=F, fill=F)+
+  theme_bw() +
+  theme(axis.text=element_text(color="black", size=14),
+        axis.title=element_text(color="black", face="bold", size=16),
+        strip.text=element_text(color="black", face="bold", size=16),
+        strip.background = element_blank())
+figure3
+ggsave("results/figure3_ASM.pdf", width=10, height=7.5)
+
+ggplotly(figure3)
 
 # App Data----
 
