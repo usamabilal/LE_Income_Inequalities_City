@@ -469,7 +469,7 @@ prop.table(table(region$Region_Name))
 
 
 #for conclusion-- find 10% and 90th percentile for AMES iowa
-ames<-dta%%
+ames<-dta %>% as.data.frame() %>% 
   filter(cbsa==11180)
 
 wtd.quantile(ames$le, q = c(.1, .9), weight = ames$pop)
