@@ -545,12 +545,12 @@ full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>%
                                "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
                                "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio",
                                "Income: SII", "Income: RII"))) %>%
-  left_join(region) %>% 
+  left_join(xwalk_region) %>% 
   select(cbsa, type2, value, Region_Name) %>% 
   spread(type2, value)
 cols<-c("Total: Abs. Disparity", "Total: Rel. Disparity",
         "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.", 
-        "Income: Abs. Disparity", "Income: Rel. Disparity",
+        "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio",
         "Income: SII", "Income: RII")
 corrs<-ggpairs(data=full_dta, 
                columns = cols, upper = list(continuous = wrap("cor", size=6, color="black"))) +
