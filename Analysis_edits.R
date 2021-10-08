@@ -596,13 +596,13 @@ le_by_decile1<-dta %>% group_by(cbsa) %>%
 
 figure3<-ggplot(le_by_decile1, 
                 aes(x=income_20k, y=le, group=cbsa)) +
-  geom_line(data=le_by_decile %>% mutate(Region_Name="Midwest Region"), 
+  geom_line(data=le_by_decile1 %>% mutate(Region_Name="Midwest Region"), 
             color="gray", alpha=1)+
-  geom_line(data=le_by_decile %>% mutate(Region_Name="Northeast Region"), 
+  geom_line(data=le_by_decile1 %>% mutate(Region_Name="Northeast Region"), 
             color="gray", alpha=1)+
-  geom_line(data=le_by_decile %>% mutate(Region_Name="South Region"), 
+  geom_line(data=le_by_decile1 %>% mutate(Region_Name="South Region"), 
             color="gray", alpha=1)+
-  geom_line(data=le_by_decile %>% mutate(Region_Name="West Region"), 
+  geom_line(data=le_by_decile1 %>% mutate(Region_Name="West Region"), 
             color="gray", alpha=1)+
   geom_line(aes(color=Region_Name))+
   geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)+
@@ -613,7 +613,7 @@ figure3<-ggplot(le_by_decile1,
   labs(x="Median Household Income",
        y="Life Expectancy (years)")+
   scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
-  scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=2))+
+  # scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=2))+
   facet_wrap(~Region_Name)+
   guides(color=F, fill=F)+
   theme_bw() +
