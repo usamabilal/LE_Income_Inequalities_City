@@ -577,9 +577,22 @@ le_by_decile1<-dta %>% group_by(cbsa) %>%
       mutate(income_20k=cut(mhi, breaks= seq(20000, 250000, by=20000), include.lowest = T))
     decile_le<-.x %>% group_by(income_20k) %>% 
       summarise(le=weighted.mean(le, w=pop))
-    decline_le
-  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
-  filter(total_pop>=1000000)
+    decile_le
+  }) %>% left_join(total_pop_msa) %>% left_join(xwalk_region) %>% 
+  filter(total_pop>=1000000) %>% 
+  ungroup() %>% 
+  mutate(income_20k = income_20k %>% 
+           dplyr::recode("[2e+04,4e+04]"="20,000",
+                         "(4e+04,6e+04]"= "40,000",
+                         "(6e+04,8e+04]"="60,000",
+                         "(8e+04,1e+05]"='80,000',
+                         "(1e+05,1.2e+05]"="100,000",
+                         "(1.2e+05,1.4e+05]"= "120,000",
+                         "(1.4e+05,1.6e+05]"= "140,000",
+                         "(1.6e+05,1.8e+05]"="160,000",
+                         "(1.8e+05,2e+05]"="180,000",
+                         "(2e+05,2.2e+05]"="200,000",
+                         "(2.2e+05,2.4e+05]"="220,000"))
 
 figure3<-ggplot(le_by_decile1, 
                 aes(x=income_20k, y=le, group=cbsa)) +
