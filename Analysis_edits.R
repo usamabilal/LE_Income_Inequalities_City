@@ -16,6 +16,7 @@ library(car)
 library(ggpubr)
 
 load("data/clean_data.rdata")
+xwalk_region = region
 total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>% 
   summarise(total_pop=sum(pop))
 
