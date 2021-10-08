@@ -763,7 +763,7 @@ ggplotly(figure3)
                                  "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
                                  "Income: Top/Bottom Difference", "Income: Top/Bottom Ratio",
                                  "Income: SII", "Income: RII"))) %>%
-    left_join(region) %>% 
+    left_join(xwalk_region) %>% 
     ungroup() %>% 
     left_join(sf_cbsa_raw %>%
                 as.data.frame() %>% 
@@ -787,7 +787,7 @@ df_fig3_raw<-dta %>% group_by(cbsa) %>%
     decile_le<-.x %>% group_by(decile_income) %>% 
       summarise(le=weighted.mean(le, w=pop))
     decile_le
-  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
+  }) %>% left_join(total_pop_msa) %>% left_join(xwalk_region) %>% 
   ungroup() %>% 
   mutate(Region_Name = Region_Name %>% str_remove("Region") %>% str_trim())
 
