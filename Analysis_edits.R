@@ -560,20 +560,9 @@ corrs<-ggpairs(data=full_dta,
         axis.text=element_text(color="black"))
 ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
 
-#Appendix FIgure 3
+####### Appendix Figure 3 -----
 #HAVING TROUBLE GETTING THIS TO WORK
 hist(dta$mhi)
-le_by_decile<-dta %>% group_by(cbsa) %>% 
-  group_modify(~{
-    #.x<-dta %>% filter(cbsa==25940)
-    .x<-.x %>% 
-      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))
-    decile_le<-.x %>% group_by(decile_income) %>% 
-      summarise(le=weighted.mean(le, w=pop))
-    decile_le
-  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
-  filter(total_pop>=1000000)
-
 summary(dta$mhi)
 
 test<- dta%>%
