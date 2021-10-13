@@ -1,8 +1,16 @@
+input = list()
+input$fig1_ineq = "Total"
+input$fig1_type = "Abs. Disparity"
+
+
+
 outcomeTmp = "Total"
 typeTmp = "Abs. Disparity"
 sizeTmp ="<120,000"
 ineqTmp ="Total"
 typeTmp = "Abs. Disparity"
+
+
 
 # Figure 1 Scr -----
 outcomeTmp = input$fig1_ineq

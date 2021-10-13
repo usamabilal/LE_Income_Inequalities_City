@@ -1,6 +1,6 @@
 ui <- function(){
   fluidPage(
-    useWaiter(),
+    use_waiter(),
     introjsUI(),
     useShinyjs(),
     # autoWaiter(c("plot_fig1", "plot_fig3")),

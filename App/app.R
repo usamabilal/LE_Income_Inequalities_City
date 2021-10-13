@@ -33,7 +33,7 @@ server <- function(input, output, session) {
   source("appPlotterFigure2.R", local = T)
   source("appPlotterFigure3.R", local = T)
   source("appJS.R", local = T)
-  w <- Waiter$new(id = c("plot_fig1",
+  w <- Waiter$new(id = c("plot_fig1_ui",
                          "plot_fig2_ui",
                          "plot_fig3_ui"),
                   html = figure_loading_screen,
@@ -56,18 +56,21 @@ server <- function(input, output, session) {
   })
   
   # Figure 1 ----
+  
   output$fig1_ui_input = renderUI({
     choices_tmp = df_fig1_choices_type %>% filter(outcome == input$fig1_ineq) %>% pull(type)
     pickerInput(inputId = "fig1_type", label = "Type" , choices = choices_tmp)
   })
+  
   output$plot_fig1 = renderPlotly({
-    w$show()
     req(input$fig1_type)
-    outcomeTmp = input$fig1_ineq
+    outcomeTmp = isolate(input$fig1_ineq)
     typeTmp = input$fig1_type
     figure1_plotter(outcomeTmp,typeTmp)
   })
+  
   output$plot_fig1_ui = renderUI({
+    w$show()
     plotlyOutput("plot_fig1")
   })
   
