@@ -52,6 +52,15 @@
   border-right: var(--uhcGray1) solid 1px;
 }
 
+.reactableCityHeader {
+  font-weight: bold;
+  font-size: 11px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+
 .reactableMetricHeader {
   font-weight: bold;
   font-size: 11px;
