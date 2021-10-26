@@ -61,6 +61,11 @@ cv<-absolute_rel_ineq_long%>%
   group_by(type, Region_Name)%>%
   summarize(cv=sd(value) / mean(value) * 100)
 
+totals<-absolute_rel_ineq_long%>%
+group_by(type, Region_Name)%>%
+ summarize(median=median(value))
+
+
 #Figure 1-----
 f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
   geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
@@ -69,6 +74,8 @@ f1a<-ggplot(absolute_rel_ineq_long,aes(x=Region_Name, y=value))+
               color="black", pch=21) +
   facet_wrap(~type, scales="free_y")+
   guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
   labs(x="",
        y="Value",
        title="Total Disparities in Life Expectancy by MSA")+
@@ -238,63 +245,34 @@ le_by_decile<-dta %>% group_by(cbsa) %>%
   }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
   filter(total_pop>=1000000)
 
-figure3<-ggplot(le_by_decile, 
-                aes(x=decile_income, y=le, group=cbsa)) +
-  geom_line(data=le_by_decile %>% mutate(Region_Name="Midwest Region"), 
-            color="gray", alpha=1)+
-  geom_line(data=le_by_decile %>% mutate(Region_Name="Northeast Region"), 
-            color="gray", alpha=1)+
-  geom_line(data=le_by_decile %>% mutate(Region_Name="South Region"), 
-            color="gray", alpha=1)+
-  geom_line(data=le_by_decile %>% mutate(Region_Name="West Region"), 
-            color="gray", alpha=1)+
-  geom_line(aes(color=Region_Name))+
-  geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)+
-  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
-  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
-  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
-  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
-  labs(x="Decile of Median Household Income",
-       y="Life Expectancy (years)")+
-  scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
-  scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=2))+
-  facet_wrap(~Region_Name)+
-  guides(color=F, fill=F)+
-  theme_bw() +
-  theme(axis.text=element_text(color="black", size=14),
-        axis.title=element_text(color="black", face="bold", size=16),
-        strip.text=element_text(color="black", face="bold", size=16),
-        strip.background = element_blank())
-figure3
-ggsave("results/figure3_ASM.pdf", width=10, height=7.5)
-
-ggplotly(figure3)
-
 #Figure 3b
 cv_decile<-le_by_decile %>% group_by(Region, decile_income) %>% 
   summarize(mean=mean(le), 
             sd=sd(le), 
             cv=sd/mean*100)%>%
-  pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")
-
+  pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
+  mutate(Region=factor(Region), 
+  Region=ordered(Region, levels=c(2, 3, 1, 4)))
+                    
 figure3cv<-cv_decile%>%
   filter(type=="cv")%>%
   ggplot( aes(x=decile_income, y=value, group=Region)) +
-  geom_line(aes(color=Region))+
-  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
+  geom_line(aes(color=Region), show.legend = F)+
+  geom_point(aes(fill=Region), size=2, color="black", pch=21, show.legend=F)+
   # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
   # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
   # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
   # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  scale_fill_discrete(name="Region", labels=c("Midwest", "South","Northeast", "West"))+
+  scale_colour_discrete()+
   labs(title="Coefficient of Variation",
         x="Decile of Median Household Income",
-       y="Life Expectancy (years)")+
+       y="Life Expectancy (years)", 
+       color="Region")+
  # scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
   scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=1))+
-#  facet_grid(~type)+
-  guides(color=F, fill=F)+
   theme_bw() +
-  theme(axis.text=element_text(color="black", size=14),
+  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
         axis.title=element_text(color="black", face="bold", size=16),
         strip.text=element_text(color="black", face="bold", size=16),
         strip.background = element_blank())
@@ -303,21 +281,24 @@ figure3cv
 figure3sd<-cv_decile%>%
   filter(type=="sd")%>%
   ggplot( aes(x=decile_income, y=value, group=Region)) +
-  geom_line(aes(color=Region))+
+  geom_line(aes(color=Region),show.legend = F)+
   geom_point(aes(fill=Region), size=2, color="black", pch=21)+
   # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
   # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
   # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
   # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  scale_fill_discrete(name="Region", labels=c("Midwest", "South","Northeast", "West"))+
+  scale_colour_discrete()+
   labs(title="Standard Deviation",
        x="Decile of Median Household Income",
-       y="Life Expectancy (years)")+
+       y="Life Expectancy (years)", 
+       color="Region")+
   # scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
   scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=1))+
   #  facet_grid(~type)+
   guides(color=F, fill=F)+
   theme_bw() +
-  theme(axis.text=element_text(color="black", size=14),
+  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
         axis.title=element_text(color="black", face="bold", size=16),
         strip.text=element_text(color="black", face="bold", size=16),
         strip.background = element_blank())
@@ -326,53 +307,35 @@ figure3sd
 figure3mean<-cv_decile%>%
   filter(type=="mean")%>%
   ggplot( aes(x=decile_income, y=value, group=Region)) +
-  geom_line(aes(color=Region))+
+  geom_line(aes(color=Region), show.legend = F)+
   geom_point(aes(fill=Region), size=2, color="black", pch=21)+
   # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
   # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
   # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
   # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  scale_fill_discrete(name="Region", labels=c("Midwest", "South","Northeast", "West"))+
+  scale_colour_discrete()+
   labs(title="Mean",
        x="Decile of Median Household Income",
-       y="Life Expectancy (years)")+
-   scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
+       y="Life Expectancy (years)", 
+       color="Region")+
+  scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
   scale_x_continuous(limits=c(-0.2, 11), breaks=seq(0, 10 , by=2))+
-  #  facet_grid(~type)+
-  guides(color=F, fill=F)+
   theme_bw() +
-  theme(axis.text=element_text(color="black", size=14),
+  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
         axis.title=element_text(color="black", face="bold", size=16),
         strip.text=element_text(color="black", face="bold", size=16),
         strip.background = element_blank())
 figure3mean
-
+  
 library(ggpubr)
 ggarrange(figure3mean,                                                
           ggarrange(figure3sd, figure3cv, ncol = 2, nrow=1 ), 
           nrow = 2                                   
 ) 
-
-
-ggarrange(figure3mean, figure3sd, figure3cv + rremove("x.text"), 
-          labels = c("Mean", "SD", "CV"),
-          ncol = 2, nrow = 2)
-
-#no city size limit
-le_by_decile1<-dta %>% group_by(cbsa) %>% 
-  group_modify(~{
-    #.x<-dta %>% filter(cbsa==25940)
-    .x<-.x %>% 
-      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))
-    decile_le<-.x %>% group_by(decile_income) %>% 
-      summarise(le=weighted.mean(le, w=pop))
-    decile_le
-  }) %>% left_join(total_pop_msa) %>% left_join(region) 
-
-cv_decile1<-le_by_decile1 %>% group_by(Region, decile_income) %>% 
-  summarize(mean=mean(le), 
-            sd=sd(le), 
-            cv=sd/mean*100)
-
+ggsave("results/figure3_new.pdf", width=10, height=7.5)
+ggplotly(figure3cv)
+ggplotly(figure3sd)
 
 #view highest and lowest disp by region and level 
 view<-le_by_decile%>%
