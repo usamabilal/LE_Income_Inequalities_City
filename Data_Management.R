@@ -64,7 +64,7 @@ ct_data<-map_dfr(states, function(state){
   cbsa
 
 # 2013 delineations from https://www.census.gov/geographies/reference-files/time-series/demo/metro-micro/delineation-files.html
-cw<-read_excel("data/list1.xls", skip=2) %>% 
+cw<-read_excel("Data/list1.xls", skip=2) %>% 
   filter(grepl("Metropolitan", `Metropolitan/Micropolitan Statistical Area`)) %>% 
   rename(cbsa=`CBSA Code`,
          cbsa_name=`CBSA Title`) %>% 
@@ -74,11 +74,17 @@ cw<-read_excel("data/list1.xls", skip=2) %>%
          cbsa=as.numeric(cbsa)) %>% 
   select(state, county, cbsa, cbsa_name)
 
-# remove CBSAs with any county in ME, WI, HI, AK = 2, 15, 23, 55 ; + PR (72)
-exclude<-cw %>% filter(state%in%c(2, 15, 23, 55, 72)) %>% pull(cbsa)
-cw<-cw %>% filter(!cbsa%in%exclude)
+# remove CBSAs with any county in ME=23 WI=55 HI=15 AK = 2; + PR (72)
+exclude<-cw %>% filter(state%in%c(23, 55)) %>% pull(cbsa)
+exclude_contig<-cw%>%filter(state%in%c(2,15,72))%>%pull(cbsa)
+cw<-cw %>% filter(!cbsa%in%exclude_contig)
+cw<-cw%>%filter(!cbsa%in%exclude)
 # plus remove  Bedford city (all go to bedford county)
 cw<-cw %>% filter(county!=51515) %>% select(-state)
+
+#number of CBSA (for counts of # removed in WI & ME)
+df_uniq <- unique(cw$cbsa)
+length(df_uniq)
 
 ct_data<-ct_data %>% 
   mutate(county=floor(GEOID/1000000),
@@ -112,7 +118,12 @@ dta<-dta %>% filter(!is.na(mhi))
 summary(dta)
 
 
-
-
+#number of CT 
+ct_uniq<-unique(dta$GEOID)
+length(ct_uniq)
+#number of MSA
+msa_uniq <- unique(dta$cbsa)
+ length(msa_uniq)
+ 
 save(dta, ct_data, le, cw, region, cbsa, file="data/clean_data.rdata")
 
