@@ -317,14 +317,6 @@ cv_decile1<-cv_decile%>%
 mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
 
 #figure out colors 
-gg_color_hue <- function(n = 6, h = c(0, 360) + 15){
-  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
-  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
-}
-
-
-
-
 
 figure3cv<-cv_decile1%>%
   filter(type=="cv")%>%
@@ -342,7 +334,7 @@ figure3cv<-cv_decile1%>%
        y="CV of Life Expectancy", 
        color="Region")+
  # guides(color=F, fill=F)+
- # scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
+  scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
   scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   theme_bw() +
   theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
@@ -367,7 +359,7 @@ figure3sd<-cv_decile1%>%
        x="Decile of Median Household Income",
        y="SD of Life Expectancy (years)", 
        color="Region")+
-  # scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
+ scale_y_continuous(limits=c(0, 3), breaks=seq(0, 3, by=1))+
   scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   #  facet_grid(~type)+
   guides(color=F, fill=F)+
@@ -400,7 +392,7 @@ figure3mean<-cv_decile%>%
        color="Region")+
   guides(color=F, fill=F)+
   scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
-  scale_x_continuous(limits=c(0, 10), breaks=seq(1, 10 , by=2))+
+  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=2))+
   theme_bw() +
   theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
         axis.title.x = element_blank(),
@@ -414,7 +406,7 @@ library(ggpubr)
 ggarrange(figure3mean,figure3sd, figure3cv, ncol = 1, nrow=3 )
  
 
-ggsave("results/figure3_new.pdf", width=10, height=7.5)
+ggsave("results/figure3_new.pdf", width=8, height=7.5)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
