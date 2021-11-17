@@ -148,7 +148,12 @@ summary_absolute<-absolute_ineq_long %>%
 
 income_ineq<-dta %>% group_by(cbsa) %>% 
   group_modify(~{
-    #.x<-dta %>% filter(cbsa==25940)
+    # .x<-dta %>% filter(cbsa==34060)
+    # .x<-.x %>%
+    #   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
+    # .x %>% group_by(decile_income) %>%
+    #   summarise(le=weighted.mean(le, w=pop)) %>%
+    #   filter(decile_income%in%c(1, 10))
     .x<-.x %>% 
       mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
     decile_le<-.x %>% group_by(decile_income) %>% 
