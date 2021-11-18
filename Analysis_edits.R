@@ -804,7 +804,7 @@ ggplotly(figure3)
       decile_le<-.x %>% group_by(decile_income) %>% 
         summarise(le=weighted.mean(le, w=pop))
       decile_le
-    }) %>% left_join(total_pop_msa) %>% left_join(region) %>% ungroup() # %>%  filter(total_pop>=1000000)
+    }) %>% left_join(ungroup(total_pop_msa)) %>% left_join(xwalk_region) %>% ungroup() # %>%  filter(total_pop>=1000000)
   
   #Figure 3b
   
