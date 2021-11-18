@@ -114,7 +114,7 @@ ui_figure2 = div(class = "figureTabContainer",
 
 ## Figure 3  ----
 ui_figure3  =  div(class = "figureTabContainer",
-                   div(class = "figureTitle", "Figure 3: Life expectancy by median household income decile for each US MSA by region"),
+                   div(class = "figureTitle", "Figure 3: Mean, Standard Deviation, and Coefficient of Variation for life expectancy by tract median household income decile for each US MSA by region"),
                    HTML(' <button id="tourButtonFigure3" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 3 Tour</i> </button>'),
                    div(
                      class = "figureContainer",
@@ -122,14 +122,11 @@ ui_figure3  =  div(class = "figureTabContainer",
                        sidebarPanel(width = 3,
                                     class = "wellFigure3",
                                     pickerInput(
-                                      inputId = "fig3_MSAsize",
-                                      label = "MSA Size" ,
-                                      choices = c("<120,000",
-                                                  "120,000-150,000",
-                                                  "150,000-220,000",
-                                                  "220,000-400,000",
-                                                  "400,000-800,000",
-                                                  ">800,000"))),
+                                      inputId = "fig3_metric",
+                                      label = "Select Statistic" ,
+                                      choices = c("Mean",
+                                                  "Standard Deviation",
+                                                  "Coefficient of Variation"))),
                        mainPanel(
                          uiOutput("plot_fig3_ui")
                        ) ) ) )

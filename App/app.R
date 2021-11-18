@@ -14,6 +14,7 @@
   library(plotly)
   library(rintrojs)
   library(shinyjs)
+  library(highcharter)
   
   library(htmlwidgets)
   ### Load UI Components
@@ -98,7 +99,7 @@ server <- function(input, output, session) {
   output$plot_fig2_ui = renderUI({
     w$show()
     typeTmp = input$fig2_type
-
+    
     div(
       fluidRow(
         uiOutput("header_fig2")
@@ -115,32 +116,20 @@ server <- function(input, output, session) {
   
   # Figure 3 ----
   
-  output$header_fig3 = renderUI({
-    sizeTmp = input$fig3_MSAsize
-    title_tmp =   paste0("MSA with ",sizeTmp, " people")
-    h3(title_tmp, align = 'center')
-  })
   
-  output$plot_fig3 = renderPlotly({
-    sizeTmp = input$fig3_MSAsize
-    figure3_plotter(sizeTmp)
+  
+  output$plot_fig3 = renderHighchart({
+    metricTmp = input$fig3_metric
+    figure3_plotter(metricTmp)
   })
   
   output$plot_fig3_ui = renderUI({
     w$show()
-    sizeTmp = input$fig3_MSAsize
+    metricTmp = input$fig3_metric
     
-    div(
-      fluidRow(
-        uiOutput("header_fig3")
-      ),
-      fluidRow(
-        plotlyOutput("plot_fig3")
-      ),
-      div(class = "Footnote",
-          HTML("<u>Footnote: </u> Grayed lines in the background represent all cities."))
-      
-    )
+    
+    highchartOutput("plot_fig3")
+    
     
   })
   
