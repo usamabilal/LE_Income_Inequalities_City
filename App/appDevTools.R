@@ -15,7 +15,7 @@
     library(plotly)
     library(rintrojs)
     library(shinyjs)
-    
+    library(highcharter)
     library(htmlwidgets)
     ### Load UI Components
     source("appUI.R", local = T)
