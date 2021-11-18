@@ -149,7 +149,20 @@ summary_absolute<-absolute_ineq_long %>%
 
 income_ineq<-dta %>% group_by(cbsa) %>% 
   group_modify(~{
-    #.x<-dta %>% filter(cbsa==25940)
+    ### Negative Difference
+    # .x<-dta %>% filter(cbsa==34060)
+    # .x<-.x %>%
+    #   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
+    # .x %>% group_by(decile_income) %>%
+    #   summarise(le=weighted.mean(le, w=pop)) %>%
+    #   filter(decile_income%in%c(1, 10))
+    ### Negative Slope
+    # .x<-dta %>% filter(cbsa==25980)
+    # .x<-.x %>%
+    #   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
+    # .x %>% 
+    #   ggplot(aes(x = decile_income, y = le))+geom_point() +
+    #   geom_smooth(method = "lm")
     .x<-.x %>% 
       mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
     decile_le<-.x %>% group_by(decile_income) %>% 
@@ -749,6 +762,7 @@ ggplotly(figure3)
 
   ## Data for map
   library(shiny)
+  xwalk_region = df_absolute_ineq_long %>% select(cbsa, Region, Region_Name) %>% distinct()
   df_fig2 = bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
                         mutate(ineq="Total"),
                       income_ineq_long %>% select(cbsa, type, value) %>% 
@@ -781,35 +795,40 @@ ggplotly(figure3)
 }
 
 # ___Figure 3 ----
-df_fig3_raw<-dta %>% group_by(cbsa) %>% 
-  group_modify(~{
-    #.x<-dta %>% filter(cbsa==25940)
-    .x<-.x %>% 
-      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))
-    decile_le<-.x %>% group_by(decile_income) %>% 
-      summarise(le=weighted.mean(le, w=pop))
-    decile_le
-  }) %>% left_join(total_pop_msa) %>% left_join(xwalk_region) %>% 
-  ungroup() %>% 
-  mutate(Region_Name = Region_Name %>% str_remove("Region") %>% str_trim())
-
-df_fig3=df_fig3_raw %>% 
-  mutate(popGrp = case_when(
-    total_pop<120*10^3~"<120,000",
-    total_pop<150*10^3~"120,000-150,000",
-    total_pop<220*10^3~"150,000-220,000",
-    total_pop<400*10^3~"220,000-400,000",
-    total_pop<800*10^3~"400,000-800,000",
-    TRUE~">800,000"
-  ))%>% 
-  mutate(tooltip = glue(
-    '<b>{cbsa_name}</b>
-      Life Expectancy: {round(le,1)} years 
-      Income Decile: {decile_income}
-      Population: {format(total_pop, big.mark = ",")} 
-      ',
-  ) %>% as.character()) 
-
+{ ## Figure 3 data
+  le_by_decile<-dta %>% group_by(cbsa) %>% 
+    group_modify(~{
+      #.x<-dta %>% filter(cbsa==25940)
+      .x<-.x %>% 
+        mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))
+      decile_le<-.x %>% group_by(decile_income) %>% 
+        summarise(le=weighted.mean(le, w=pop))
+      decile_le
+    }) %>% left_join(total_pop_msa) %>% left_join(region) %>% ungroup() # %>%  filter(total_pop>=1000000)
+  
+  #Figure 3b
+  
+  cv_decile<-le_by_decile %>% group_by(Region, decile_income) %>% 
+    summarize(mean=mean(le), 
+              sd=sd(le), 
+              cv=sd/mean*100)%>%
+    pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
+    mutate(Region=factor(Region)) %>% ungroup()
+  
+  cv_decile_tot<-le_by_decile%>%
+    group_by(decile_income)%>%
+    summarize(mean=mean(le), 
+              sd=sd(le), 
+              cv=sd/mean*100)%>%
+    pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
+    mutate(Region=factor(5))
+  
+  
+  df_fig3 <-cv_decile%>%
+    bind_rows(cv_decile_tot)%>%
+    mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
+  
+}
 
 # ___UI elements -----
 df_fig1_choices_type = df_fig1 %>% 
