@@ -385,6 +385,16 @@ figure3sd<-cv_decile1%>%
 
 figure3sd 
   
+### ALINA RUN HERE TO CHECK COLOR CODING
+xwalk_region_name = le_by_decile %>% ungroup() %>% select(Region,Region_Name) %>% distinct()
+figure3mean__RL<-cv_decile%>%ungroup() %>% 
+  left_join(xwalk_region_name) %>% 
+  filter(type=="mean")%>%
+  ggplot( aes(x=decile_income, y=value, group=Region_Name)) +
+  geom_line(aes(color=Region_Name), show.legend = F)+
+  geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)
+figure3mean__RL
+### END COLOR CODING CHECK
 
 figure3mean<-cv_decile%>%
   filter(type=="mean")%>%
