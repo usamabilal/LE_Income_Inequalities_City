@@ -128,7 +128,7 @@ server <- function(input, output, session) {
     metricTmp = input$fig3_metric
     
     
-    highchartOutput("plot_fig3")
+    highchartOutput("plot_fig3", height = '450px')
     
     
   })
