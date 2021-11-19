@@ -304,8 +304,8 @@ le_by_decile<-dta %>% group_by(cbsa) %>%
     decile_le<-.x %>% group_by(decile_income) %>% 
       summarise(le=weighted.mean(le, w=pop))
     decile_le
-  }) %>% left_join(total_pop_msa) %>% left_join(region) %>% 
-  filter(total_pop>=1000000)
+  }) %>% left_join(total_pop_msa) %>% left_join(region)%>%
+filter(total_pop>=1000000)
 
 #Figure 3b
 
@@ -328,8 +328,6 @@ cv_decile_tot<-le_by_decile%>%
 cv_decile1<-cv_decile%>%
  bind_rows(cv_decile_tot)%>%
 mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
-
-#figure out colors 
 
 figure3cv<-cv_decile1%>%
   filter(type=="cv")%>%
@@ -394,6 +392,7 @@ figure3mean__RL<-cv_decile%>%ungroup() %>%
   geom_line(aes(color=Region_Name), show.legend = F)+
   geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)
 figure3mean__RL
+
 ### END COLOR CODING CHECK
 
 figure3mean<-cv_decile%>%
