@@ -163,18 +163,21 @@ income_ineq<-dta %>% group_by(cbsa) %>%
     #   ggplot(aes(x = decile_income, y = le))+geom_point() +
     #   geom_smooth(method = "lm")
     .x<-.x %>% 
-      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))
-    decile_le<-.x %>% group_by(decile_income) %>% 
-      summarise(le=weighted.mean(le, w=pop)) %>% 
-      filter(decile_income%in%c(1, 10)) %>% pull(le)
+      mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)), 
+             decile_income1=(decile_income-1)/9)
+    decile_le<-.x %>% group_by(decile_income1) %>% 
+      summarise(le=weighted.mean(le, w=pop))%>% 
+      filter(decile_income1%in%c(0, 1)) %>% pull(le)
     mean_le<-weighted.mean(.x$le, w=.x$pop)
-    model<-lm(le~decile_income, data=.x) %>% tidy
-    sii<-model %>% filter(term=="decile_income") %>% pull(estimate)
-    rii<-sii/mean_le
+    model<-lm(le~decile_income1, data=.x) %>% tidy
+   model1<-glm(le~decile_income1, data=.x, family = quasipoisson(link="log"))%>% tidy
+    sii<-model %>% filter(term=="decile_income1") %>% pull(estimate)
+    rii<-model1 %>%filter(term=="decile_income1")%>%pull (estimate)
     data.frame(dif=decile_le[2]-decile_le[1],
                ratio=decile_le[2]/decile_le[1],
                sii=sii, 
-               rii=rii) %>% as_tibble
+               rii=rii, 
+#tests diff from prior rii calc  rii2=sii/mean_le) %>% as_tibble
   }) %>% left_join(region)
 
 income_ineq_long<-income_ineq %>% gather(type, value, -cbsa, -Region, -Region_Name) %>% 
@@ -304,7 +307,8 @@ le_by_decile<-dta %>% group_by(cbsa) %>%
     decile_le<-.x %>% group_by(decile_income) %>% 
       summarise(le=weighted.mean(le, w=pop))
     decile_le
-  }) %>% left_join(total_pop_msa) %>% left_join(region)%>%
+  }) %>% left_join(total_pop_msa) %>% left_join(region)
+
 filter(total_pop>=1000000)
 
 #Figure 3b
@@ -345,7 +349,7 @@ figure3cv<-cv_decile1%>%
        y="CV of Life Expectancy", 
        color="Region")+
  # guides(color=F, fill=F)+
-  scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
+  scale_y_continuous(limits=c(0, 5), breaks=seq(0, 5, by=1))+
   scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   theme_bw() +
   theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
@@ -370,7 +374,7 @@ figure3sd<-cv_decile1%>%
        x="Decile of Median Household Income",
        y="SD of Life Expectancy (years)", 
        color="Region")+
- scale_y_continuous(limits=c(0, 3), breaks=seq(0, 3, by=1))+
+ scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
   scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   #  facet_grid(~type)+
   guides(color=F, fill=F)+
@@ -383,19 +387,7 @@ figure3sd<-cv_decile1%>%
 
 figure3sd 
   
-### ALINA RUN HERE TO CHECK COLOR CODING
-xwalk_region_name = le_by_decile %>% ungroup() %>% select(Region,Region_Name) %>% distinct()
-figure3mean__RL<-cv_decile%>%ungroup() %>% 
-  left_join(xwalk_region_name) %>% 
-  filter(type=="mean")%>%
-  ggplot( aes(x=decile_income, y=value, group=Region_Name)) +
-  geom_line(aes(color=Region_Name), show.legend = F)+
-  geom_point(aes(fill=Region_Name), size=2, color="black", pch=21)
-figure3mean__RL
-
-### END COLOR CODING CHECK
-
-figure3mean<-cv_decile%>%
+figure3mean<-cv_decile1%>%
   filter(type=="mean")%>%
   ggplot( aes(x=decile_income, y=value, group=Region)) +
   stat_summary(aes(y = value,group=1), fun=mean, colour="black", geom= "point",group=1)+
@@ -520,7 +512,7 @@ group_by(Region_Name, decile_income)%>%
   summarize(mean=mean(le), 
             sd=sd(le))
 
-figure4<- ggplot()+ 
+figure3<- ggplot()+ 
   geom_line(data=mean, aes(x=decile_income, y=mean))+
   geom_point(data=mean, aes(x=decile_income, y=mean))+
   facet_wrap(~Region_Name)
@@ -569,7 +561,7 @@ full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>%
                                "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
                                "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio",
                                "Income: SII", "Income: RII"))) %>%
-  left_join(region) %>% 
+  left_join(region) %>%
   select(cbsa, type2, value, Region_Name) %>% 
   spread(type2, value)
 cols<-c("Total: Abs. Disparity", "Total: Rel. Disparity",
