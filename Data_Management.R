@@ -34,6 +34,32 @@ WI_le<-WI_le%>%
 #bind WI and ME with rest of the country
 le1<-rbind(le, ME_le, WI_le)
 
+####load abridged life tables 
+lt<-fread('https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/US_B.CSV')
+ 
+lt<-lt%>%
+  mutate(GEOID=as.numeric(`Tract ID`),
+       le=as.numeric(`e(x)`), 
+       se=as.numeric(`se(e(x))`)) %>% 
+  select(GEOID, le,se)
+
+ME_lt<-fread('https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/ME_B.CSV')
+ME_lt<-ME_lt%>%
+  mutate(GEOID=as.numeric(`Tract ID`),
+              le=as.numeric(`e(x)`), 
+              se=as.numeric(`se(e(x))`)) %>% 
+  select(GEOID, le,se)
+
+WI_lt<-fread('https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/WI_B.CSV')
+WI_lt<-WI_lt%>%
+  mutate(GEOID=as.numeric(`Tract ID`),
+         le=as.numeric(`e(x)`), 
+         se=as.numeric(`se(e(x))`)) %>% 
+  select(GEOID, le,se)
+str(ME_lt)
+#bind all the abridged life tables together
+lt1<-rbind(lt, ME_lt, WI_lt)
+
 # MHI, population, and # households by census tract, from ACS using tidycensus
 
 # obtain a census api key https://api.census.gov/data/key_signup.html
@@ -131,6 +157,18 @@ dta %>% filter(is.na(mhi))
 dta<-dta %>% filter(!is.na(mhi))
 summary(dta)
 
+
+#join abridged life tables to census data
+
+life_tables<-left_join(lt1, ct_data)%>%full_join(cw)%>%left_join(region)
+life_tables<-life_tables %>% filter(!is.na(cbsa))
+# 1 county in ND with is part of the CBSA for Billings, MT. County is tiny so its only census tract is not part USALEEP
+life_tables %>% life_tables(is.na(le))
+life_tables<-life_tables %>% filter(!is.na(le))
+# a total of 6 census tracts with missing income. 
+life_tables %>% filter(is.na(mhi))
+life_tables<-life_tables%>% filter(!is.na(mhi))
+summary(life_tables)
 
 #total population in the final dataste. 
 
