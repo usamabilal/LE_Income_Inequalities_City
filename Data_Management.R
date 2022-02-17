@@ -37,28 +37,40 @@ le1<-rbind(le, ME_le, WI_le)
 ####load abridged life tables 
 lt<-fread('https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/US_B.CSV')
  
-lt<-lt%>%
+lt1<-lt%>%
   mutate(GEOID=as.numeric(`Tract ID`),
        le=as.numeric(`e(x)`), 
        se=as.numeric(`se(e(x))`)) %>% 
-  select(GEOID, le,se)
+  rename(age_grp=`Age Group`)%>%
+  select(GEOID,age_grp, le,se)
 
 ME_lt<-fread('https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/ME_B.CSV')
-ME_lt<-ME_lt%>%
-  mutate(GEOID=as.numeric(`Tract ID`),
+
+ME_lt1<-ME_lt%>%
+  rename(age_grp='Age Group')%>%
+    mutate(GEOID=as.numeric(`Tract ID`),
               le=as.numeric(`e(x)`), 
-              se=as.numeric(`se(e(x))`)) %>% 
-  select(GEOID, le,se)
+              se=as.numeric(`se(e(x))`), 
+      #age groups coded differently than in the full US dataset--only recode the values we'll need
+           age_grp=case_when(age_grp=="25 to 34"~ "25-34", 
+                             age_grp=="55 to 64"~ "55-64", 
+                             age_grp=="65 to 74"~ "65-74"))%>%
+  select(GEOID,age_grp, le,se)
+
 
 WI_lt<-fread('https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/WI_B.CSV')
-WI_lt<-WI_lt%>%
+WI_lt1<-WI_lt%>%
+  rename(age_grp='Age Group')%>%
   mutate(GEOID=as.numeric(`Tract ID`),
          le=as.numeric(`e(x)`), 
-         se=as.numeric(`se(e(x))`)) %>% 
-  select(GEOID, le,se)
-str(ME_lt)
+         se=as.numeric(`se(e(x))`), 
+         age_grp=case_when(age_grp=="25 to 34"~ "25-34", 
+                           age_grp=="55 to 64"~ "55-64", 
+                           age_grp=="65 to 74"~ "65-74"))%>%
+  select(GEOID,age_grp, le,se)
+
 #bind all the abridged life tables together
-lt1<-rbind(lt, ME_lt, WI_lt)
+lt1<-rbind(lt, ME_lt1, WI_lt1)
 
 # MHI, population, and # households by census tract, from ACS using tidycensus
 
@@ -146,7 +158,7 @@ region<-full_join(ct_data, region) %>%
   select(cbsa, Region) %>% left_join(names)
   
 
-dta<-left_join(le, ct_data) %>% full_join(cw) %>% left_join(region)
+dta<-left_join(le1, ct_data) %>% full_join(cw) %>% left_join(region)
 # remove all CTs not belonging to a cbsa
 dta<-dta %>% filter(!is.na(cbsa))
 # 1 county in ND with is part of the CBSA for Billings, MT. County is tiny so its only census tract is not part USALEEP
@@ -163,12 +175,17 @@ summary(dta)
 life_tables<-left_join(lt1, ct_data)%>%full_join(cw)%>%left_join(region)
 life_tables<-life_tables %>% filter(!is.na(cbsa))
 # 1 county in ND with is part of the CBSA for Billings, MT. County is tiny so its only census tract is not part USALEEP
-life_tables %>% life_tables(is.na(le))
+life_tables %>% filter(is.na(le))
 life_tables<-life_tables %>% filter(!is.na(le))
 # a total of 6 census tracts with missing income. 
 life_tables %>% filter(is.na(mhi))
 life_tables<-life_tables%>% filter(!is.na(mhi))
 summary(life_tables)
+
+#limit life tables to just estimates for 25-34, 55-64, 65-74
+life_tables1<-life_tables%>%
+  #limit to the le's at 25, 55, and 65
+  filter(age_grp%in% c('25-34', '55-64', '65-74'))
 
 #total population in the final dataste. 
 
