@@ -6,13 +6,33 @@ library(tidycensus)
 library(lubridate)
 library(bit64)
 # life expectancy
-
+#load LE for all states (minus Maine and WI)
 le<-fread("https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/US_A.CSV")
 le<-le %>% 
   mutate(GEOID=as.numeric(`Tract ID`),
-         le=as.numeric(`e(0)`)) %>% 
-  select(GEOID, le)
+         le=as.numeric(`e(0)`), 
+         se=as.numeric(`se(e(0))`)) %>% 
+  select(GEOID, le,se)
+
 states<-c(state.abb, "DC")
+
+#load Maine and WI
+ME_le<-fread("https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/ME_A.CSV")
+ME_le<-ME_le%>%
+  mutate(GEOID=as.numeric(`Tract ID`),
+         le=as.numeric(`e(0)`), 
+         se=as.numeric(`se(e(0))`)) %>% 
+  select(GEOID, le,se)
+  
+WI_le<-fread("https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/WI_A.CSV")
+WI_le<-WI_le%>%
+  mutate(GEOID=as.numeric(`Tract ID`),
+         le=as.numeric(`e(0)`), 
+         se=as.numeric(`se(e(0))`)) %>% 
+  select(GEOID, le,se)
+
+#bind WI and ME with rest of the country
+le1<-rbind(le, ME_le, WI_le)
 
 # MHI, population, and # households by census tract, from ACS using tidycensus
 
@@ -74,8 +94,8 @@ cw<-read_excel("data/list1.xls", skip=2) %>%
          cbsa=as.numeric(cbsa)) %>% 
   select(state, county, cbsa, cbsa_name)
 
-# remove CBSAs with any county in ME, WI, HI, AK = 2, 15, 23, 55 ; + PR (72)
-exclude<-cw %>% filter(state%in%c(2, 15, 23, 55, 72)) %>% pull(cbsa)
+# remove CBSAs with any county in HI=15 , AK = 2, PR =72 b/c outside the contiguous US
+exclude<-cw %>% filter(state%in%c(2, 15, 72)) %>% pull(cbsa)
 cw<-cw %>% filter(!cbsa%in%exclude)
 # plus remove  Bedford city (all go to bedford county)
 cw<-cw %>% filter(county!=51515) %>% select(-state)
@@ -112,7 +132,13 @@ dta<-dta %>% filter(!is.na(mhi))
 summary(dta)
 
 
+#total population in the final dataste. 
 
+totalpop_ourpop<-dta%>%
+  summarise(total_pop=sum(pop))
+
+totalpop_us<-ct_data%>%
+  summarise(total_pop=sum(pop))
 
 save(dta, ct_data, le, cw, region, cbsa, file="data/clean_data.rdata")
 
