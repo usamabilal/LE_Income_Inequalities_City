@@ -14,6 +14,10 @@ library(plotly)
 library(dineq)
 library(car)
 library(ggpubr)
+library(mice)
+library(ineq)
+
+
 
 load("data/clean_data.rdata")
 total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>% 
@@ -25,25 +29,54 @@ total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>%
 # CV
 # GINI from reldist package and mean log deviation from dineq
 
+
+#Using Rubin's rule to estimate the pooled standard error
+dta1<-dta%>%
+  mutate(total_pop=sum(pop),
+         pct_pop=pop/total_pop)
+
+
+pooled_se<-dta1 %>% group_by(cbsa) %>% 
+  group_modify(~{
+    mean<-mean(.x$le)
+    within<-sum((.x$se)^2)/length(.x$GEOID)
+    between<-sum((.x$le-mean)^2)/(length(.x$GEOID)-1)
+    grandvar <- within + ((1 + (1/length(.x$GEOID))) * between)
+    data.frame(
+      grandse = sqrt(grandvar),
+      mean=mean)%>% as_tibble
+  }) %>% left_join(region)
+
+
 #we'll run all of this, but then limit to our two measures of interest, absolute and relative 
 
-absolute_ineq<-dta %>% group_by(cbsa) %>% 
+absolute_ineq<-dta1 %>% group_by(cbsa) %>% 
   group_modify(~{
     #.x<-dta %>% filter(cbsa==25940)
+    mean<-mean(.x$le)
+    within<-sum((.x$se)^2)/length(.x$GEOID)
+    between<-sum((.x$le-mean)^2)/(length(.x$GEOID)-1)
+    grandvar <- within + ((1 + (1/length(.x$GEOID))) * between)
     quants<-wtd.quantile(.x$le, q = c(.1, .9), weight = .x$pop)
     wtd.mean<-weighted.mean(.x$le, w=.x$pop)
     wtd.sd<-sum(.x$pop/sum(.x$pop) * (.x$le - wtd.mean)^2)
     gini<-gini(.x$le, weights=.x$pop)*100
+    BGV=sum(.x$pct_pop*((.x$le-mean)^2))
+    kolm<-ineq(.x$le, type="Kolm")
+    wtd.mean<-weighted.mean(.x$le, w=.x$pop)
     data.frame(dif=quants[2]-quants[1],
                ratio=quants[2]/quants[1],
                cv=wtd.sd/wtd.mean*100,
                gini=gini,
-               mld.wt=mld.wtd(.x$le, weights=.x$pop)) %>% as_tibble
+               mld.wt=mld.wtd(.x$le, weights=.x$pop), 
+               kolm=kolm,
+               BGV=BGV,
+               grandse = sqrt(grandvar)) %>% as_tibble
   }) %>% left_join(region)
 absolute_ineq_long<-absolute_ineq %>% gather(type, value, -cbsa, -Region, -Region_Name) %>% 
-  mutate(type=factor(type, levels=c("dif", "ratio", "cv", "gini", "mld.wt"),
+  mutate(type=factor(type, levels=c("dif", "ratio", "cv", "gini", "mld.wt", "kolm", "BGV"),
                      labels=c("Abs. Disparity", "Rel. Disparity",
-                              "Coefficient of Variation", "Gini", "Mean Log Deviation")),
+                              "Coefficient of Variation", "Gini", "Mean Log Deviation", "Kolm Index", "Between Group Variance")),
          Region_Name=sub(" Region", "", Region_Name)) %>% 
   left_join(total_pop_msa)
 
@@ -176,7 +209,7 @@ income_ineq<-dta %>% group_by(cbsa) %>%
     data.frame(dif=decile_le[2]-decile_le[1],
                ratio=decile_le[2]/decile_le[1],
                sii=sii, 
-               rii=rii, 
+               rii=rii) 
 #tests diff from prior rii calc  rii2=sii/mean_le) %>% as_tibble
   }) %>% left_join(region)
 
@@ -197,7 +230,7 @@ summary_income<-income_ineq_long %>%
   mutate(rank=row_number())
 # > 1M
 summary_absolute_large<-absolute_ineq_long %>% 
-  filter(total_pop>=1000000) %>% 
+#  filter(total_pop>=1000000) %>% 
   arrange(type, value) %>% 
   group_by(type) %>% 
   mutate(rank=row_number()) %>% 
@@ -207,7 +240,7 @@ summary_absolute_large<-absolute_ineq_long %>%
   ungroup() %>% 
   mutate(rank=row_number())
 summary_income_large<-income_ineq_long %>% 
-  filter(total_pop>=1000000) %>% 
+#  filter(total_pop>=1000000) %>% 
   arrange(type, value) %>% 
   group_by(type) %>% 
   mutate(rank=row_number()) %>% 
@@ -218,7 +251,7 @@ summary_income_large<-income_ineq_long %>%
   mutate(rank=row_number())
 
 summary_large_abs<-absolute_ineq_long %>% 
-  filter(total_pop>=1000000 & type=="Abs. Disparity") %>% 
+ filter( type=="Abs. Disparity") %>% 
   arrange(desc(value)) %>% 
   group_by(type) %>% 
   mutate(rank=row_number())%>%
@@ -229,7 +262,7 @@ summary_large_abs<-absolute_ineq_long %>%
   mutate(total_dif=format(total_dif, digits=1, nsmall=1))
 
 summary_large_rel<-absolute_ineq_long %>% 
-  filter(total_pop>=1000000 & type=="Rel. Disparity") %>% 
+  filter( type=="Rel. Disparity") %>% 
   arrange(desc(value)) %>% 
   group_by(type) %>% 
   mutate(rank=row_number())%>%
@@ -543,7 +576,155 @@ quantile(sj$le, probs = seq(.1, .9, by = .1))
 
 #view quintiles
 
-####### Appendix Figure 1 -----
+####### Appendix ###################### -----
+
+#Appendix Figure 1######
+#Figure 1 repeated with income disparity measure 
+#Figure 1 repeated with income disparity measure 
+
+absolute_rel_income_ineq_long<-income_ineq_long%>%
+  filter(type %in% c("Top/Bottom Difference", "Top/Bottom Ratio"))%>%
+  mutate(Region_Name=factor(Region_Name), 
+         Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
+
+my_breaks <- function(y) { if (max(y) > 2) seq(0, 12.5, 2.5) else seq(1, 1.16, 0.2) }
+
+appen_f1a<-absolute_rel_income_ineq_long%>%
+  filter(type=="Top/Bottom Difference")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  geom_hline(lty=2, yintercept=0)+
+  labs(x="",
+       y="Value",
+       title="Top/Bottom Difference")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y=element_text(size=18, color="black"),
+        axis.title.y=element_text(face="bold", size=20),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+appen_f1af1a
+ggsave("results/Appendixfigure1a_ASM.pdf", f1a, width=20, height=7.5)
+
+appen_f1b<-absolute_rel_income_ineq_long%>%
+  filter(type=="Top/Bottom Ratio")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  geom_hline(lty=2, yintercept=1)+
+  scale_y_continuous(trans="log") +
+  labs(x="",
+       y="Value",
+       title="Top/Bottom Ratio")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y=element_text(size=18, color="black"),
+        axis.title.y=element_blank(),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+f1b
+
+library(gridExtra)
+
+figure1<-grid.arrange(f1a,f1b,
+                      ncol = 2, nrow = 1)
+g <- arrangeGrob(f1a,f1b,  nrow=1) #generates g
+ggsave(g, file="results/Appendix_figure1.pdf", width=15, height=10) #saves g
+
+#view specific MSAs
+ggplotly(f1a)
+
+
+#repeat with RII and SII
+
+absolute_rel_income_ineq_long<-income_ineq_long%>%
+  mutate(Region_Name=factor(Region_Name), 
+         Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
+
+my_breaks <- function(y) { if (max(y) > 2) seq(0, 12.5, 2.5) else seq(1, 1.16, 0.2) }
+
+appen_f1a<-absolute_rel_income_ineq_long%>%
+  filter(type=="Slope Index of Inequality")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  geom_hline(lty=2, yintercept=0)+
+  labs(x="",
+       y="Value",
+       title="Slope Index of Inequality")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y=element_text(size=18, color="black"),
+        axis.title.y=element_text(face="bold", size=20),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+appen_f1a
+ggsave("results/Appendixfigure1a_ASM.pdf", f1a, width=20, height=7.5)
+
+appen_f1b<-absolute_rel_income_ineq_long%>%
+  filter(type=="Relative Index of Inequality")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  scale_y_continuous() +
+  labs(x="",
+       y="Value",
+       title="Relative Index of Inequality")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y=element_text(size=18, color="black"),
+        axis.title.y=element_blank(),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+appen_f1b
+
+library(gridExtra)
+
+figure_appen1b<-grid.arrange(appen_f1a,appen_f1b,
+                             ncol = 2, nrow = 1)
+g <- arrangeGrob(appen_f1a,appen_f1b,  nrow=1) #generates g
+ggsave(g, file="results/Appendix_figure1.pdf", width=15, height=10) #saves g
+
+#view specific MSAs
+ggplotly(f1a)
+####Appendix FIgure 2
 ## correlation between indicators
 full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
                       mutate(ineq="Total"),

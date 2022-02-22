@@ -70,7 +70,7 @@ WI_lt1<-WI_lt%>%
   select(GEOID,age_grp, le,se)
 
 #bind all the abridged life tables together
-lt1<-rbind(lt, ME_lt1, WI_lt1)
+lt1<-rbind(lt1, ME_lt1, WI_lt1)
 
 # MHI, population, and # households by census tract, from ACS using tidycensus
 
@@ -187,7 +187,7 @@ life_tables1<-life_tables%>%
   #limit to the le's at 25, 55, and 65
   filter(age_grp%in% c('25-34', '55-64', '65-74'))
 
-#total population in the final dataste. 
+#total population in the final dataset. 
 
 totalpop_ourpop<-dta%>%
   summarise(total_pop=sum(pop))
@@ -195,5 +195,5 @@ totalpop_ourpop<-dta%>%
 totalpop_us<-ct_data%>%
   summarise(total_pop=sum(pop))
 
-save(dta, ct_data, le, cw, region, cbsa, file="data/clean_data.rdata")
+save(dta, ct_data, le, cw, region, cbsa, life_tables1, file="data/clean_data.rdata")
 
