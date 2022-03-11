@@ -962,7 +962,7 @@ medians_inc<-absolute_rel_income_ineq_long%>%
 
 
 #################################################################################
-####Conditional Life Expectancy Appendix Figure 1
+####Conditional Life Expectancy
 #APpendix Figure 3 
 #absolute and relative disparity 
 
