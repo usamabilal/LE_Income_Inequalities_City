@@ -457,6 +457,15 @@ ggsave(g, file="results/figure1.pdf", width=15, height=10) #saves g
 #view specific MSAs
 ggplotly(f1a)
 
+
+#median LE disparities by region (figure 1)
+
+medians<-absolute_rel_ineq_long%>%group_by(Region_Name, type)%>%
+  summarize(median=median(value), 
+            mean=mean(value),
+            sd=sd(value), 
+            cv=sd/mean*100)
+
 ############################################################################
 #Table 1 -------
 
@@ -602,20 +611,8 @@ logmhi
 abspop<-ggplot(cbsa_inequities, aes(x=poplog, y=value))+geom_point()
 
 #regress inequities on absolute disparities
-#model 1- pop (log)
-summary(abspop<-lm(dif~log(pop), data=cbsa_inequities))
-confint(abspop,level=0.95)
-coef(abspop)*log(1.01)
 
-0.341*log(1.10)
 
-#model 2 - MHI (log) 
-summary(abs_mhi<-lm(value~log(mhi), data=cbsa_inequities ))
-confint(abs_mhi,level=0.95)
-
-#model 3- region 
-summary(region<-lm(value~ region, data=cbsa_abs))
-confint(region,level=0.95)
 
 #use rubin's rule for SE's
 regressions<-cbsa_inequities %>% group_by(iteration) %>% 
@@ -769,141 +766,16 @@ ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
 
-###############################################################################
-#APPENDIX FIGURE 3b
-#repeated w/ mhi standardized across the full US, not MSA
-
-#use imputed data (iterations 1000) to find weighted mean, then take mean of that le by cbsa and decile income
-
-le_by_decile_v2<-imputed %>%  group_by(iteration, cbsa)%>% 
-  mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))%>%
-  group_by(decile_income, cbsa)%>%
-  summarise(le=weighted.mean(le, w=pop))%>%
-  ungroup()%>%
-  summarise(le=mean(le))%>%
-  left_join(total_pop_msa)%>% left_join(region)
-
-
-cv_decile_v2<-le_by_decile_v2 %>% group_by(Region, decile_income) %>% 
-  summarize(mean=mean(le), 
-            sd=sd(le), 
-            cv=sd/mean*100)%>%
-  pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
-  mutate(Region=factor(Region)) 
-
-cv_decile_tot_v2<-le_by_decile_v2%>%
-  group_by(decile_income)%>%
-  summarize(mean=mean(le), 
-            sd=sd(le), 
-            cv=sd/mean*100)%>%
-  pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
-  mutate(Region=factor(5))
-
-
-cv_decile1_v2<-cv_decile_v2%>%
-  bind_rows(cv_decile_tot_v2)%>%
-  mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
-
-figure3cv<-cv_decile1_v2%>%
-  filter(type=="cv")%>%
-  ggplot(aes(x=decile_income, y=value, group=Region)) +
-  geom_line(aes(color=Region), show.legend = F)+
-  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
-  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
-  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
-  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
-  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
-  scale_fill_manual(name="Region", labels=c("Midwest", "South","Northeast", "West", "Overall"), values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
-  scale_colour_manual(values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
-  labs(title="Coefficient of Variation (CV)",
-       x="Decile of Median Household Income",
-       y="CV of Life Expectancy", 
-       color="Region")+
-  # guides(color=F, fill=F)+
-  scale_y_continuous(limits=c(0, 5), breaks=seq(0, 5, by=1))+
-  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
-  theme_bw() +
-  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
-        axis.title=element_text(color="black", face="bold", size=10),
-        strip.text=element_text(color="black", face="bold", size=16),
-        strip.background = element_blank())
-figure3cv
-
-
-figure3sd<-cv_decile1_v2%>%
-  filter(type=="sd")%>%
-  ggplot(aes(x=decile_income, y=value, group=Region)) +
-  geom_line(aes(color=Region),show.legend = F)+
-  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
-  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
-  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
-  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
-  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
-  scale_fill_manual(name="Region", labels=c("Midwest", "South","Northeast", "West", "Overall"), values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
-  scale_colour_manual(values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
-  labs(title="Standard Deviation (SD)",
-       x="Decile of Median Household Income",
-       y="SD of Life Expectancy (years)", 
-       color="Region")+
-  scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
-  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
-  #  facet_grid(~type)+
-  guides(color=F, fill=F)+
-  theme_bw() +
-  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
-        axis.title.x = element_blank(),
-        axis.title=element_text(color="black", face="bold", size=10),
-        strip.text=element_text(color="black", face="bold", size=16),
-        strip.background = element_blank())
-
-figure3sd 
-
-figure3mean<-cv_decile1_v2%>%
-  filter(type=="mean")%>%
-  ggplot( aes(x=decile_income, y=value, group=Region)) +
-  stat_summary(aes(y = value,group=1), fun=mean, colour="black", geom= "point",group=1)+
-  stat_summary(aes(y = value,group=1), fun=mean, colour="black", geom="line",group=1)+
-  geom_line(aes(color=Region), show.legend = F)+
-  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
-  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
-  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
-  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
-  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
-  scale_fill_manual(name="Region", labels=c("Midwest", "South","Northeast", "West", "Overall"), values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
-  scale_colour_manual(values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
-  labs(title="Mean",
-       x="Decile of Median Household Income",
-       y="Life Expectancy (years)", 
-       color="Region")+
-  guides(color=F, fill=F)+
-  scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
-  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
-  theme_bw() +
-  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
-        axis.title.x = element_blank(),
-        axis.title=element_text(color="black", face="bold", size=10),
-        strip.text=element_text(color="black", face="bold", size=16),
-        strip.background = element_blank())
-
-figure3mean
-
-library(ggpubr)
-ggarrange(figure3mean,figure3sd, figure3cv, ncol = 1, nrow=3 )
-
-
-ggsave("results/figure3_new_v2.pdf", width=8, height=7.5)
-ggplotly(figure3mean)
-ggplotly(figure3cv)
-ggplotly(figure3sd)
 
 
 #view highest and lowest disp by region and level 
 view<-le_by_decile%>%
   arrange(Region, decile_income, le)
 
-#TABLE 2
+##############################################################
+
 #find the mean, sd, cv for each decile within regions
-cv_decile<-le_by_decile %>% group_by(Region, decile_income) %>% 
+cv_decile<-le_by_decile %>% group_by(Region_Name, decile_income) %>% 
   summarize(mean=mean(le), 
             sd=sd(le), 
             cv=sd/mean*100)
@@ -921,6 +793,7 @@ fwrite(cv_decile_tot, "results/cv_decile_tot.csv")
 
 ################################################################################
 #Descriptives:  -----
+
 #mean differences by income 
 mean<-le_by_decile%>%
 group_by(Region_Name, decile_income)%>%
@@ -962,14 +835,51 @@ wtd.quantile(sj$le, q = c(.1, .9), weight = sj$pop)
 
 quantile(sj$le, probs = seq(.1, .9, by = .1))
 
-#view quintiles
+
+########################################################################################################################################################
+#-----------------------------Appendix ----------------------------------------------------------------------------------------------------------------
+########################################################################################################################################################
 
 
-#################################################################################
-#-----------------------------Appendix -------------------------------------------
-##################################################################################
+####Appendix FIgure 1
+## correlation between indicators
+full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
+                      mutate(ineq="Total"),
+                    income_ineq_long %>% select(cbsa, type, value) %>% 
+                      mutate(ineq="Income"))  %>%
+  filter(type%in%c("Abs. Disparity", "Rel. Disparity",
+                   "Coefficient of Variation", "Gini", "Mean Log Deviation", 
+                   "Top/Bottom Difference", "Top/Bottom Ratio","Between Group Variance",
+                   "Slope Index of Inequality", "Relative Index of Inequality"))%>%
+  mutate(type2=paste0(ineq, ": ", type)) %>% 
+  arrange(desc(value)) %>%
+  group_by(type2) %>%
+  mutate(rank=row_number()) %>% 
+  mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
+                                      "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Deviation",
+                                      "Income: Top/Bottom Difference", "Income: Top/Bottom Ratio", "Income: Between Group Variance", 
+                                      "Income: Slope Index of Inequality", "Income: Relative Index of Inequality"),
+                      labels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
+                               "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.", 
+                               "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio","Income: BGV",
+                               "Income: SII", "Income: RII"))) %>%
+  left_join(region) %>%
+  select(cbsa, type2, value, Region_Name) %>% 
+  spread(type2, value)
+cols<-c("Total: Abs. Disparity", "Total: Rel. Disparity",
+        "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
+        "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio", "Income: BGV",
+        "Income: SII", "Income: RII")
+corrs<-ggpairs(data=full_dta, 
+               columns = cols, upper = list(continuous = wrap("cor", size=6, color="black", stars=F))) +
+  theme_bw() +
+  theme(strip.background=element_blank(),
+        strip.text = element_text(color="black", size=12, face="bold"),
+        axis.text=element_text(color="black"))
+ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
 
-#Appendix Figure 1######
+###############################################################################
+#Appendix Figure 2######
 #Figure 1 repeated with income disparity measure 
 
 absolute_rel_income_ineq_long<-income_ineq_long%>%
@@ -1037,86 +947,23 @@ library(gridExtra)
 figure1<-grid.arrange(appen_f1a,appen_f1b,
                       ncol = 2, nrow = 1)
 g <- arrangeGrob(appen_f1a,appen_f1b,  nrow=1) #generates g
-ggsave(g, file="results/Appendix_figure1.pdf", width=15, height=10) #saves g
+ggsave(g, file="results/Appendix_figure2.pdf", width=15, height=10) #saves g
 
 #view specific MSAs
 ggplotly(f1a)
 
+medians_inc<-absolute_rel_income_ineq_long%>%
+  filter(type%in%c("Top/Bottom Difference", "Top/Bottom Ratio"))%>%
+  group_by(Region_Name, type)%>%
+  summarize(median=median(value), 
+            mean=mean(value),
+            sd=sd(value), 
+            cv=sd/mean*100)
 
-#Figure 1 repeat with RII and SII
-
-absolute_rel_income_ineq_long<-income_ineq_long%>%
-  mutate(Region_Name=factor(Region_Name), 
-         Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
-
-my_breaks <- function(y) { if (max(y) > 2) seq(0, 12.5, 2.5) else seq(1, 1.16, 0.2) }
-
-appen_f1c<-absolute_rel_income_ineq_long%>%
-  filter(type=="Slope Index of Inequality")%>%
-  ggplot(aes(x=Region_Name, y=value))+
-  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
-  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
-              width=0.1, height=0, alpha=1,
-              color="black", pch=21) +
-  guides(color=F, fill=F, size=F)+
-  scale_fill_discrete()+
-  scale_colour_discrete()+
-  geom_hline(lty=2, yintercept=0)+
-  labs(x="",
-       y="Value",
-       title="Slope Index of Inequality")+
-  theme_bw() +
-  theme(legend.position = "bottom",
-        legend.key.width = unit(50, "points"),
-        panel.grid.major.x = element_blank(),
-        axis.text.x=element_text(size=18, color="black"),
-        axis.text.y=element_text(size=18, color="black"),
-        axis.title.y=element_text(face="bold", size=20),
-        strip.text =element_text(face="bold", size=20),
-        strip.background = element_blank(),
-        plot.title=element_text(size=18, hjust=0.5))
-appen_f1c
-ggsave("results/Appendixfigure1c_ASM.pdf", f1a, width=20, height=7.5)
-
-appen_f1d<-absolute_rel_income_ineq_long%>%
-  filter(type=="Relative Index of Inequality")%>%
-  ggplot(aes(x=Region_Name, y=value))+
-  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
-  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
-              width=0.1, height=0, alpha=1,
-              color="black", pch=21) +
-  guides(color=F, fill=F, size=F)+
-  scale_fill_discrete()+
-  scale_colour_discrete()+
-  scale_y_continuous() +
-  labs(x="",
-       y="Value",
-       title="Relative Index of Inequality")+
-  theme_bw() +
-  geom_hline(lty=2, yintercept=1)+
-  theme(legend.position = "bottom",
-        legend.key.width = unit(50, "points"),
-        panel.grid.major.x = element_blank(),
-        axis.text.x=element_text(size=18, color="black"),
-        axis.text.y=element_text(size=18, color="black"),
-        axis.title.y=element_blank(),
-        strip.text =element_text(face="bold", size=20),
-        strip.background = element_blank(),
-        plot.title=element_text(size=18, hjust=0.5))
-appen_f1d
-
-library(gridExtra)
-
-figure_appen1b<-grid.arrange(appen_f1c,appen_f1d,
-                             ncol = 2, nrow = 1)
-g <- arrangeGrob(appen_f1c,appen_f1d,  nrow=1) #generates g
-ggsave(g, file="results/Appendix_figure1c.pdf", width=15, height=10) #saves g
-
-#view specific MSAs
-ggplotly(f1a)
 
 #################################################################################
 ####Conditional Life Expectancy Appendix Figure 1
+#APpendix Figure 3 
 #absolute and relative disparity 
 
 f1a_lt<-absolute_rel_ineq_long_lt%>%
@@ -1180,49 +1027,153 @@ library(gridExtra)
 figure1<-grid.arrange(f1a_lt,f1b_lt,
                       ncol = 2, nrow = 2)
 g_lt <- arrangeGrob(f1a_lt,f1b_lt,  nrow=2) #generates g
-ggsave(g_lt, file="results/appendix_figure1_conditional.pdf", width=15, height=10) #saves g
+ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=10) #saves g
 
 
-####Appendix FIgure 2
-## correlation between indicators
-full_dta<-bind_rows(absolute_ineq_long %>% select(cbsa, type, value) %>% 
-                      mutate(ineq="Total"),
-                    income_ineq_long %>% select(cbsa, type, value) %>% 
-                      mutate(ineq="Income"))  %>%
-  filter(type%in%c("Abs. Disparity", "Rel. Disparity",
-                                      "Coefficient of Variation", "Gini", "Mean Log Deviation", 
-                                      "Top/Bottom Difference", "Top/Bottom Ratio","Between Group Variance",
-                                      "Slope Index of Inequality", "Relative Index of Inequality"))%>%
-  mutate(type2=paste0(ineq, ": ", type)) %>% 
-  arrange(desc(value)) %>%
-  group_by(type2) %>%
-  mutate(rank=row_number()) %>% 
-  mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
-                                      "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Deviation",
-                                      "Income: Top/Bottom Difference", "Income: Top/Bottom Ratio", "Income: Between Group Variance", 
-                                      "Income: Slope Index of Inequality", "Income: Relative Index of Inequality"),
-                      labels=c("Total: Abs. Disparity", "Total: Rel. Disparity",
-                               "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.", 
-                               "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio","Income: BGV",
-                               "Income: SII", "Income: RII"))) %>%
-  left_join(region) %>%
-  select(cbsa, type2, value, Region_Name) %>% 
-  spread(type2, value)
-cols<-c("Total: Abs. Disparity", "Total: Rel. Disparity",
-        "Total: Coefficient of Variation", "Total: Gini", "Total: Mean Log Dev.",
-        "Income: Top/Bottom Difference", "Income:Top/Bottom Ratio", "Income: BGV",
-        "Income: SII", "Income: RII")
-corrs<-ggpairs(data=full_dta, 
-               columns = cols, upper = list(continuous = wrap("cor", size=6, color="black", stars=F))) +
+
+#######APPENDIX Figure 4
+##############################################################################
+#figure 3 repeated w/ mhi standardized across the full US, not MSA-- some cbsa's won't have observations in all deciles
+
+#use imputed data (iterations 1000) to find weighted mean, then take mean of that le by cbsa and decile income
+mhi_nation<-dta1 %>% 
+  mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))%>%
+  select(GEOID, decile_income, pop, cbsa, pct_pop)
+
+#create 1000 iterations of the LE for each CT (using le and se)
+imputed_mhi_nation<-dta %>% group_by(GEOID) %>% 
+  group_modify(~{
+    dist=rnorm(1000, mean=.x$le, sd=.x$se)
+    data.frame(
+      le=dist, 
+      iteration=1:1000)
+  }) %>% left_join(mhi_nation, by="GEOID") 
+
+
+le_by_decile_v2<-imputed_mhi_nation %>% group_by(iteration, cbsa, decile_income) %>% 
+  summarize(le=weighted.mean(le, w=pop))%>%
+  ungroup()%>%
+  group_by(cbsa, decile_income)%>%
+  summarize(le=mean(le))%>%
+  left_join(total_pop_msa) %>% left_join(region)
+
+cv_decile_v2<-le_by_decile_v2 %>% group_by(Region, decile_income) %>% 
+  summarize(mean=mean(le, na.rm=T), 
+            sd=sd(le, na.rm=T), 
+            cv=sd/mean*100, na.rm=T)%>%
+  pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
+  mutate(Region=factor(Region)) 
+
+cv_decile_tot_v2<-le_by_decile_v2%>%
+  group_by(decile_income)%>%
+  summarize(mean=mean(le, na.rm=T), 
+            sd=sd(le, na.rm=T), 
+            cv=sd/mean*100, na.rm=T)%>%
+  pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
+  mutate(Region=factor(5))
+
+
+cv_decile1_v2<-cv_decile_v2%>%
+  bind_rows(cv_decile_tot_v2)%>%
+  mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
+
+figure3cv_mhi<-cv_decile1_v2%>%
+  filter(type=="cv")%>%
+  ggplot(aes(x=decile_income, y=value, group=Region)) +
+  geom_line(aes(color=Region), show.legend = F)+
+  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
+  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
+  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
+  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
+  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  scale_fill_manual(name="Region", labels=c("Midwest", "South","Northeast", "West", "Overall"), values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
+  scale_colour_manual(values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
+  labs(title="Coefficient of Variation (CV)",
+       x="Decile of Median Household Income",
+       y="CV of Life Expectancy", 
+       color="Region")+
+  # guides(color=F, fill=F)+
+  scale_y_continuous(limits=c(0, 5), breaks=seq(0, 5, by=1))+
+  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   theme_bw() +
-  theme(strip.background=element_blank(),
-        strip.text = element_text(color="black", size=12, face="bold"),
-        axis.text=element_text(color="black"))
-ggsave(filename="results/Appendix_figure2.pdf", corrs, width=20, height=15)
+  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
+        axis.title=element_text(color="black", face="bold", size=10),
+        strip.text=element_text(color="black", face="bold", size=16),
+        strip.background = element_blank())
+figure3cv_mhi
 
 
-#######APPENDIX Figure 3
+figure3sd_mhi<-cv_decile1_v2%>%
+  filter(type=="sd")%>%
+  ggplot(aes(x=decile_income, y=value, group=Region)) +
+  geom_line(aes(color=Region),show.legend = F)+
+  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
+  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
+  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
+  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
+  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  scale_fill_manual(name="Region", labels=c("Midwest", "South","Northeast", "West", "Overall"), values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
+  scale_colour_manual(values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
+  labs(title="Standard Deviation (SD)",
+       x="Decile of Median Household Income",
+       y="SD of Life Expectancy (years)", 
+       color="Region")+
+  scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
+  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
+  #  facet_grid(~type)+
+  guides(color=F, fill=F)+
+  theme_bw() +
+  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
+        axis.title.x = element_blank(),
+        axis.title=element_text(color="black", face="bold", size=10),
+        strip.text=element_text(color="black", face="bold", size=16),
+        strip.background = element_blank())
+
+figure3sd_mhi 
+
+figure3mean_mhi<-cv_decile1_v2%>%
+  filter(type=="mean")%>%
+  ggplot( aes(x=decile_income, y=value, group=Region)) +
+  stat_summary(aes(y = value,group=1), fun=mean, colour="black", geom= "point",group=1)+
+  stat_summary(aes(y = value,group=1), fun=mean, colour="black", geom="line",group=1)+
+  geom_line(aes(color=Region), show.legend = F)+
+  geom_point(aes(fill=Region), size=2, color="black", pch=21)+
+  # annotate("segment", x=0, xend=0, y=-Inf, yend=Inf, arrow=arrow(type="closed"), color="darkgreen", size=2)+
+  # annotate("segment", x=-Inf, xend=Inf, y=67.5, yend=67.5, arrow=arrow(type="closed"), color="darkblue", size=2)+
+  # annotate("text", label="Higher Income", x=4, y=68, vjust=0, hjust=.5, color="darkblue", fontface="bold", size=5)+
+  # annotate("text", label="Increased Longevity", x=-0.2, y=77.5, angle=90, vjust=0, hjust=.5, color="darkgreen", fontface="bold", size=5)+
+  scale_fill_manual(name="Region", labels=c("Midwest", "South","Northeast", "West", "Overall"), values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
+  scale_colour_manual(values=c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF","Black"))+
+  labs(title="Mean",
+       x="Decile of Median Household Income",
+       y="Life Expectancy (years)", 
+       color="Region")+
+  guides(color=F, fill=F)+
+  scale_y_continuous(limits=c(67, 85.8), breaks=seq(70, 85, by=5))+
+  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
+  theme_bw() +
+  theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
+        axis.title.x = element_blank(),
+        axis.title=element_text(color="black", face="bold", size=10),
+        strip.text=element_text(color="black", face="bold", size=16),
+        strip.background = element_blank())
+
+figure3mean_mhi
+
+library(ggpubr)
+ggarrange(figure3mean_mhi,figure3sd_mhi, figure3cv_mhi, ncol = 1, nrow=3 )
+
+
+ggsave("results/appen_figure4_mhi_nation.pdf", width=8, height=7.5)
+ggplotly(figure3mean)
+ggplotly(figure3cv)
+ggplotly(figure3sd)
+
+
+###############################################################################
+#APpendix Figure 5
 #conditional life expectancies, repeating Figure 3 
+
 
 le_by_decile_v2<-imputed_lt %>%  group_by(iteration, cbsa, age_grp)%>% 
   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))%>%
@@ -1256,7 +1207,7 @@ cv_decile1_lt<-cv_decile_lt%>%
   bind_rows(cv_decile_tot_lt)%>%
   mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
 
-figure3cv<-cv_decile1_lt%>%
+figure3cv_con<-cv_decile1_lt%>%
   filter(type=="cv")%>%
   ggplot(aes(x=decile_income, y=value, group=Region)) +
   geom_line(aes(color=Region), show.legend = F)+
@@ -1280,10 +1231,10 @@ figure3cv<-cv_decile1_lt%>%
         strip.text=element_text(color="black", face="bold", size=16),
         strip.background = element_blank())+
   facet_wrap(~age_grp)
-figure3cv
+figure3cv_con
 
 
-figure3sd<-cv_decile1_lt%>%
+figure3sd_con<-cv_decile1_lt%>%
   filter(type=="sd")%>%
   ggplot(aes(x=decile_income, y=value, group=Region)) +
   geom_line(aes(color=Region),show.legend = F)+
@@ -1310,9 +1261,9 @@ figure3sd<-cv_decile1_lt%>%
         strip.background = element_blank())+
   facet_wrap(~age_grp)
 
-figure3sd 
+figure3sd_con
 
-figure3mean<-cv_decile1_lt%>%
+figure3mean_con<-cv_decile1_lt%>%
   filter(type=="mean")%>%
   ggplot( aes(x=decile_income, y=value, group=Region)) +
   stat_summary(aes(y = value,group=1), fun=mean, colour="black", geom= "point",group=1)+
@@ -1340,13 +1291,13 @@ figure3mean<-cv_decile1_lt%>%
         strip.background = element_blank())+
   facet_wrap(~age_grp)
 
-figure3mean
+figure3mean_con
 
 library(ggpubr)
-ggarrange(figure3mean,figure3sd, figure3cv, ncol = 1, nrow=3 )
+ggarrange(figure3mean_con,figure3sd_con, figure3cv_con, ncol = 1, nrow=3 )
 
 
-ggsave("results/appendix_figure3_conditional.pdf", width=8, height=7.5)
+ggsave("results/appendix_figure5_conditional.pdf", width=8, height=7.5)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
