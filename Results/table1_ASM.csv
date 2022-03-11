@@ -1,364 +1,52 @@
-cbsa_name,Region_Name,rank,total_dif,cbsa_name,Region_Name,rank,total_ratio
-"Ames, IA",Midwest,1,12.3,"Greenville, NC",South,1,1.16
-"Trenton, NJ",Northeast,2,12.0,"Trenton, NJ",Northeast,2,1.16
-"Greenville, NC",South,3,11.9,"Ames, IA",Midwest,3,1.16
-"Naples-Immokalee-Marco Island, FL",South,4,11.7,"Muncie, IN",Midwest,4,1.16
-"Chambersburg-Waynesboro, PA",Northeast,5,11.3,"Evansville, IN-KY",Midwest,5,1.16
-"Evansville, IN-KY",Midwest,6,11.2,"Carbondale-Marion, IL",Midwest,6,1.15
-"Muncie, IN",Midwest,7,11.2,"Naples-Immokalee-Marco Island, FL",South,7,1.15
-"Kankakee, IL",Midwest,8,11.0,"Dayton, OH",Midwest,8,1.15
-"Sierra Vista-Douglas, AZ",West,9,10.9,"Columbus, GA-AL",South,9,1.15
-"Sioux Falls, SD",Midwest,10,10.9,"Memphis, TN-MS-AR",South,10,1.15
-"Carbondale-Marion, IL",Midwest,11,10.8,"Kankakee, IL",Midwest,11,1.15
-"Dayton, OH",Midwest,12,10.8,"Niles-Benton Harbor, MI",Midwest,12,1.15
-"Columbus, GA-AL",South,13,10.7,"Louisville/Jefferson County, KY-IN",South,13,1.15
-"Louisville/Jefferson County, KY-IN",South,14,10.7,"Decatur, IL",Midwest,14,1.15
-"Memphis, TN-MS-AR",South,15,10.7,"Detroit-Warren-Dearborn, MI",Midwest,15,1.15
-"Niles-Benton Harbor, MI",Midwest,16,10.7,"Chambersburg-Waynesboro, PA",Northeast,16,1.15
-"Detroit-Warren-Dearborn, MI",Midwest,17,10.7,"Sierra Vista-Douglas, AZ",West,17,1.15
-"Mankato-North Mankato, MN",Midwest,18,10.6,"Birmingham-Hoover, AL",South,18,1.15
-"Decatur, IL",Midwest,19,10.6,"Sioux Falls, SD",Midwest,19,1.15
-"Great Falls, MT",West,20,10.5,"Springfield, OH",Midwest,20,1.14
-"Watertown-Fort Drum, NY",Northeast,21,10.5,"Great Falls, MT",West,21,1.14
-"Baltimore-Columbia-Towson, MD",South,22,10.3,"Baltimore-Columbia-Towson, MD",South,22,1.14
-"Birmingham-Hoover, AL",South,23,10.3,"Cincinnati, OH-KY-IN",Midwest,23,1.14
-"Punta Gorda, FL",South,24,10.3,"Punta Gorda, FL",South,24,1.14
-"Cincinnati, OH-KY-IN",Midwest,25,10.2,"Lake Havasu City-Kingman, AZ",West,25,1.14
-"Columbus, IN",Midwest,26,10.2,"Columbus, IN",Midwest,26,1.14
-"Fort Wayne, IN",Midwest,27,10.2,"Fort Wayne, IN",Midwest,27,1.14
-"Burlington, NC",South,28,10.1,"Burlington, NC",South,28,1.14
-"Bismarck, ND",Midwest,29,10.1,"Kokomo, IN",Midwest,29,1.14
-"Cleveland-Elyria, OH",Midwest,30,10.0,"Mansfield, OH",Midwest,30,1.14
-"Nashville-Davidson--Murfreesboro--Franklin, TN",South,31,10.0,"Cleveland-Elyria, OH",Midwest,31,1.14
-"Port St. Lucie, FL",South,32,10.0,"Nashville-Davidson--Murfreesboro--Franklin, TN",South,32,1.14
-"Springfield, OH",Midwest,33,10.0,"Jackson, MS",South,33,1.14
-"Cheyenne, WY",West,34, 9.9,"Owensboro, KY",South,34,1.14
-"Jackson, MS",South,35, 9.9,"Mankato-North Mankato, MN",Midwest,35,1.14
-"Kokomo, IN",Midwest,36, 9.9,"Indianapolis-Carmel-Anderson, IN",Midwest,36,1.14
-"Lake Havasu City-Kingman, AZ",West,37, 9.9,"Abilene, TX",South,37,1.14
-"Owensboro, KY",South,38, 9.9,"Shreveport-Bossier City, LA",South,38,1.14
-"Indianapolis-Carmel-Anderson, IN",Midwest,39, 9.9,"Rockford, IL",Midwest,39,1.14
-"Iowa City, IA",Midwest,40, 9.9,"Watertown-Fort Drum, NY",Northeast,40,1.14
-"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",Northeast,41, 9.9,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",Northeast,41,1.14
-"Champaign-Urbana, IL",Midwest,42, 9.9,"Tulsa, OK",South,42,1.14
-"Abilene, TX",South,43, 9.8,"Lawton, OK",South,43,1.14
-"Mansfield, OH",Midwest,44, 9.8,"Sumter, SC",South,44,1.13
-"Rockford, IL",Midwest,45, 9.8,"Waco, TX",South,45,1.13
-"Waco, TX",South,46, 9.8,"Port St. Lucie, FL",South,46,1.13
-"Bloomington, IN",Midwest,47, 9.7,"Monroe, LA",South,47,1.13
-"Greensboro-High Point, NC",South,48, 9.7,"Columbus, OH",Midwest,48,1.13
-"Lakeland-Winter Haven, FL",South,49, 9.7,"Baton Rouge, LA",South,49,1.13
-"Miami-Fort Lauderdale-West Palm Beach, FL",South,50, 9.7,"Bismarck, ND",Midwest,50,1.13
-"Tulsa, OK",South,51, 9.7,"Knoxville, TN",South,51,1.13
-"Columbus, OH",Midwest,52, 9.7,"Beckley, WV",South,52,1.13
-"Lawton, OK",South,53, 9.6,"Greensboro-High Point, NC",South,53,1.13
-"Lima, OH",Midwest,54, 9.6,"Albany, GA",South,54,1.13
-"Ocean City, NJ",Northeast,55, 9.6,"Springfield, IL",Midwest,55,1.13
-"Elkhart-Goshen, IN",Midwest,56, 9.6,"Lake Charles, LA",South,56,1.13
-"Shreveport-Bossier City, LA",South,57, 9.6,"Lima, OH",Midwest,57,1.13
-"Springfield, IL",Midwest,58, 9.6,"Lakeland-Winter Haven, FL",South,58,1.13
-"Albany, GA",South,59, 9.5,"Toledo, OH",Midwest,59,1.13
-"Baton Rouge, LA",South,60, 9.5,"Champaign-Urbana, IL",Midwest,60,1.13
-"Fargo, ND-MN",Midwest,61, 9.5,"Jacksonville, FL",South,61,1.13
-"Jacksonville, FL",South,62, 9.5,"Ocean City, NJ",Northeast,62,1.13
-"Knoxville, TN",South,63, 9.5,"Wichita, KS",Midwest,63,1.13
-"Monroe, LA",South,64, 9.5,"Anniston-Oxford-Jacksonville, AL",South,64,1.13
-"Omaha-Council Bluffs, NE-IA",Midwest,65, 9.5,"Bloomington, IN",Midwest,65,1.13
-"Rapid City, SD",Midwest,66, 9.5,"St. Louis, MO-IL",Midwest,66,1.13
-"St. Louis, MO-IL",Midwest,67, 9.5,"Cheyenne, WY",West,67,1.13
-"Sumter, SC",South,68, 9.5,"Longview, WA",West,68,1.13
-"Waterloo-Cedar Falls, IA",Midwest,69, 9.5,"Huntsville, AL",South,69,1.13
-"Wichita, KS",Midwest,70, 9.5,"Greenville-Anderson-Mauldin, SC",South,70,1.13
-"Fresno, CA",West,71, 9.4,"Elkhart-Goshen, IN",Midwest,71,1.13
-"Greenville-Anderson-Mauldin, SC",South,72, 9.4,"Pensacola-Ferry Pass-Brent, FL",South,72,1.13
-"Huntsville, AL",South,73, 9.4,"Miami-Fort Lauderdale-West Palm Beach, FL",South,73,1.13
-"Durham-Chapel Hill, NC",South,74, 9.4,"Iowa City, IA",Midwest,74,1.13
-"Richmond, VA",South,75, 9.4,"Omaha-Council Bluffs, NE-IA",Midwest,75,1.13
-"Toledo, OH",Midwest,76, 9.4,"Waterloo-Cedar Falls, IA",Midwest,76,1.13
-"Chicago-Naperville-Elgin, IL-IN-WI",Midwest,77, 9.3,"Richmond, VA",South,77,1.13
-"Yuba City, CA",West,78, 9.3,"Youngstown-Warren-Boardman, OH-PA",Midwest,78,1.13
-"Beckley, WV",South,79, 9.3,"Oklahoma City, OK",South,79,1.13
-"Bremerton-Silverdale, WA",West,80, 9.3,"Lexington-Fayette, KY",South,80,1.13
-"Cedar Rapids, IA",Midwest,81, 9.3,"Rapid City, SD",Midwest,81,1.13
-"Lake Charles, LA",South,82, 9.3,"Jackson, TN",South,82,1.13
-"Lexington-Fayette, KY",South,83, 9.3,"Fresno, CA",West,83,1.13
-"Longview, WA",West,84, 9.3,"Jonesboro, AR",South,84,1.13
-"Pittsfield, MA",Northeast,85, 9.3,"Yuba City, CA",West,85,1.13
-"Tucson, AZ",West,86, 9.3,"Flint, MI",Midwest,86,1.13
-"Bend-Redmond, OR",West,87, 9.2,"Saginaw, MI",Midwest,87,1.13
-"Charlotte-Concord-Gastonia, NC-SC",South,88, 9.2,"Durham-Chapel Hill, NC",South,88,1.13
-"Ithaca, NY",Northeast,89, 9.2,"Hot Springs, AR",South,89,1.13
-"Jackson, TN",South,90, 9.2,"New Orleans-Metairie, LA",South,90,1.13
-"Kansas City, MO-KS",Midwest,91, 9.2,"Canton-Massillon, OH",Midwest,91,1.13
-"North Port-Sarasota-Bradenton, FL",South,92, 9.2,"Roanoke, VA",South,92,1.13
-"Oklahoma City, OK",South,93, 9.2,"Charlotte-Concord-Gastonia, NC-SC",South,93,1.13
-"Pensacola-Ferry Pass-Brent, FL",South,94, 9.2,"Tucson, AZ",West,94,1.13
-"Saginaw, MI",Midwest,95, 9.2,"Deltona-Daytona Beach-Ormond Beach, FL",South,95,1.13
-"State College, PA",Northeast,96, 9.2,"Kansas City, MO-KS",Midwest,96,1.13
-"Victoria, TX",South,97, 9.2,"Chicago-Naperville-Elgin, IL-IN-WI",Midwest,97,1.13
-"Davenport-Moline-Rock Island, IA-IL",Midwest,98, 9.2,"Reno, NV",West,98,1.13
-"Reno, NV",West,99, 9.2,"Pittsfield, MA",Northeast,99,1.13
-"Rochester, NY",Northeast,100, 9.2,"Chattanooga, TN-GA",South,100,1.12
-"Canton-Massillon, OH",Midwest,101, 9.1,"Fargo, ND-MN",Midwest,101,1.12
-"Colorado Springs, CO",West,102, 9.1,"Gadsden, AL",South,102,1.12
-"New Orleans-Metairie, LA",South,103, 9.1,"Bremerton-Silverdale, WA",West,103,1.12
-"Roanoke, VA",South,104, 9.1,"Davenport-Moline-Rock Island, IA-IL",Midwest,104,1.12
-"Ann Arbor, MI",Midwest,105, 9.1,"Little Rock-North Little Rock-Conway, AR",South,105,1.12
-"Deltona-Daytona Beach-Ormond Beach, FL",South,106, 9.1,"Pueblo, CO",West,106,1.12
-"Jonesboro, AR",South,107, 9.1,"Buffalo-Cheektowaga-Niagara Falls, NY",Northeast,107,1.12
-"Youngstown-Warren-Boardman, OH-PA",Midwest,108, 9.1,"Palm Bay-Melbourne-Titusville, FL",South,108,1.12
-"Buffalo-Cheektowaga-Niagara Falls, NY",Northeast,109, 9.0,"Akron, OH",Midwest,109,1.12
-"Chattanooga, TN-GA",South,110, 9.0,"Elmira, NY",Northeast,110,1.12
-"Des Moines-West Des Moines, IA",Midwest,111, 9.0,"Rome, GA",South,111,1.12
-"Elmira, NY",Northeast,112, 9.0,"North Port-Sarasota-Bradenton, FL",South,112,1.12
-"Flint, MI",Midwest,113, 9.0,"Victoria, TX",South,113,1.12
-"Lincoln, NE",Midwest,114, 9.0,"Tallahassee, FL",South,114,1.12
-"Palm Bay-Melbourne-Titusville, FL",South,115, 9.0,"Cedar Rapids, IA",Midwest,115,1.12
-"Tallahassee, FL",South,116, 9.0,"Bend-Redmond, OR",West,116,1.12
-"Akron, OH",Midwest,117, 8.9,"Florence, SC",South,117,1.12
-"Anniston-Oxford-Jacksonville, AL",South,118, 8.9,"Rochester, NY",Northeast,118,1.12
-"Cape Coral-Fort Myers, FL",South,119, 8.9,"Colorado Springs, CO",West,119,1.12
-"Lebanon, PA",Northeast,120, 8.9,"Des Moines-West Des Moines, IA",Midwest,120,1.12
-"Little Rock-North Little Rock-Conway, AR",South,121, 8.9,"Lebanon, PA",Northeast,121,1.12
-"Pueblo, CO",West,122, 8.9,"Ann Arbor, MI",Midwest,122,1.12
-"Norwich-New London, CT",Northeast,123, 8.8,"Amarillo, TX",South,123,1.12
-"Auburn-Opelika, AL",South,124, 8.8,"Lincoln, NE",Midwest,124,1.12
-"Gainesville, FL",South,125, 8.8,"Wichita Falls, TX",South,125,1.12
-"Hot Springs, AR",South,126, 8.8,"Tampa-St. Petersburg-Clearwater, FL",South,126,1.12
-"Rome, GA",South,127, 8.8,"State College, PA",Northeast,127,1.12
-"Syracuse, NY",Northeast,128, 8.8,"Gainesville, FL",South,128,1.12
-"Tampa-St. Petersburg-Clearwater, FL",South,129, 8.8,"New Bern, NC",South,129,1.12
-"Utica-Rome, NY",Northeast,130, 8.8,"Cape Coral-Fort Myers, FL",South,130,1.12
-"Albany-Schenectady-Troy, NY",Northeast,131, 8.7,"Charleston-North Charleston, SC",South,131,1.12
-"Amarillo, TX",South,132, 8.7,"Huntington-Ashland, WV-KY-OH",South,132,1.12
-"Charleston-North Charleston, SC",South,133, 8.7,"Ithaca, NY",Northeast,133,1.12
-"Erie, PA",Northeast,134, 8.7,"Virginia Beach-Norfolk-Newport News, VA-NC",South,134,1.12
-"Flagstaff, AZ",West,135, 8.7,"Erie, PA",Northeast,135,1.12
-"New Bern, NC",South,136, 8.7,"Columbia, SC",South,136,1.12
-"San Francisco-Oakland-Hayward, CA",West,137, 8.7,"Auburn-Opelika, AL",South,137,1.12
-"Bloomington, IL",Midwest,138, 8.7,"South Bend-Mishawaka, IN-MI",Midwest,138,1.12
-"New York-Newark-Jersey City, NY-NJ-PA",Northeast,139, 8.7,"Utica-Rome, NY",Northeast,139,1.12
-"Eugene, OR",West,140, 8.6,"Macon, GA",South,140,1.12
-"Lubbock, TX",South,141, 8.6,"Lubbock, TX",South,141,1.12
-"South Bend-Mishawaka, IN-MI",Midwest,142, 8.6,"Syracuse, NY",Northeast,142,1.12
-"Virginia Beach-Norfolk-Newport News, VA-NC",South,143, 8.6,"Bloomington, IL",Midwest,143,1.12
-"Brownsville-Harlingen, TX",South,144, 8.6,"Mobile, AL",South,144,1.12
-"Columbia, SC",South,145, 8.6,"Hagerstown-Martinsburg, MD-WV",South,145,1.12
-"Dubuque, IA",Midwest,146, 8.6,"Cumberland, MD-WV",South,146,1.12
-"Florence, SC",South,147, 8.6,"Spartanburg, SC",South,147,1.12
-"Lafayette-West Lafayette, IN",Midwest,148, 8.6,"Norwich-New London, CT",Northeast,148,1.12
-"Washington-Arlington-Alexandria, DC-VA-MD-WV",South,149, 8.6,"Augusta-Richmond County, GA-SC",South,149,1.12
-"Wichita Falls, TX",South,150, 8.6,"Odessa, TX",South,150,1.12
-"Gadsden, AL",South,151, 8.5,"St. Joseph, MO-KS",Midwest,151,1.12
-"Peoria, IL",Midwest,152, 8.5,"Flagstaff, AZ",West,152,1.12
-"Pittsburgh, PA",Northeast,153, 8.5,"Pittsburgh, PA",Northeast,153,1.12
-"Sebring, FL",South,154, 8.5,"Peoria, IL",Midwest,154,1.12
-"Charlottesville, VA",South,155, 8.4,"Eugene, OR",West,155,1.12
-"Cumberland, MD-WV",South,156, 8.4,"Lafayette-West Lafayette, IN",Midwest,156,1.12
-"Hagerstown-Martinsburg, MD-WV",South,157, 8.4,"Montgomery, AL",South,157,1.12
-"St. Joseph, MO-KS",Midwest,158, 8.4,"Parkersburg-Vienna, WV",South,158,1.11
-"Spartanburg, SC",South,159, 8.4,"Albany-Schenectady-Troy, NY",Northeast,159,1.11
-"Augusta-Richmond County, GA-SC",South,160, 8.4,"Dubuque, IA",Midwest,160,1.11
-"Denver-Aurora-Lakewood, CO",West,161, 8.4,"Sebring, FL",South,161,1.11
-"Huntington-Ashland, WV-KY-OH",South,162, 8.4,"New York-Newark-Jersey City, NY-NJ-PA",Northeast,162,1.11
-"Logan, UT-ID",West,163, 8.4,"Cleveland, TN",South,163,1.11
-"Reading, PA",Northeast,164, 8.4,"Redding, CA",West,164,1.11
-"Greeley, CO",West,165, 8.3,"Reading, PA",Northeast,165,1.11
-"Mobile, AL",South,166, 8.3,"San Francisco-Oakland-Hayward, CA",West,166,1.11
-"Seattle-Tacoma-Bellevue, WA",West,167, 8.3,"Brownsville-Harlingen, TX",South,167,1.11
-"Yakima, WA",West,168, 8.3,"Pine Bluff, AR",South,168,1.11
-"Atlanta-Sandy Springs-Roswell, GA",South,169, 8.3,"Atlanta-Sandy Springs-Roswell, GA",South,169,1.11
-"Harrisburg-Carlisle, PA",Northeast,170, 8.3,"Spokane-Spokane Valley, WA",West,170,1.11
-"Macon, GA",South,171, 8.3,"Washington-Arlington-Alexandria, DC-VA-MD-WV",South,171,1.11
-"Odessa, TX",South,172, 8.3,"Yakima, WA",West,172,1.11
-"Spokane-Spokane Valley, WA",West,173, 8.3,"Denver-Aurora-Lakewood, CO",West,173,1.11
-"Billings, MT",West,174, 8.2,"Fort Smith, AR-OK",South,174,1.11
-"El Centro, CA",West,175, 8.2,"Terre Haute, IN",Midwest,175,1.11
-"Minneapolis-St. Paul-Bloomington, MN-WI",Midwest,176, 8.2,"Springfield, MO",Midwest,176,1.11
-"Montgomery, AL",South,177, 8.2,"Harrisburg-Carlisle, PA",Northeast,177,1.11
-"Olympia-Tumwater, WA",West,178, 8.2,"Charlottesville, VA",South,178,1.11
-"Orlando-Kissimmee-Sanford, FL",South,179, 8.2,"Williamsport, PA",Northeast,179,1.11
-"Redding, CA",West,180, 8.2,"Greeley, CO",West,180,1.11
-"Salinas, CA",West,181, 8.2,"Goldsboro, NC",South,181,1.11
-"Santa Maria-Santa Barbara, CA",West,182, 8.2,"Logan, UT-ID",West,182,1.11
-"Kingston, NY",Northeast,183, 8.2,"Billings, MT",West,183,1.11
-"Las Cruces, NM",West,184, 8.2,"Danville, IL",Midwest,184,1.11
-"Parkersburg-Vienna, WV",South,185, 8.2,"Orlando-Kissimmee-Sanford, FL",South,185,1.11
-"Cleveland, TN",South,186, 8.1,"Winston-Salem, NC",South,186,1.11
-"Sacramento--Roseville--Arden-Arcade, CA",West,187, 8.1,"Clarksville, TN-KY",South,187,1.11
-"Springfield, MO",Midwest,188, 8.1,"Seattle-Tacoma-Bellevue, WA",West,188,1.11
-"Ogden-Clearfield, UT",West,189, 8.1,"Panama City, FL",South,189,1.11
-"Rochester, MN",Midwest,190, 8.1,"Topeka, KS",Midwest,190,1.11
-"Williamsport, PA",Northeast,191, 8.1,"Cape Girardeau, MO-IL",Midwest,191,1.11
-"East Stroudsburg, PA",Northeast,192, 8.0,"Stockton-Lodi, CA",West,192,1.11
-"Goldsboro, NC",South,193, 8.0,"Olympia-Tumwater, WA",West,193,1.11
-"Hilton Head Island-Bluffton-Beaufort, SC",South,194, 8.0,"Ogden-Clearfield, UT",West,194,1.11
-"Lansing-East Lansing, MI",Midwest,195, 8.0,"Sacramento--Roseville--Arden-Arcade, CA",West,195,1.11
-"Los Angeles-Long Beach-Anaheim, CA",West,196, 8.0,"Las Cruces, NM",West,196,1.11
-"Pine Bluff, AR",South,197, 8.0,"Lansing-East Lansing, MI",Midwest,197,1.11
-"Riverside-San Bernardino-Ontario, CA",West,198, 8.0,"Minneapolis-St. Paul-Bloomington, MN-WI",Midwest,198,1.11
-"Stockton-Lodi, CA",West,199, 8.0,"Riverside-San Bernardino-Ontario, CA",West,199,1.11
-"Terre Haute, IN",Midwest,200, 8.0,"Santa Maria-Santa Barbara, CA",West,200,1.11
-"Topeka, KS",Midwest,201, 8.0,"Kingston, NY",Northeast,201,1.11
-"Winston-Salem, NC",South,202, 8.0,"Savannah, GA",South,202,1.11
-"Cape Girardeau, MO-IL",Midwest,203, 7.9,"The Villages, FL",South,203,1.11
-"Fort Smith, AR-OK",South,204, 7.9,"Hilton Head Island-Bluffton-Beaufort, SC",South,204,1.11
-"Houston-The Woodlands-Sugar Land, TX",South,205, 7.9,"El Centro, CA",West,205,1.11
-"McAllen-Edinburg-Mission, TX",South,206, 7.9,"Salinas, CA",West,206,1.11
-"Springfield, MA",Northeast,207, 7.9,"Houston-The Woodlands-Sugar Land, TX",South,207,1.11
-"Duluth, MN-WI",Midwest,208, 7.9,"Brunswick, GA",South,208,1.11
-"Santa Fe, NM",West,209, 7.9,"Lynchburg, VA",South,209,1.11
-"Panama City, FL",South,210, 7.9,"Charleston, WV",South,210,1.11
-"Midland, MI",Midwest,211, 7.8,"Duluth, MN-WI",Midwest,211,1.11
-"Bridgeport-Stamford-Norwalk, CT",Northeast,212, 7.8,"Wheeling, WV-OH",South,212,1.10
-"Clarksville, TN-KY",South,213, 7.8,"Springfield, MA",Northeast,213,1.10
-"Danville, IL",Midwest,214, 7.8,"East Stroudsburg, PA",Northeast,214,1.10
-"Lynchburg, VA",South,215, 7.8,"Los Angeles-Long Beach-Anaheim, CA",West,215,1.10
-"Savannah, GA",South,216, 7.8,"Santa Fe, NM",West,216,1.10
-"The Villages, FL",South,217, 7.8,"Sioux City, IA-NE-SD",Midwest,217,1.10
-"Sioux City, IA-NE-SD",Midwest,218, 7.8,"Rochester, MN",Midwest,218,1.10
-"Binghamton, NY",Northeast,219, 7.7,"Rocky Mount, NC",South,219,1.10
-"Boulder, CO",West,220, 7.7,"Athens-Clarke County, GA",South,220,1.10
-"Brunswick, GA",South,221, 7.7,"Farmington, NM",West,221,1.10
-"Farmington, NM",West,222, 7.7,"Wilmington, NC",South,222,1.10
-"Raleigh, NC",South,223, 7.7,"Winchester, VA-WV",South,223,1.10
-"Sebastian-Vero Beach, FL",South,224, 7.7,"McAllen-Edinburg-Mission, TX",South,224,1.10
-"Vallejo-Fairfield, CA",West,225, 7.7,"Chico, CA",West,225,1.10
-"Walla Walla, WA",West,226, 7.7,"Jackson, MI",Midwest,226,1.10
-"Wilmington, NC",South,227, 7.7,"Vineland-Bridgeton, NJ",Northeast,227,1.10
-"Winchester, VA-WV",South,228, 7.7,"Las Vegas-Henderson-Paradise, NV",West,228,1.10
-"Athens-Clarke County, GA",South,229, 7.6,"Salisbury, MD-DE",South,229,1.10
-"Charleston, WV",South,230, 7.6,"San Antonio-New Braunfels, TX",South,230,1.10
-"Chico, CA",West,231, 7.6,"Vallejo-Fairfield, CA",West,231,1.10
-"Jackson, MI",Midwest,232, 7.6,"Raleigh, NC",South,232,1.10
-"Las Vegas-Henderson-Paradise, NV",West,233, 7.6,"Sebastian-Vero Beach, FL",South,233,1.10
-"Salisbury, MD-DE",South,234, 7.6,"Beaumont-Port Arthur, TX",South,234,1.10
-"San Antonio-New Braunfels, TX",South,235, 7.6,"Binghamton, NY",Northeast,235,1.10
-"Wheeling, WV-OH",South,236, 7.6,"Lafayette, LA",South,236,1.10
-"Allentown-Bethlehem-Easton, PA-NJ",Northeast,237, 7.5,"Myrtle Beach-Conway-North Myrtle Beach, SC-NC",South,237,1.10
-"Boston-Cambridge-Newton, MA-NH",Northeast,238, 7.5,"Bridgeport-Stamford-Norwalk, CT",Northeast,238,1.10
-"Corvallis, OR",West,239, 7.5,"Bowling Green, KY",South,239,1.10
-"Grand Junction, CO",West,240, 7.5,"Grand Junction, CO",West,240,1.10
-"Manchester-Nashua, NH",Northeast,241, 7.5,"Midland, MI",Midwest,241,1.10
-"St. Cloud, MN",Midwest,242, 7.5,"Walla Walla, WA",West,242,1.10
-"Vineland-Bridgeton, NJ",Northeast,243, 7.5,"Alexandria, LA",South,243,1.10
-"Bowling Green, KY",South,244, 7.4,"Scranton--Wilkes-Barre--Hazleton, PA",Northeast,244,1.10
-"New Haven-Milford, CT",Northeast,245, 7.4,"Allentown-Bethlehem-Easton, PA-NJ",Northeast,245,1.10
-"Rocky Mount, NC",South,246, 7.4,"Hattiesburg, MS",South,246,1.10
-"Santa Rosa, CA",West,247, 7.4,"Dallas-Fort Worth-Arlington, TX",South,247,1.10
-"Dallas-Fort Worth-Arlington, TX",South,248, 7.4,"Joplin, MO",Midwest,248,1.10
-"Hartford-West Hartford-East Hartford, CT",Northeast,249, 7.4,"Manchester-Nashua, NH",Northeast,249,1.10
-"Lafayette, LA",South,250, 7.4,"Muskegon, MI",Midwest,250,1.10
-"Myrtle Beach-Conway-North Myrtle Beach, SC-NC",South,251, 7.4,"Boulder, CO",West,251,1.10
-"Salt Lake City, UT",West,252, 7.4,"Houma-Thibodaux, LA",South,252,1.10
-"Albuquerque, NM",West,253, 7.3,"Sherman-Denison, TX",South,253,1.10
-"Midland, TX",South,254, 7.3,"Salt Lake City, UT",West,254,1.10
-"Beaumont-Port Arthur, TX",South,255, 7.3,"New Haven-Milford, CT",Northeast,255,1.10
-"Kennewick-Richland, WA",West,256, 7.3,"Midland, TX",South,256,1.10
-"Phoenix-Mesa-Scottsdale, AZ",West,257, 7.3,"Valdosta, GA",South,257,1.10
-"San Diego-Carlsbad, CA",West,258, 7.3,"Battle Creek, MI",Midwest,258,1.10
-"Scranton--Wilkes-Barre--Hazleton, PA",Northeast,259, 7.3,"Hartford-West Hartford-East Hartford, CT",Northeast,259,1.10
-"Alexandria, LA",South,260, 7.2,"Texarkana, TX-AR",South,260,1.10
-"Austin-Round Rock, TX",South,261, 7.2,"Boston-Cambridge-Newton, MA-NH",Northeast,261,1.10
-"Joplin, MO",Midwest,262, 7.2,"Albuquerque, NM",West,262,1.10
-"Muskegon, MI",Midwest,263, 7.2,"Phoenix-Mesa-Scottsdale, AZ",West,263,1.10
-"Oxnard-Thousand Oaks-Ventura, CA",West,264, 7.2,"St. Cloud, MN",Midwest,264,1.10
-"Visalia-Porterville, CA",West,265, 7.2,"Dalton, GA",South,265,1.10
-"Crestview-Fort Walton Beach-Destin, FL",South,266, 7.2,"Bakersfield, CA",West,266,1.10
-"Lewiston, ID-WA",West,267, 7.2,"Kennewick-Richland, WA",West,267,1.10
-"Battle Creek, MI",Midwest,268, 7.1,"Visalia-Porterville, CA",West,268,1.10
-"Dalton, GA",South,269, 7.1,"Corvallis, OR",West,269,1.10
-"Hattiesburg, MS",South,270, 7.1,"Crestview-Fort Walton Beach-Destin, FL",South,270,1.10
-"Houma-Thibodaux, LA",South,271, 7.1,"Lewiston, ID-WA",West,271,1.10
-"Providence-Warwick, RI-MA",Northeast,272, 7.1,"Corpus Christi, TX",South,272,1.10
-"Sherman-Denison, TX",South,273, 7.1,"Santa Rosa, CA",West,273,1.10
-"Bakersfield, CA",West,274, 7.1,"Austin-Round Rock, TX",South,274,1.09
-"Barnstable Town, MA",Northeast,275, 7.1,"San Diego-Carlsbad, CA",West,275,1.09
-"Corpus Christi, TX",South,276, 7.1,"Providence-Warwick, RI-MA",Northeast,276,1.09
-"Grand Island, NE",Midwest,277, 7.1,"Johnson City, TN",South,277,1.09
-"Salem, OR",West,278, 7.1,"Ocala, FL",South,278,1.09
-"Valdosta, GA",South,279, 7.1,"Grand Island, NE",Midwest,279,1.09
-"Medford, OR",West,280, 7.0,"Medford, OR",West,280,1.09
-"Prescott, AZ",West,281, 7.0,"Hammond, LA",South,281,1.09
-"Texarkana, TX-AR",South,282, 7.0,"Salem, OR",West,282,1.09
-"Grand Rapids-Wyoming, MI",Midwest,283, 6.9,"Killeen-Temple, TX",South,283,1.09
-"Jefferson City, MO",Midwest,284, 6.9,"Prescott, AZ",West,284,1.09
-"Tyler, TX",South,285, 6.9,"Altoona, PA",Northeast,285,1.09
-"Altoona, PA",Northeast,286, 6.9,"Oxnard-Thousand Oaks-Ventura, CA",West,286,1.09
-"Columbia, MO",Midwest,287, 6.9,"Tyler, TX",South,287,1.09
-"Killeen-Temple, TX",South,288, 6.9,"Weirton-Steubenville, WV-OH",Midwest,288,1.09
-"Johnson City, TN",South,289, 6.8,"Jefferson City, MO",Midwest,289,1.09
-"Ocala, FL",South,290, 6.8,"Barnstable Town, MA",Northeast,290,1.09
-"Portland-Vancouver-Hillsboro, OR-WA",West,291, 6.8,"Warner Robins, GA",South,291,1.09
-"Warner Robins, GA",South,292, 6.8,"Columbia, MO",Midwest,292,1.09
-"Asheville, NC",South,293, 6.7,"Gulfport-Biloxi-Pascagoula, MS",South,293,1.09
-"Burlington-South Burlington, VT",Northeast,294, 6.7,"Decatur, AL",South,294,1.09
-"Glens Falls, NY",Northeast,295, 6.7,"Grand Rapids-Wyoming, MI",Midwest,295,1.09
-"Hammond, LA",South,296, 6.7,"Monroe, MI",Midwest,296,1.09
-"Manhattan, KS",Midwest,297, 6.7,"Blacksburg-Christiansburg-Radford, VA",South,297,1.09
-"Monroe, MI",Midwest,298, 6.7,"Fayetteville, NC",South,298,1.09
-"Albany, OR",West,299, 6.6,"Portland-Vancouver-Hillsboro, OR-WA",West,299,1.09
-"Grand Forks, ND-MN",Midwest,300, 6.6,"San Angelo, TX",South,300,1.09
-"San Angelo, TX",South,301, 6.6,"Asheville, NC",South,301,1.09
-"San Jose-Sunnyvale-Santa Clara, CA",West,302, 6.6,"Tuscaloosa, AL",South,302,1.09
-"Boise City, ID",West,303, 6.6,"Albany, OR",West,303,1.09
-"College Station-Bryan, TX",South,304, 6.6,"College Station-Bryan, TX",South,304,1.09
-"Missoula, MT",West,305, 6.6,"Elizabethtown-Fort Knox, KY",South,305,1.09
-"Weirton-Steubenville, WV-OH",Midwest,306, 6.6,"Bay City, MI",Midwest,306,1.09
-"Bay City, MI",Midwest,307, 6.5,"Missoula, MT",West,307,1.09
-"Blacksburg-Christiansburg-Radford, VA",South,308, 6.5,"Burlington-South Burlington, VT",Northeast,308,1.09
-"Decatur, AL",South,309, 6.5,"Glens Falls, NY",Northeast,309,1.09
-"Elizabethtown-Fort Knox, KY",South,310, 6.5,"Kingsport-Bristol-Bristol, TN-VA",South,310,1.09
-"Fayetteville, NC",South,311, 6.5,"Boise City, ID",West,311,1.09
-"Fort Collins, CO",West,312, 6.5,"Grand Forks, ND-MN",Midwest,312,1.09
-"Gulfport-Biloxi-Pascagoula, MS",South,313, 6.5,"Manhattan, KS",Midwest,313,1.09
-"Worcester, MA-CT",Northeast,314, 6.5,"Worcester, MA-CT",Northeast,314,1.09
-"Kalamazoo-Portage, MI",Midwest,315, 6.4,"Kalamazoo-Portage, MI",Midwest,315,1.08
-"Santa Cruz-Watsonville, CA",West,316, 6.4,"Carson City, NV",West,316,1.08
-"Tuscaloosa, AL",South,317, 6.4,"Pocatello, ID",West,317,1.08
-"Bellingham, WA",West,318, 6.3,"Fort Collins, CO",West,318,1.08
-"Carson City, NV",West,319, 6.3,"Johnstown, PA",Northeast,319,1.08
-"Idaho Falls, ID",West,320, 6.3,"Idaho Falls, ID",West,320,1.08
-"Kingsport-Bristol-Bristol, TN-VA",South,321, 6.3,"San Jose-Sunnyvale-Santa Clara, CA",West,321,1.08
-"Mount Vernon-Anacortes, WA",West,322, 6.3,"Bloomsburg-Berwick, PA",Northeast,322,1.08
-"Casper, WY",West,323, 6.2,"Mount Vernon-Anacortes, WA",West,323,1.08
-"Johnstown, PA",Northeast,324, 6.2,"Santa Cruz-Watsonville, CA",West,324,1.08
-"La Crosse-Onalaska, WI-MN",Midwest,325, 6.2,"Hickory-Lenoir-Morganton, NC",South,325,1.08
-"Napa, CA",West,326, 6.2,"Atlantic City-Hammonton, NJ",Northeast,326,1.08
-"Pocatello, ID",West,327, 6.2,"Bellingham, WA",West,327,1.08
-"Provo-Orem, UT",West,328, 6.2,"Jacksonville, NC",South,328,1.08
-"Atlantic City-Hammonton, NJ",Northeast,329, 6.1,"Provo-Orem, UT",West,329,1.08
-"Lancaster, PA",Northeast,330, 6.1,"Casper, WY",West,330,1.08
-"Bloomsburg-Berwick, PA",Northeast,331, 6.1,"Napa, CA",West,331,1.08
-"San Luis Obispo-Paso Robles-Arroyo Grande, CA",West,332, 6.1,"Lancaster, PA",Northeast,332,1.08
-"Hickory-Lenoir-Morganton, NC",South,333, 6.0,"San Luis Obispo-Paso Robles-Arroyo Grande, CA",West,333,1.08
-"Jacksonville, NC",South,334, 6.0,"Homosassa Springs, FL",South,334,1.08
-"Wenatchee, WA",West,335, 6.0,"Gainesville, GA",South,335,1.08
-"Gainesville, GA",South,336, 5.9,"Longview, TX",South,336,1.08
-"York-Hanover, PA",Northeast,337, 5.9,"York-Hanover, PA",Northeast,337,1.08
-"El Paso, TX",South,338, 5.8,"Wenatchee, WA",West,338,1.08
-"Fayetteville-Springdale-Rogers, AR-MO",South,339, 5.8,"Florence-Muscle Shoals, AL",South,339,1.08
-"Homosassa Springs, FL",South,340, 5.8,"Fayetteville-Springdale-Rogers, AR-MO",South,340,1.08
-"Merced, CA",West,341, 5.8,"La Crosse-Onalaska, WI-MN",Midwest,341,1.08
-"California-Lexington Park, MD",South,342, 5.7,"Merced, CA",West,342,1.08
-"Longview, TX",South,343, 5.7,"Morgantown, WV",South,343,1.08
-"Morgantown, WV",South,344, 5.7,"El Paso, TX",South,344,1.08
-"Daphne-Fairhope-Foley, AL",South,345, 5.6,"Daphne-Fairhope-Foley, AL",South,345,1.07
-"Florence-Muscle Shoals, AL",South,346, 5.6,"Staunton-Waynesboro, VA",South,346,1.07
-"Modesto, CA",West,347, 5.5,"Dothan, AL",South,347,1.07
-"Staunton-Waynesboro, VA",South,348, 5.5,"Modesto, CA",West,348,1.07
-"Laredo, TX",South,349, 5.4,"California-Lexington Park, MD",South,349,1.07
-"Dothan, AL",South,350, 5.4,"Hanford-Corcoran, CA",West,350,1.07
-"Hanford-Corcoran, CA",West,351, 5.4,"Laredo, TX",South,351,1.07
-"Coeur d'Alene, ID",West,352, 5.3,"Coeur d'Alene, ID",West,352,1.07
-"Harrisonburg, VA",South,353, 5.2,"Harrisonburg, VA",South,353,1.07
-"Dover, DE",South,354, 5.0,"Dover, DE",South,354,1.07
-"Madera, CA",West,355, 5.0,"Michigan City-La Porte, IN",Midwest,355,1.07
-"Yuma, AZ",West,356, 5.0,"Madera, CA",West,356,1.07
-"Michigan City-La Porte, IN",Midwest,357, 4.9,"Yuma, AZ",West,357,1.07
-"Lawrence, KS",Midwest,358, 4.6,"Lawrence, KS",Midwest,358,1.06
-"St. George, UT",West,359, 4.2,"Morristown, TN",South,359,1.06
-"Morristown, TN",South,360, 4.1,"St. George, UT",West,360,1.05
-"Gettysburg, PA",Northeast,361, 4.0,"Gettysburg, PA",Northeast,361,1.05
-"Grants Pass, OR",West,362, 3.1,"Grants Pass, OR",West,362,1.04
-"Hinesville, GA",South,363, 2.6,"Hinesville, GA",South,363,1.03
+cbsa_name,Region_Name,rank,total_dif,uci,lci,cbsa_name,Region_Name,rank,total_ratio,uci,lci
+"Memphis, TN-MS-AR",South,1,11.6,12.5154408910909,10.6299130275682,"Memphis, TN-MS-AR",South,1,1.16,1.17903965461988,1.15060564941841
+"Detroit-Warren-Dearborn, MI",Midwest,2,11.5,11.9497666244756,11.0638879088308,"Detroit-Warren-Dearborn, MI",Midwest,2,1.16,1.16831833479766,1.15484100623552
+"Baltimore-Columbia-Towson, MD",South,3,11.3,11.9302933011973,10.64373280713,"Birmingham-Hoover, AL",South,3,1.16,1.17427206121988,1.14846352948154
+"Birmingham-Hoover, AL",South,4,11.3,12.1118346796527,10.418859132744,"Louisville/Jefferson County, KY-IN",South,4,1.16,1.17128089343772,1.14390984746034
+"Louisville/Jefferson County, KY-IN",South,5,11.2,12.0468950294638,10.2833974941163,"Baltimore-Columbia-Towson, MD",South,5,1.16,1.16691784063861,1.14735229772858
+"Milwaukee-Waukesha-West Allis, WI",Midwest,6,11.2,12.0293595264742,10.3160467374951,"Cincinnati, OH-KY-IN",Midwest,6,1.15,1.16452946006318,1.14413032576684
+"Columbus, OH",Midwest,7,11.1,11.8388335091959,10.3244697615248,"Columbus, OH",Midwest,7,1.15,1.16545728146401,1.14299340864066
+"Cincinnati, OH-KY-IN",Midwest,8,11.1,11.737718458108,10.3559173733459,"Milwaukee-Waukesha-West Allis, WI",Midwest,8,1.15,1.16603423133059,1.14099773957515
+"Indianapolis-Carmel-Anderson, IN",Midwest,9,10.9,11.7728551432355,10.0914330307703,"Indianapolis-Carmel-Anderson, IN",Midwest,9,1.15,1.16496637353207,1.14015339062004
+"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",Northeast,10,10.9,11.2825038046484,10.4900331593485,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",Northeast,10,1.15,1.15588109697696,1.144137661757
+"Miami-Fort Lauderdale-West Palm Beach, FL",South,11,10.9,11.371397210141,10.3607355633266,"Cleveland-Elyria, OH",Midwest,11,1.15,1.15569388524594,1.1383096661046
+"Cleveland-Elyria, OH",Midwest,12,10.6,11.1825878817445,10.0088279663076,"Jacksonville, FL",South,12,1.15,1.1626242509182,1.13118924972074
+"St. Louis, MO-IL",Midwest,13,10.6,11.1700894538899,10.0253649259183,"St. Louis, MO-IL",Midwest,13,1.15,1.1546157958084,1.13790643754907
+"Jacksonville, FL",South,14,10.6,11.6281599730534,9.49209511878329,"Nashville-Davidson--Murfreesboro--Franklin, TN",South,14,1.15,1.15975179433914,1.13487783237977
+"Nashville-Davidson--Murfreesboro--Franklin, TN",South,15,10.5,11.4600576087158,9.7515151163956,"Miami-Fort Lauderdale-West Palm Beach, FL",South,15,1.15,1.15246255823963,1.13817626233658
+"Rochester, NY",Northeast,16,10.5,11.5334951951681,9.59135027022187,"New Orleans-Metairie, LA",South,16,1.15,1.15807127882969,1.13479659730115
+"New Orleans-Metairie, LA",South,17,10.4,11.1914959890687,9.64792257814931,"Oklahoma City, OK",South,17,1.15,1.1574911975696,1.13340546325131
+"Chicago-Naperville-Elgin, IL-IN-WI",Midwest,18,10.4,10.7393680256224,10.038046770306,"Chicago-Naperville-Elgin, IL-IN-WI",Midwest,18,1.14,1.14616210510056,1.13602117501556
+"Oklahoma City, OK",South,19,10.3,11.1782074778339,9.56684572404017,"Rochester, NY",Northeast,19,1.14,1.15498426942885,1.12727671422773
+"Washington-Arlington-Alexandria, DC-VA-MD-WV",South,20,10.3,10.7902956628472,9.84581135350268,"Charlotte-Concord-Gastonia, NC-SC",South,20,1.14,1.1496096495241,1.13042698124685
+"Kansas City, MO-KS",Midwest,21,10.2,10.8425544442283,9.50473207588266,"Richmond, VA",South,21,1.14,1.15400962461821,1.12637800656019
+"Charlotte-Concord-Gastonia, NC-SC",South,22,10.2,10.8311863052178,9.52388639467464,"Kansas City, MO-KS",Midwest,22,1.14,1.14915002149064,1.12964104095788
+"Richmond, VA",South,23,10.2,11.1517615219949,9.24199235749443,"Buffalo-Cheektowaga-Niagara Falls, NY",Northeast,23,1.14,1.15239737241118,1.12697761709568
+"Buffalo-Cheektowaga-Niagara Falls, NY",Northeast,24,10.1,11.0075406146366,9.29292301940436,"Tampa-St. Petersburg-Clearwater, FL",South,24,1.14,1.14481510121582,1.12837651795733
+"Tampa-St. Petersburg-Clearwater, FL",South,25, 9.9,10.4831230594952,9.34515153187095,"Washington-Arlington-Alexandria, DC-VA-MD-WV",South,25,1.14,1.14283599511527,1.12943705760663
+"New York-Newark-Jersey City, NY-NJ-PA",Northeast,26, 9.9,10.1799303025426,9.69339982908541,"Virginia Beach-Norfolk-Newport News, VA-NC",South,26,1.14,1.14591159945095,1.12526639305279
+"San Francisco-Oakland-Hayward, CA",West,27, 9.9,10.4068132572003,9.4035603620302,"New York-Newark-Jersey City, NY-NJ-PA",Northeast,27,1.13,1.13430908346182,1.12759398844346
+"Virginia Beach-Norfolk-Newport News, VA-NC",South,28, 9.8,10.4976302162723,9.10555143777078,"Las Vegas-Henderson-Paradise, NV",West,28,1.13,1.14107465434741,1.11914588381889
+"Denver-Aurora-Lakewood, CO",West,29, 9.7,10.3718953773388,9.08369692988512,"Denver-Aurora-Lakewood, CO",West,29,1.13,1.13949157190841,1.12118709927539
+"Minneapolis-St. Paul-Bloomington, MN-WI",Midwest,30, 9.6,10.2590322106908,9.05373970838402,"Houston-The Woodlands-Sugar Land, TX",South,30,1.13,1.13801386446125,1.12217151330589
+"Houston-The Woodlands-Sugar Land, TX",South,31, 9.6,10.1636241258324,9.03202132619385,"San Francisco-Oakland-Hayward, CA",West,31,1.13,1.13630978528089,1.12250160312011
+"Las Vegas-Henderson-Paradise, NV",West,32, 9.5,10.2736332963335,8.73942358103246,"Atlanta-Sandy Springs-Roswell, GA",South,32,1.13,1.13636809012307,1.12173515742228
+"Los Angeles-Long Beach-Anaheim, CA",West,33, 9.5,9.77094433679502,9.21589368421085,"Pittsburgh, PA",Northeast,33,1.13,1.13554686287113,1.12066291417362
+"Orlando-Kissimmee-Sanford, FL",South,34, 9.5,10.4212231169922,8.59663878579473,"Orlando-Kissimmee-Sanford, FL",South,34,1.13,1.13969035989642,1.11475865579558
+"Seattle-Tacoma-Bellevue, WA",West,35, 9.5,10.0569743630501,8.9324114106947,"Minneapolis-St. Paul-Bloomington, MN-WI",Midwest,35,1.13,1.13547955578019,1.1188024960839
+"Atlanta-Sandy Springs-Roswell, GA",South,36, 9.4,9.98142366926808,8.96051506688461,"Riverside-San Bernardino-Ontario, CA",West,36,1.13,1.13409810284874,1.11896301330042
+"Riverside-San Bernardino-Ontario, CA",West,37, 9.4,9.92777490855311,8.8539678302808,"Phoenix-Mesa-Scottsdale, AZ",West,37,1.13,1.13278842701219,1.11754663668635
+"Sacramento--Roseville--Arden-Arcade, CA",West,38, 9.3,10.0812821597985,8.69490975622924,"Seattle-Tacoma-Bellevue, WA",West,38,1.13,1.13327756930378,1.11755276793071
+"Pittsburgh, PA",Northeast,39, 9.3,9.88150291177903,8.86161167044446,"Sacramento--Roseville--Arden-Arcade, CA",West,39,1.12,1.13503083679412,1.11591977980524
+"Phoenix-Mesa-Scottsdale, AZ",West,40, 9.3,9.82632151085263,8.7391764443639,"San Antonio-New Braunfels, TX",South,40,1.12,1.13473094138238,1.11603542164012
+"San Antonio-New Braunfels, TX",South,41, 9.2,9.90367507636386,8.5922067390859,"Los Angeles-Long Beach-Anaheim, CA",West,41,1.12,1.12848798153661,1.12085168953662
+"Dallas-Fort Worth-Arlington, TX",South,42, 9.0,9.43844227302904,8.56290748214817,"Dallas-Fort Worth-Arlington, TX",South,42,1.12,1.1279120944067,1.1154727778326
+"Raleigh, NC",South,43, 9.0,10.1928403724079,7.96627998521909,"Raleigh, NC",South,43,1.12,1.13615179368693,1.10556716088043
+"Austin-Round Rock, TX",South,44, 8.9,9.81010135485284,8.03153215271374,"Austin-Round Rock, TX",South,44,1.12,1.13079793563444,1.10637009259664
+"San Diego-Carlsbad, CA",West,45, 8.9,9.51241701883555,8.29764305497366,"Salt Lake City, UT",West,45,1.12,1.13078102478287,1.10253734753081
+"Boston-Cambridge-Newton, MA-NH",Northeast,46, 8.7,9.20017062289613,8.28352664454279,"San Diego-Carlsbad, CA",West,46,1.12,1.12476903731284,1.10816061350662
+"Salt Lake City, UT",West,47, 8.7,9.7191559121516,7.69848815446375,"Boston-Cambridge-Newton, MA-NH",Northeast,47,1.11,1.12020659235575,1.10780025017929
+"Portland-Vancouver-Hillsboro, OR-WA",West,48, 8.5,9.19525138368643,7.90140417176511,"Portland-Vancouver-Hillsboro, OR-WA",West,48,1.11,1.12217950563636,1.1041705034807
+"Hartford-West Hartford-East Hartford, CT",Northeast,49, 8.5,9.42059164547194,7.73299588378697,"Hartford-West Hartford-East Hartford, CT",Northeast,49,1.11,1.12555829723128,1.10169127217887
+"San Jose-Sunnyvale-Santa Clara, CA",West,50, 8.2,8.97693858355848,7.53519643706731,"Providence-Warwick, RI-MA",Northeast,50,1.11,1.11869888073079,1.09934671221829
+"Providence-Warwick, RI-MA",Northeast,51, 8.2,8.87002812715894,7.49046105208827,"San Jose-Sunnyvale-Santa Clara, CA",West,51,1.10,1.11439014805949,1.09527395908936
