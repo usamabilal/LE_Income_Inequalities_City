@@ -563,7 +563,7 @@ figure2<-ggplot()+
         panel.background = element_rect(fill = "grey", color=NA),
         legend.position="bottom")
 figure2
-ggsave("results/figure2_ASM.pdf", width=12, height=5)
+ggsave("results/figure2.pdf", width=12, height=5)
 
 #just to view which areas have largest disparities 
 absolute_ineq_long1<-absolute_ineq_long%>%
@@ -761,7 +761,7 @@ library(ggpubr)
 ggarrange(figure3mean,figure3sd, figure3cv, ncol = 1, nrow=3 )
  
 
-ggsave("results/figure3_new.pdf", width=8, height=7.5)
+ggsave("results/figure3.pdf", width=8, height=7.5)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
