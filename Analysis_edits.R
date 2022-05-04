@@ -32,10 +32,10 @@ total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>%
 
 
 #create var w/ mhi by decile (both 1-10 and 0-1 rescaled)
-income_ineq_se<-dta1 %>% group_by(cbsa) %>% 
+income_ineq_se<-dta %>% group_by(cbsa) %>% 
   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)), 
          decile_income1=(decile_income-1)/9)%>%
-  select(GEOID, decile_income, decile_income1, pop, cbsa, pct_pop)
+  select(GEOID, decile_income, decile_income1, pop, cbsa)
 
 #create 1000 iterations of the LE for each CT (using le and se)
 imputed<-dta %>% group_by(GEOID) %>% 
@@ -879,7 +879,7 @@ corrs<-ggpairs(data=full_dta,
 ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
 
 ###############################################################################
-#Appendix Figure 2######
+#Appendix Figure 3######
 #Figure 1 repeated with income disparity measure 
 
 absolute_rel_income_ineq_long<-income_ineq_long%>%
@@ -1029,9 +1029,12 @@ figure1<-grid.arrange(f1a_lt,f1b_lt,
 g_lt <- arrangeGrob(f1a_lt,f1b_lt,  nrow=2) #generates g
 ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=10) #saves g
 
+###############################################################################
+##APpendix figure 4
+#map but w/ relative disparity
 
 
-#######APPENDIX Figure 4
+#######APPENDIX Figure 5
 ##############################################################################
 #figure 3 repeated w/ mhi standardized across the full US, not MSA-- some cbsa's won't have observations in all deciles
 
@@ -1171,7 +1174,7 @@ ggplotly(figure3sd)
 
 
 ###############################################################################
-#APpendix Figure 5
+#APpendix Figure 6
 #conditional life expectancies, repeating Figure 3 
 
 
@@ -1182,9 +1185,6 @@ le_by_decile_v2<-imputed_lt %>%  group_by(iteration, cbsa, age_grp)%>%
   ungroup()%>%
   summarise(le=mean(le))%>%
   left_join(total_pop_msa)%>% left_join(region)
-
-
-#Figure 3b
 
 
 cv_decile_lt<-le_by_decile_lt %>% group_by(age_grp, Region, decile_income) %>% 
