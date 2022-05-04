@@ -879,7 +879,7 @@ corrs<-ggpairs(data=full_dta,
 ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
 
 ###############################################################################
-#Appendix Figure 3######
+#Appendix Figure 2######
 #Figure 1 repeated with income disparity measure 
 
 absolute_rel_income_ineq_long<-income_ineq_long%>%
