@@ -184,8 +184,8 @@ summary(life_tables)
 
 #limit life tables to just estimates for 25-34, 55-64, 65-74
 life_tables1<-life_tables%>%
-  #limit to the le's at 25, 55, and 65
-  filter(age_grp%in% c('25-34', '55-64', '65-74'))
+  #limit to the le's at 25, and 65
+  filter(age_grp%in% c('25-34','65-74'))
 
 #total population in the final dataset. 
 

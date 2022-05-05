@@ -195,9 +195,12 @@ income_ineq_long<-income_ineq %>% gather(type, value, -cbsa, -Region, -Region_Na
 #################################################################################
 #repeat the absolute and relative disparity measures using life tables (conditional life expectancies)
 
+
+
 #find pct of the pop
 life_tables2<-life_tables1%>%
-  mutate(total_pop=sum(pop),
+  filter(age_grp%in% c('25-34','65-74'))%>%
+mutate(total_pop=sum(pop),
          pct_pop=pop/total_pop)
 
 #create mhi var for each age group 
