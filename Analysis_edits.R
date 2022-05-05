@@ -213,10 +213,11 @@ imputed_lt<-life_tables1 %>% group_by(GEOID, age_grp) %>%
     data.frame(
       le=dist, 
       iteration=1:1000)
-  }) %>% left_join(income_ineq_se_lt, by="GEOID") 
+  }) %>% left_join(income_ineq_se_lt) 
 
 #find absolute disparity measures, for each age group (and each iteration)
-absolute_inequities_long_test_lt<-imputed_lt %>% group_by(iteration, cbsa, age_grp) %>% 
+absolute_inequities_long_test_lt<-imputed_lt %>% 
+  group_by(iteration, cbsa, age_grp) %>% 
   group_modify(~{
     quants<-wtd.quantile(.x$le, q = c(.1, .9), weight = .x$pop)
     wtd.mean<-weighted.mean(.x$le, w=.x$pop)
