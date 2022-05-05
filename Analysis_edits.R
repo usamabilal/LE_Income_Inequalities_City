@@ -529,9 +529,8 @@ full_dta<-absolute_ineq_long %>% select(cbsa, type, value, Region_Name) %>%
 shp<-read_sf("Data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
   mutate(cbsa=as.numeric(GEOID))
 regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
-  states<-read_sf("Data/cb_2013_us_state_20m/cb_2013_us_state_20m.shp")%>%
-    subset(STATEFP%in% c(23, 55))
-
+  states<-read_sf("Data/cb_2013_us_state_20m/cb_2013_us_state_20m.shp")
+  
 #export full_dta file as csv for map(but only absolute and relative)
 dta_abs_rel<-full_dta%>%
   select(cbsa, Region_Name, type2, value)%>%
@@ -548,7 +547,6 @@ figure2<-ggplot()+
   geom_sf(data=regions, size=0.5, color="black", 
           fill=NA,
           aes(geometry=geometry))+
-  geom_sf(data=states, color="black",fill="black")+
   scale_fill_binned(name="Rank", type="gradient",
                     show.limits=T,n.breaks=5,labels=round,
                     low="red", high="white")+
@@ -597,12 +595,6 @@ cbsa_inequities<-absolute_inequities_long%>%
 
 str(cbsa_inequities)
 
-cbsa_abs<-cbsa_inequities%>%
-  select(type=="dif")%>%
-  mutate(region=factor(Region, levels=c(4, 1, 2, 3)))
-
-summary(cbsa_abs$mhi)
-summary(cbsa_abs)
 
 #exploratory visualization (scatter plots)
 absmhi<-ggplot(cbsa_inequities, aes(x=mhi, y=value))+geom_point()
@@ -612,8 +604,6 @@ logmhi
 abspop<-ggplot(cbsa_inequities, aes(x=poplog, y=value))+geom_point()
 
 #regress inequities on absolute disparities
-
-
 
 #use rubin's rule for SE's
 regressions<-cbsa_inequities %>% group_by(iteration) %>% 
