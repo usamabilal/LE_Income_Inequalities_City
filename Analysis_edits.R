@@ -23,7 +23,7 @@ total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>%
   summarise(total_pop=sum(pop))
 
 # specify # of simulations for the uncertainty part
-nsim<-100
+nsim<-10
 
 # first, calculate absolute ineq indicators by city
 # Gap and ratio: need .9 and .1 weighted quantiles
