@@ -22,13 +22,15 @@ load("data/clean_data.rdata")
 total_pop_msa<-dta %>% group_by(cbsa_name, cbsa) %>% 
   summarise(total_pop=sum(pop))
 
+# specify # of simulations for the uncertainty part
+nsim<-100
 
 # first, calculate absolute ineq indicators by city
 # Gap and ratio: need .9 and .1 weighted quantiles
 # CV
 # GINI from reldist package and mean log deviation from dineq
 
-#we'll impute 1000 iterations using the mean le and se then calculate our measures, take median le and 2.5 & 97.5% 
+#we'll impute nsim iterations using the mean le and se then calculate our measures, take median le and 2.5 & 97.5% 
 
 
 #create var w/ mhi by decile (both 1-10 and 0-1 rescaled)
@@ -37,13 +39,13 @@ income_ineq_se<-dta %>% group_by(cbsa) %>%
          decile_income1=(decile_income-1)/9)%>%
   select(GEOID, decile_income, decile_income1, pop, cbsa)
 
-#create 1000 iterations of the LE for each CT (using le and se)
+#create nsim iterations of the LE for each CT (using le and se)
 imputed<-dta %>% group_by(GEOID) %>% 
   group_modify(~{
-    dist=rnorm(1000, mean=.x$le, sd=.x$se)
+    dist=rnorm(nsim, mean=.x$le, sd=.x$se)
     data.frame(
       le=dist, 
-      iteration=1:1000)
+      iteration=1:nsim)
   }) %>% left_join(income_ineq_se, by="GEOID") 
 
 #calculate disparity measures 
@@ -119,7 +121,7 @@ group_by(type, Region_Name)%>%
 ##################################################################################
 #####Repeat for income based inequities
 
-#find the top/bottom ratio and top/bottom difference using MHI deciles, and the imputed (1000 iterations) data
+#find the top/bottom ratio and top/bottom difference using MHI deciles, and the imputed (nsim iterations) data
 decile_le<-imputed %>% group_by(iteration, cbsa, decile_income1) %>% 
   summarize(le=weighted.mean(le, w=pop))%>% 
   filter(decile_income1%in%c(0, 1))%>%
@@ -197,26 +199,26 @@ income_ineq_long<-income_ineq %>% gather(type, value, -cbsa, -Region, -Region_Na
 
 
 
-#find pct of the pop
-life_tables2<-life_tables1%>%
-  filter(age_grp%in% c('25-34','65-74'))%>%
-mutate(total_pop=sum(pop),
-         pct_pop=pop/total_pop)
-
-#create mhi var for each age group 
-income_ineq_se_lt<-life_tables2 %>% group_by(cbsa, age_grp) %>% 
-  mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)), 
-         decile_income1=(decile_income-1)/9)%>%
-  select(GEOID, decile_income1, pop, cbsa, pct_pop, age_grp)
-
-#impute for 1000 iterations for each ct by age group 
-imputed_lt<-life_tables1 %>% group_by(GEOID, age_grp) %>% 
-  group_modify(~{
-    dist=rnorm(1000, mean=.x$le, sd=.x$se)
-    data.frame(
-      le=dist, 
-      iteration=1:1000)
-  }) %>% left_join(income_ineq_se_lt) 
+  #find pct of the pop
+  life_tables2<-life_tables1%>%
+    filter(age_grp%in% c('25-34','65-74'))%>%
+  mutate(total_pop=sum(pop),
+           pct_pop=pop/total_pop)
+  
+  #create mhi var for each age group 
+  income_ineq_se_lt<-life_tables2 %>% group_by(cbsa, age_grp) %>% 
+    mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)), 
+           decile_income1=(decile_income-1)/9)%>%
+    select(GEOID, decile_income1, pop, cbsa, pct_pop, age_grp)
+  
+  #impute for nsim iterations for each ct by age group 
+  imputed_lt<-life_tables2 %>% group_by(GEOID, age_grp) %>% 
+    group_modify(~{
+      dist=rnorm(nsim, mean=.x$le, sd=.x$se)
+      data.frame(
+        le=dist, 
+        iteration=1:nsim)
+    }) %>% left_join(income_ineq_se_lt) 
 
 #find absolute disparity measures, for each age group (and each iteration)
 absolute_inequities_long_test_lt<-imputed_lt %>% 
@@ -277,7 +279,7 @@ absolute_rel_ineq_long_lt<-absolute_ineq_long_lt%>%
 absolute_rel_ineq_long_lt<-absolute_rel_ineq_long_lt%>%
   arrange(value)
 
-str(absolute_rel_ineq_long)
+#str(absolute_rel_ineq_long)
 
 #find Coefficient of variation (CV) for each region and measure and age group
 cv_lt<-absolute_rel_ineq_long_lt%>%
@@ -378,7 +380,7 @@ income_ineq_long_lt<-income_ineq_long_lt%>%
 income_ineq_long_lt<-income_ineq_long_lt%>%
   arrange(value)
 
-str(absolute_rel_ineq_long)
+#str(absolute_rel_ineq_long)
 #find Coefficient of variation (CV) for each region and measure 
 cv_lt<-income_ineq_long_lt%>%
   group_by(age_grp, type, Region_Name)%>%
@@ -596,7 +598,7 @@ cbsa_inequities<-absolute_inequities_long%>%
 
 
 
-str(cbsa_inequities)
+#str(cbsa_inequities)
 
 
 #exploratory visualization (scatter plots)
@@ -638,7 +640,7 @@ regresssions_pooled<-regressions%>% group_by(type)%>%
 #-------Figure 3 ------
 
 
-#use imputed data (iterations 1000) to find weighted mean, then take mean of that le by cbsa and decile income
+#use imputed data (iterations nsim) to find weighted mean, then take mean of that le by cbsa and decile income
 le_by_decile<-imputed %>% group_by(iteration, cbsa, decile_income) %>% 
   summarize(le=weighted.mean(le, w=pop))%>%
   ungroup()%>%
@@ -1032,18 +1034,18 @@ ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=1
 ##############################################################################
 #figure 3 repeated w/ mhi standardized across the full US, not MSA-- some cbsa's won't have observations in all deciles
 
-#use imputed data (iterations 1000) to find weighted mean, then take mean of that le by cbsa and decile income
+#use imputed data (iterations nsim) to find weighted mean, then take mean of that le by cbsa and decile income
 mhi_nation<-dta1 %>% 
   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))%>%
   select(GEOID, decile_income, pop, cbsa, pct_pop)
 
-#create 1000 iterations of the LE for each CT (using le and se)
+#create nsim iterations of the LE for each CT (using le and se)
 imputed_mhi_nation<-dta %>% group_by(GEOID) %>% 
   group_modify(~{
-    dist=rnorm(1000, mean=.x$le, sd=.x$se)
+    dist=rnorm(nsim, mean=.x$le, sd=.x$se)
     data.frame(
       le=dist, 
-      iteration=1:1000)
+      iteration=1:nsim)
   }) %>% left_join(mhi_nation, by="GEOID") 
 
 
