@@ -401,7 +401,8 @@ totals<-income_ineq_long_lt%>%
 
 #-----Figure 1-----
 
-my_breaks <- function(y) { if (max(y) > 2) seq(0, 12.5, 2.5) else seq(1, 1.16, 0.2) }
+
+my_breaks <- function(y) { if (max(y) > 2) seq(0, 12.5, 2.5) else seq(1, 1.16, 0.5) }
 
 f1a<-absolute_rel_ineq_long%>%
   filter(type=="Abs. Disparity")%>%
@@ -413,6 +414,7 @@ f1a<-absolute_rel_ineq_long%>%
   guides(color=F, fill=F, size=F)+
   scale_fill_discrete()+
   scale_colour_discrete()+
+  scale_y_continuous(breaks=my_breaks)+
   geom_hline(lty=2, yintercept=0)+
   labs(x="",
        y="Value",
@@ -441,7 +443,7 @@ f1b<-absolute_rel_ineq_long%>%
   scale_fill_discrete()+
   scale_colour_discrete()+
   geom_hline(lty=2, yintercept=1)+
-  scale_y_continuous(trans="log") +
+  scale_y_continuous(trans="log")+
   labs(x="",
        y="Value",
        title="Relative Disparity")+
@@ -456,6 +458,7 @@ f1b<-absolute_rel_ineq_long%>%
         strip.background = element_blank(),
         plot.title=element_text(size=18, hjust=0.5))
 f1b
+
 
 library(gridExtra)
 
@@ -981,6 +984,7 @@ appen_f1a<-absolute_rel_income_ineq_long%>%
        y="Value",
        title="Top/Bottom Difference")+
   theme_bw() +
+  scale_y_continuous(breaks=my_breaks)+
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
         panel.grid.major.x = element_blank(),
@@ -991,7 +995,6 @@ appen_f1a<-absolute_rel_income_ineq_long%>%
         strip.background = element_blank(),
         plot.title=element_text(size=18, hjust=0.5))
 appen_f1a
-ggsave("results/Appendixfigure1a_ASM.pdf", f1a, width=20, height=7.5)
 
 appen_f1b<-absolute_rel_income_ineq_long%>%
   filter(type=="Top/Bottom Ratio")%>%
@@ -1043,7 +1046,11 @@ medians_inc<-absolute_rel_income_ineq_long%>%
 #APpendix Figure 3 
 #absolute and relative disparity 
 
-f1a_lt<-absolute_rel_ineq_long_lt%>%
+absolute_rel_ineq_long_lt1<-absolute_rel_ineq_long_lt%>%
+  mutate(age_grp=case_when(age_grp=="25-34" ~ "25", 
+                           age_grp=="65-74"~"65")) 
+
+f1a_lt<-absolute_rel_ineq_long_lt1%>%
   filter(type=="Abs. Disparity")%>%
   ggplot(aes(x=Region_Name, y=value))+
   geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
@@ -1054,6 +1061,7 @@ f1a_lt<-absolute_rel_ineq_long_lt%>%
   scale_fill_discrete()+
   scale_colour_discrete()+
   geom_hline(lty=2, yintercept=0)+
+  scale_y_continuous(breaks=my_breaks)+
   labs(x="",
        y="Value",
        title="Absolute Disparity")+
@@ -1061,7 +1069,7 @@ f1a_lt<-absolute_rel_ineq_long_lt%>%
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
         panel.grid.major.x = element_blank(),
-        axis.text.x=element_text(size=14, color="black"),
+        axis.text.x=element_text(size=18, color="black"),
         axis.text.y=element_text(size=18, color="black"),
         axis.title.y=element_text(face="bold", size=20),
         strip.text =element_text(face="bold", size=20),
@@ -1069,9 +1077,8 @@ f1a_lt<-absolute_rel_ineq_long_lt%>%
         plot.title=element_text(size=18, hjust=0.5))+
   facet_wrap(~age_grp)
 f1a_lt
-ggsave("results/figure1_ASM.pdf", f1a, width=20, height=7.5)
 
-f1b_lt<-absolute_rel_ineq_long_lt%>%
+f1b_lt<-absolute_rel_ineq_long_lt1%>%
   filter(type=="Rel. Disparity")%>%
   ggplot(aes(x=Region_Name, y=value))+
   geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
@@ -1090,9 +1097,9 @@ f1b_lt<-absolute_rel_ineq_long_lt%>%
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
         panel.grid.major.x = element_blank(),
-        axis.text.x=element_text(size=14, color="black"),
+        axis.text.x=element_text(size=18, color="black"),
         axis.text.y=element_text(size=18, color="black"),
-        axis.title.y=element_text(face="bold", size=20),
+        axis.title.y=element_blank(),
         strip.text =element_text(face="bold", size=20),
         strip.background = element_blank(),
         plot.title=element_text(size=18, hjust=0.5))+
@@ -1103,13 +1110,13 @@ f1b_lt
 
 library(gridExtra)
 
-figure1<-grid.arrange(f1a_lt,f1b_lt,
+figure3_append<-grid.arrange(f1a_lt,f1b_lt,
                       ncol = 1, nrow = 2)
 g_lt <- arrangeGrob(f1a_lt,f1b_lt,  nrow=2) #generates g
-ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=10) #saves g
+ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=15)#saves g
 
 ###############################################################################
-##APpendix figure 4
+##Appendix figure 4
 #map but w/ relative disparity (in code for figure )
 
 
@@ -1247,7 +1254,7 @@ library(ggpubr)
 ggarrange(figure3mean_mhi,figure3sd_mhi, figure3cv_mhi, ncol = 1, nrow=3 )
 
 
-ggsave("results/appen_figure4_mhi_nation.pdf", width=8, height=7.5)
+ggsave("results/appen_figure5_mhi_nation.pdf", width=12, height=10)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
@@ -1380,7 +1387,7 @@ library(ggpubr)
 ggarrange(figure3mean_con,figure3sd_con, figure3cv_con, ncol = 1, nrow=3 )
 
 
-ggsave("results/appendix_figure5_conditional.pdf", width=8, height=7.5)
+ggsave("results/appendix_figure6_conditional.pdf", width=12 height=10)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
