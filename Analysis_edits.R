@@ -197,8 +197,6 @@ income_ineq_long<-income_ineq %>% gather(type, value, -cbsa, -Region, -Region_Na
 #################################################################################
 #repeat the absolute and relative disparity measures using life tables (conditional life expectancies)
 
-
-
   #find pct of the pop
   life_tables2<-life_tables1%>%
     filter(age_grp%in% c('25-34','65-74'))%>%
@@ -228,14 +226,15 @@ absolute_inequities_long_test_lt<-imputed_lt %>%
     wtd.mean<-weighted.mean(.x$le, w=.x$pop)
     wtd.sd<-sum(.x$pop/sum(.x$pop) * (.x$le - wtd.mean)^2)
     gini<-gini(.x$le, weights=.x$pop)*100
-    wtd.mean<-weighted.mean(.x$le, w=.x$pop)
     data.frame(dif=quants[2]-quants[1],
                ratio=quants[2]/quants[1],
                cv=wtd.sd/wtd.mean*100,
                gini=gini,
-               mld.wt=mld.wtd(.x$le, weights=.x$pop), 
-               BGV=BGV) %>% as_tibble
+               mld.wt=mld.wtd(.x$le, weights=.x$pop)
+      ) %>% as_tibble
   })
+
+
 
 #find median, 97.5, and 2.5 percentile for each abs. disparity measure by cbsa and age-group 
 summary_lt<-absolute_inequities_long_test_lt%>%
@@ -302,29 +301,35 @@ decile_le_lt<-imputed_lt %>% group_by(iteration, cbsa, decile_income1, age_grp) 
   mutate(dif=le_decile1-le_decile0, 
          ratio=le_decile1/le_decile0)
 
+#get the population pct by income and CBSA (and iteration) and cbsa mean Le and income mean le
+between_group<-imputed%>%group_by(iteration, cbsa)%>%
+  mutate(total_pop=sum(pop),
+         mean_le=mean(le))%>%
+  group_by(iteration, cbsa, decile_income)%>%
+  mutate(income_pop=sum(pop), 
+         pct_pop=income_pop/total_pop, 
+         mean_le_inc=mean(le))%>%
+  ungroup()
+#calculate the between group variance 
+BGV<-between_group%>%group_by(iteration, cbsa)%>%
+  summarize(BGV=sum(pct_pop*(mean_le_inc-mean_le)^2))
 
-#Find the Between Group variance 
-BGV<-imputed%>%group_by(iteration, cbsa, age_grp)%>% 
-  group_modify(~{
-    means_pops<-.x%>%
-      mutate(total_pop=sum(pop),
-            mean_le=mean(le),
-      decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, probs=seq(0, 1, by=0.1)), include.lowest = T)))%>%
-      group_by(decile_income)%>%
-      mutate(income_pop=sum(pop), 
-             pct_pop=income_pop/total_pop, 
-             mean_le_inc=mean(le))%>%
-      ungroup()
-    BGV<-sum(means_pops$pct_pop*(means_pops$mean_le_inc-means_pops$mean_le)^2)
-    data.frame(
-      BGV=BGV
-    )
-  })
+between_group1<-imputed_lt%>%group_by(iteration, cbsa, age_grp)%>% 
+mutate(total_pop=sum(pop),
+       mean_le=mean(le))%>%
+  group_by(iteration, cbsa, decile_income1, age_grp)%>%
+  mutate(income_pop=sum(pop), 
+         pct_pop=income_pop/total_pop, 
+         mean_le_inc=mean(le))%>%
+  ungroup()
+#calculate the between group variance 
+BGV1<-between_group1%>%group_by(iteration, cbsa, age_grp)%>%
+  summarize(BGV=sum(pct_pop*(mean_le_inc-mean_le)^2))
 
 #join BGV w /ratio/difference 
 #find median, 97.5, and 2.5 percentile for the ratio/difference/BGV measures for each cbsa and age group  
-summary_income<-decile_le%>%
-  left_join(BGV)%>%
+summary_income_lt<-decile_le%>%
+  left_join(BGV1)%>%
   group_by(cbsa, age_grp)%>%
   summarize(med_dif=median(dif), 
             uci_dif=as.numeric(quantile(dif,probs=0.975)),
@@ -352,8 +357,7 @@ income_ineq_v3_lt<-income_ineq_v2_lt%>%
   group_by(cbsa, type, age_grp) %>% 
   summarise(med=median(estimate), 
             uci=as.numeric(quantile(estimate,probs=0.975)), 
-            lci=as.numeric(quantile(estimate,probs=0.025))) %>% 
-  select(cbsa, type, med, lci, uci) %>% 
+            lci=as.numeric(quantile(estimate,probs=0.025)))%>% 
   mutate( med=ifelse(type=="rii", exp(med), med),
           uci=ifelse(type=="rii", exp(uci), uci), 
           lci=ifelse(type=="rii", exp(lci), lci))%>%
@@ -371,13 +375,13 @@ income_ineq_long_lt<-income_ineq_lt %>% gather(type, value, -age_grp,  -cbsa, -R
          Region_Name=sub(" Region", "", Region_Name)) %>% 
   left_join(total_pop_msa)
 
-income_ineq_long_lt<-income_ineq_long_lt%>%
+income_ineq_long_lt1<-income_ineq_long_lt%>%
   filter(type %in% c("Top/Bottom Difference", "97th% Top/Bottom Difference", "2.5% Top/Bottom Difference", "Top/Bottom Ratio",
                      "97th% Top/Bottom Ratio", "2.5% Top/Bottom Ratio"))%>%
   mutate(Region_Name=factor(Region_Name), 
          Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
 
-income_ineq_long_lt<-income_ineq_long_lt%>%
+income_ineq_long_lt1<-income_ineq_long_lt%>%
   arrange(value)
 
 #str(absolute_rel_ineq_long)
@@ -576,12 +580,15 @@ absolute_ineq_long1<-absolute_ineq_long%>%
 ##############################################################################
 # Table 2
 
-#view highest and lowest disp by region and level 
-view<-le_by_decile%>%
-  arrange(Region, decile_income, le)
+#Table 2- Univariate analysis 
 
-#Table 2- Analysis examining Pop size and MHI as predictors of disparities 
+#load in the additional contextual variables from CBSA_vars.R
 
+load('data/univariate.Rdata')
+univariate<-univariate%>%
+  mutate(GEOID=as.numeric(cbsa))
+
+str(univariate)
 #join the cbsa dataset (pop & MHI w/ absolute, relative inequities measure)
 #the total_pop and pop differ-- more likely to trust pop since it's from tidycensus rather than sum of CT
 
@@ -594,19 +601,68 @@ cbsa_inequities<-absolute_inequities_long%>%
          mhilog=log(mhi),
          mhi_cat=as.numeric(cut(mhi, breaks=c(0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000), right=T, 
                                 labels=c(1, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000,140000, 150000, 160000, 170000, 180000, 190000))))%>%
-  mutate(region=factor(Region, levels=c(4, 1, 2, 3)))
+  mutate(region=factor(Region, levels=c(4, 1, 2, 3)))%>%
+#join in the additional contextual data 
+  left_join(univariate)
 
+cbsa_inequities1<-cbsa_inequities%>%
+  filter(iteration==1)
 
-
+cbsa_inequities2<-cbsa_inequities1%>%
+  pivot_longer(value)
 #str(cbsa_inequities)
+hist(cbsa_inequities1$pop)
+hist(cbsa_inequities1$mhi)
+hist(cbsa_inequities1$mhilog)
+hist(cbsa_inequities1$poplog)
+hist(cbsa_inequities1$p_nhblack)
+hist(log(cbsa_inequities1$p_nhblack))
+hist(cbsa_inequities1$p_hispanic)
+hist(log(cbsa_inequities1$p_hispanic))
+hist(cbsa_inequities1$p_foreignb)
+hist(log(cbsa_inequities1$p_foreignb))
+hist(cbsa_inequities1$p_college)
+hist(log(cbsa_inequities1$p_college))
+hist(cbsa_inequities1$p_poverty)
+hist(cbsa_inequities1$p_noinsur)
+hist(cbsa_inequities1$p_house_burd)
+hist(cbsa_inequities1$pct_unemployed)
+hist(log(cbsa_inequities1$pct_unemployed))
+hist(cbsa_inequities1$DI_nhb_nhw)
+hist(cbsa_inequities1$DI_hisp_nhw)
+
 
 
 #exploratory visualization (scatter plots)
-absmhi<-ggplot(cbsa_inequities, aes(x=mhi, y=value))+geom_point()
+absmhi<-ggplot(cbsa_inequities1, aes(x=mhi, y=dif))+geom_point()
 absmhi
-logmhi<-ggplot(cbsa_inequities, aes(x=mhilog, y=value))+geom_point()
+logmhi<-ggplot(cbsa_inequities1, aes(x=mhilog, y=dif))+geom_point()
 logmhi
-abspop<-ggplot(cbsa_inequities, aes(x=poplog, y=value))+geom_point()
+abspop<-ggplot(cbsa_inequities1, aes(x=pop, y=dif))+geom_point()
+abspop
+abspoplog<-ggplot(cbsa_inequities1, aes(x=poplog, y=dif))+geom_point()
+abspoplog
+abs_phblack<-ggplot(cbsa_inequities1, aes(x=log(p_nhblack), y=dif))+geom_point()
+abs_phblack
+abs_p_hispanic<-ggplot(cbsa_inequities1, aes(x=log(p_hispanic), y=dif))+geom_point()
+abs_p_hispanic
+abs_p_foreignb<-ggplot(cbsa_inequities1, aes(x=log(p_foreignb), y=dif))+geom_point()
+abs_p_foreignb
+abs_p_college<-ggplot(cbsa_inequities1, aes(x=p_college, y=dif))+geom_point()
+abs_p_college
+abs_p_poverty<-ggplot(cbsa_inequities1, aes(x=p_poverty, y=dif))+geom_point()
+abs_p_poverty
+abs_p_noinsur<-ggplot(cbsa_inequities1, aes(x=p_noinsur, y=dif))+geom_point()
+abs_p_noinsur
+abs_p_house_burd<-ggplot(cbsa_inequities1, aes(x=p_house_burd, y=dif))+geom_point()
+abs_p_house_burd
+abs_pct_unemployed<-ggplot(cbsa_inequities1, aes(x=log(pct_unemployed), y=dif))+geom_point()
+abs_pct_unemployed
+abs_DI_nhb_nhw<-ggplot(cbsa_inequities1, aes(x=DI_nhb_nhw, y=dif))+geom_point()
+abs_DI_nhb_nhw
+abs_DI_hisp_nhw<-ggplot(cbsa_inequities1, aes(x=DI_hisp_nhw, y=dif))+geom_point()
+abs_DI_hisp_nhw
+
 
 #regress inequities on absolute disparities
 
@@ -614,10 +670,30 @@ abspop<-ggplot(cbsa_inequities, aes(x=poplog, y=value))+geom_point()
 regressions<-cbsa_inequities %>% group_by(iteration) %>% 
   group_modify(~{
     model_pop<-lm(dif~log(pop), data=.x)%>% tidy
-    model_mhi<-lm(dif~log(mhi), data=.x)%>% tidy
+    model_mhi<-lm(dif~log(mhi), data=.x)%>% tidy   
+    model_nhb<-lm(dif~log(p_nhblack), data=.x)%>% tidy
+    model_hisp<-lm(dif~log(p_hispanic), data=.x)%>% tidy
+    model_fb<-lm(dif~log(p_foreignb), data=.x)%>% tidy
+    model_college<-lm(dif~p_college, data=.x)%>% tidy
+    model_pov<-lm(dif~p_poverty, data=.x)%>% tidy
+    model_insur<-lm(dif~p_noinsur, data=.x)%>% tidy
+    model_house<-lm(dif~p_house_burd, data=.x)%>% tidy
+    model_unemp<-lm(dif~log(pct_unemployed), data=.x)%>% tidy
+    model_dis_nhb<-lm(dif~DI_nhb_nhw, data=.x)%>% tidy
+    model_dis_hisp<-lm(dif~DI_hisp_nhw, data=.x)%>% tidy
     model_region<-lm(dif~region, data=.x)%>% tidy
     bind_rows(model_pop %>% filter(term=="log(pop)") %>% select(estimate, std.error) %>% mutate(type="pop"),
               model_mhi %>% filter(term=="log(mhi)") %>% select(estimate, std.error) %>% mutate(type="mhi"), 
+              model_nhb %>% filter(term=="log(p_nhblack)") %>% select(estimate, std.error) %>% mutate(type="p_nhblack"), 
+              model_hisp %>% filter(term=="log(p_hispanic)") %>% select(estimate, std.error) %>% mutate(type="p_hispanic"), 
+              model_fb %>% filter(term=="log(p_foreignb)") %>% select(estimate, std.error) %>% mutate(type="p_foreignb"), 
+              model_college %>% filter(term=="p_college") %>% select(estimate, std.error) %>% mutate(type="p_college"), 
+              model_pov %>% filter(term=="p_poverty") %>% select(estimate, std.error) %>% mutate(type="p_poverty"), 
+              model_insur %>% filter(term=="p_noinsur") %>% select(estimate, std.error) %>% mutate(type="p_noinsur"), 
+              model_house %>% filter(term=="p_house_burd") %>% select(estimate, std.error) %>% mutate(type="p_house_burd"), 
+              model_unemp %>% filter(term=="log(pct_unemployed)") %>% select(estimate, std.error) %>% mutate(type="pct_unemployed"), 
+              model_dis_nhb %>% filter(term=="DI_nhb_nhw") %>% select(estimate, std.error) %>% mutate(type="DI_nhb_nhw"), 
+              model_dis_hisp %>% filter(term=="DI_hisp_nhw") %>% select(estimate, std.error) %>% mutate(type="DI_hisp_nhw"), 
               model_region %>% filter(term=="region1")%>% select(estimate, std.error) %>% mutate(type="Northeast"), 
               model_region %>% filter(term=="region2")%>% select(estimate, std.error) %>% mutate(type="Midwest"), 
               model_region %>% filter(term=="region3")%>% select(estimate, std.error) %>% mutate(type="South"))
@@ -634,7 +710,12 @@ regresssions_pooled<-regressions%>% group_by(type)%>%
   select(type, beta, lci, uci)
 
 #find the estimate for a 10% larger population
-0.3197116*log(1.10)
+0.32943113*log(1.10)
+#CI
+0.1584489*log(1.10)
+0.50041339*log(1.10)
+
+
 
 ###############################################################################
 #-------Figure 3 ------
@@ -1011,33 +1092,36 @@ f1b_lt<-absolute_rel_ineq_long_lt%>%
         panel.grid.major.x = element_blank(),
         axis.text.x=element_text(size=14, color="black"),
         axis.text.y=element_text(size=18, color="black"),
-        axis.title.y=element_blank(),
+        axis.title.y=element_text(face="bold", size=20),
         strip.text =element_text(face="bold", size=20),
         strip.background = element_blank(),
         plot.title=element_text(size=18, hjust=0.5))+
   facet_wrap(~age_grp)
 f1b_lt
 
+
+
 library(gridExtra)
 
 figure1<-grid.arrange(f1a_lt,f1b_lt,
-                      ncol = 2, nrow = 2)
+                      ncol = 1, nrow = 2)
 g_lt <- arrangeGrob(f1a_lt,f1b_lt,  nrow=2) #generates g
 ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=10) #saves g
 
 ###############################################################################
 ##APpendix figure 4
-#map but w/ relative disparity
+#map but w/ relative disparity (in code for figure )
 
 
 #######APPENDIX Figure 5
 ##############################################################################
 #figure 3 repeated w/ mhi standardized across the full US, not MSA-- some cbsa's won't have observations in all deciles
 
+
 #use imputed data (iterations nsim) to find weighted mean, then take mean of that le by cbsa and decile income
-mhi_nation<-dta1 %>% 
+mhi_nation<-dta %>% 
   mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))%>%
-  select(GEOID, decile_income, pop, cbsa, pct_pop)
+  select(GEOID, decile_income, pop, cbsa)
 
 #create nsim iterations of the LE for each CT (using le and se)
 imputed_mhi_nation<-dta %>% group_by(GEOID) %>% 
@@ -1173,35 +1257,38 @@ ggplotly(figure3sd)
 #APpendix Figure 6
 #conditional life expectancies, repeating Figure 3 
 
-
-le_by_decile_v2<-imputed_lt %>%  group_by(iteration, cbsa, age_grp)%>% 
-  mutate(decile_income=as.numeric(cut(mhi, breaks=quantile(mhi, seq(0, 1, by=0.1)), include.lowest = T)))%>%
-  group_by(decile_income, cbsa, age_group)%>%
-  summarise(le=weighted.mean(le, w=pop))%>%
+le_by_decile_lt<-imputed_lt %>% group_by(iteration, cbsa, decile_income1, age_grp) %>% 
+  summarize(le=weighted.mean(le, w=pop))%>%
   ungroup()%>%
-  summarise(le=mean(le))%>%
-  left_join(total_pop_msa)%>% left_join(region)
+  group_by(cbsa, decile_income1, age_grp)%>%
+  summarize(le=mean(le))%>%
+  left_join(total_pop_msa) %>% left_join(region)
 
 
-cv_decile_lt<-le_by_decile_lt %>% group_by(age_grp, Region, decile_income) %>% 
+#now find mean, sd, cv by decile for total population   
+cv_decile_tot_lt<-le_by_decile_lt%>%
+  group_by(age_grp, decile_income1)%>%
   summarize(mean=mean(le), 
             sd=sd(le), 
             cv=sd/mean*100)%>%
   pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
-  mutate(Region=factor(Region)) 
+  mutate(Region=factor(5), 
+         decile_income=factor(decile_income1, labels=c(1,2,3,4,5,6,7,8,9,10)))
 
-cv_decile_tot_lt<-le_by_decile%>%
-  group_by(age_grp, decile_income)%>%
+cv_decile_lt<-le_by_decile_lt %>% group_by(age_grp, Region, decile_income1) %>% 
   summarize(mean=mean(le), 
             sd=sd(le), 
             cv=sd/mean*100)%>%
   pivot_longer(cols=c("mean", "sd", "cv"), names_to="type", values_to="value")%>%
-  mutate(Region=factor(5))
+  mutate(Region=factor(Region), 
+         decile_income=factor(decile_income1, labels=c(1,2,3,4,5,6,7,8,9,10))) 
 
 
 cv_decile1_lt<-cv_decile_lt%>%
   bind_rows(cv_decile_tot_lt)%>%
-  mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
+  mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall")), 
+         age_grp=case_when(age_grp=="25-34" ~ "25", 
+                           age_grp=="65-74"~"65")) 
 
 figure3cv_con<-cv_decile1_lt%>%
   filter(type=="cv")%>%

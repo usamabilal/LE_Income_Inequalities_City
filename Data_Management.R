@@ -53,7 +53,6 @@ ME_lt1<-ME_lt%>%
               se=as.numeric(`se(e(x))`), 
       #age groups coded differently than in the full US dataset--only recode the values we'll need
            age_grp=case_when(age_grp=="25 to 34"~ "25-34", 
-                             age_grp=="55 to 64"~ "55-64", 
                              age_grp=="65 to 74"~ "65-74"))%>%
   select(GEOID,age_grp, le,se)
 
@@ -65,7 +64,6 @@ WI_lt1<-WI_lt%>%
          le=as.numeric(`e(x)`), 
          se=as.numeric(`se(e(x))`), 
          age_grp=case_when(age_grp=="25 to 34"~ "25-34", 
-                           age_grp=="55 to 64"~ "55-64", 
                            age_grp=="65 to 74"~ "65-74"))%>%
   select(GEOID,age_grp, le,se)
 
@@ -138,9 +136,18 @@ cw<-cw %>% filter(!cbsa%in%exclude)
 # plus remove  Bedford city (all go to bedford county)
 cw<-cw %>% filter(county!=51515) %>% select(-state)
 
+#save the cbsa to county crosswalk
+cbsa_county<-cw
+save(cbsa_county, file='data/cbsa_county.Rdata')
+
 ct_data<-ct_data %>% 
   mutate(county=floor(GEOID/1000000),
          state=floor(county/1000))
+#create dataset w/ just ct, county, state
+ct_county<-ct_data%>%
+  select(GEOID, county, state)
+  
+save(ct_county, file='data/ct_county.Rdata')
 
 # get census regions
 region<-read_excel("data/state-geocodes-v2014-1.xls", skip=5)
@@ -182,7 +189,7 @@ life_tables %>% filter(is.na(mhi))
 life_tables<-life_tables%>% filter(!is.na(mhi))
 summary(life_tables)
 
-#limit life tables to just estimates for 25-34, 55-64, 65-74
+#limit life tables to just estimates for 25-34, 65-74
 life_tables1<-life_tables%>%
   #limit to the le's at 25, and 65
   filter(age_grp%in% c('25-34','65-74'))
