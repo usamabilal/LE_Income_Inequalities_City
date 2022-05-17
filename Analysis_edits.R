@@ -703,6 +703,7 @@ regressions<-cbsa_inequities %>% group_by(iteration) %>%
   })
 
 
+
 regresssions_pooled<-regressions%>% group_by(type)%>%
    summarize(beta=mean(estimate), 
           var_wtn=mean(std.error^2),
@@ -711,6 +712,45 @@ regresssions_pooled<-regressions%>% group_by(type)%>%
           lci=beta-(1.96*se),
           uci=beta+(1.96*se))%>%
   select(type, beta, lci, uci)
+
+#extract R2
+r_squared<-cbsa_inequities %>% group_by(iteration) %>% 
+  group_modify(~{
+    model_pop<-summary(lm(dif~log(pop), data=.x))$r.squared%>%data_frame()
+    model_mhi<-summary(lm(dif~log(mhi), data=.x))$r.squared%>%data_frame()
+    model_nhb<-summary(lm(dif~log(p_nhblack), data=.x))$r.squared%>%data_frame()
+    model_hisp<-summary(lm(dif~log(p_hispanic), data=.x))$r.squared%>%data_frame()
+    model_fb<-summary(lm(dif~log(p_foreignb), data=.x))$r.squared%>%data_frame()
+    model_college<-summary(lm(dif~p_college, data=.x))$r.squared%>%data_frame()
+    model_pov<-summary(lm(dif~p_poverty, data=.x))$r.squared%>%data_frame()
+    model_insur<-summary(lm(dif~p_noinsur, data=.x))$r.squared%>%data_frame()
+    model_house<-summary(lm(dif~p_house_burd, data=.x))$r.squared%>%data_frame()
+    model_unemp<-summary(lm(dif~log(pct_unemployed), data=.x))$r.squared%>%data_frame()
+    model_dis_nhb<-summary(lm(dif~DI_nhb_nhw, data=.x))$r.squared%>%data_frame()
+    model_dis_hisp<-summary(lm(dif~DI_hisp_nhw, data=.x))$r.squared%>%data_frame()
+    model_region<-summary(lm(dif~region, data=.x))$r.squared%>%data_frame()
+    bind_rows(
+      model_pop%>%mutate(type="pop"),
+      model_mhi%>%mutate(type="mhi"),
+      model_nhb%>%mutate(type="nhb"),
+      model_hisp%>%mutate(type="hisp"),
+      model_fb%>%mutate(type="fb"),
+      model_college%>%mutate(type="college"),
+      model_pov%>%mutate(type="pov"),
+      model_insur%>%mutate(type="insur"),       
+      model_house%>%mutate(type="house"),
+      model_unemp%>%mutate(type="unemp"),
+      model_pop%>%mutate(type="pop"),
+      model_dis_nhb%>%mutate(type="dis_nhb"),
+      model_dis_hisp%>%mutate(type="dis_hisp"),
+      model_region%>%mutate(type="region"))
+  })%>%
+  rename(r_squared=".")
+
+r_squared_pooled<-r_squared%>% group_by(type)%>%
+  summarize(mean=mean(r_squared))
+             
+  
 
 #find the estimate for a 10% larger population
 0.32943113*log(1.10)
@@ -1115,6 +1155,13 @@ figure3_append<-grid.arrange(f1a_lt,f1b_lt,
 g_lt <- arrangeGrob(f1a_lt,f1b_lt,  nrow=2) #generates g
 ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=15)#saves g
 
+
+medians<-absolute_rel_ineq_long_lt1%>%group_by(age_grp, Region_Name, type)%>%
+  summarize(median=median(value), 
+            mean=mean(value),
+            sd=sd(value), 
+            cv=sd/mean*100)
+
 ###############################################################################
 ##Appendix figure 4
 #map but w/ relative disparity (in code for figure )
@@ -1313,7 +1360,7 @@ figure3cv_con<-cv_decile1_lt%>%
        y="CV of Life Expectancy", 
        color="Region")+
   # guides(color=F, fill=F)+
-  #  scale_y_continuous(limits=c(0, 5), breaks=seq(0, 5, by=1))+
+  scale_y_continuous(limits=c(0,10), breaks=seq(0,10, by=1))+
   #  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   theme_bw() +
   theme(legend.position = "bottom", axis.text=element_text(color="black", size=14),
@@ -1339,7 +1386,7 @@ figure3sd_con<-cv_decile1_lt%>%
        x="Decile of Median Household Income",
        y="SD of Life Expectancy (years)", 
        color="Region")+
-  # scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
+   scale_y_continuous(limits=c(0, 4), breaks=seq(0, 4, by=1))+
   #  scale_x_continuous(limits=c(1, 10), breaks=seq(1, 10 , by=1))+
   #  facet_grid(~type)+
   guides(color=F, fill=F)+
@@ -1387,7 +1434,7 @@ library(ggpubr)
 ggarrange(figure3mean_con,figure3sd_con, figure3cv_con, ncol = 1, nrow=3 )
 
 
-ggsave("results/appendix_figure6_conditional.pdf", width=12 height=10)
+ggsave("results/appendix_figure6_conditional.pdf", width=12,height=10)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
