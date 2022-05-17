@@ -485,6 +485,62 @@ ggsave(g, file="results/figure1.pdf", width=15, height=10) #saves g
 #view specific MSAs
 ggplotly(f1a)
 
+# figure 1 alternative option (plus)
+f1c<-income_ineq_long%>%
+  filter(type=="Slope Index of Inequality")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  scale_y_continuous(breaks=my_breaks)+
+  geom_hline(lty=2, yintercept=0)+
+  labs(x="",
+       y="Value",
+       title="Slope Index of Inequality")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y=element_text(size=18, color="black"),
+        axis.title.y=element_text(face="bold", size=20),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+
+f1d<-income_ineq_long%>%
+  filter(type=="Relative Index of Inequality")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  geom_hline(lty=2, yintercept=1)+
+  scale_y_continuous(trans="log", sec.axis = dup_axis())+
+  labs(x="",
+       y="Value",
+       title="Relative Index of Inequality")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y.right=element_text(size=18, color="black"),
+        axis.text.y.left=element_blank(),
+        axis.title.y.right=element_text(face="bold", size=20),
+        axis.title.y.left=element_blank(),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+g <- arrangeGrob(f1a,f1b,f1c, f1d,  nrow=2) #generates g
+ggsave(g, file="results/figure1_alternative.pdf", width=15, height=13) #saves g
 
 #median LE disparities by region (figure 1)
 
