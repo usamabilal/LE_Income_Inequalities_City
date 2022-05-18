@@ -955,7 +955,6 @@ r_squared_pooled_cond<-r_squared_cond%>% group_by(type, age_grp)%>%
   summarize(mean=mean(r_squared)*100)
 
 # create table:
-# create table:
 table2_app<-regresssions_pooled_cond %>% 
   left_join(sds %>% rename(type=variable)) %>% 
   left_join(r_squared_pooled_cond) %>% 
@@ -1219,8 +1218,9 @@ corrs<-ggpairs(data=full_dta,
                columns = cols, upper = list(continuous = wrap("cor", size=6, color="black", stars=F))) +
   theme_bw() +
   theme(strip.background=element_blank(),
-        strip.text = element_text(color="black", size=12, face="bold"),
+        strip.text = element_text(color="black", size=10, face="bold"),
         axis.text=element_text(color="black"))
+corrs
 ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
 
 ###############################################################################
@@ -1228,7 +1228,8 @@ ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
 #Figure 1 repeated with income disparity measure 
 
 absolute_rel_income_ineq_long<-income_ineq_long%>%
-  filter(type %in% c("Top/Bottom Difference", "Top/Bottom Ratio"))%>%
+  filter(type %in% c("Top/Bottom Difference", "Top/Bottom Ratio", 
+                     "Slope Index of Inequality", "Relative Index of Inequality"))%>%
   mutate(Region_Name=factor(Region_Name), 
          Region_Name=ordered(Region_Name, levels=c("Midwest", "South", "Northeast", "West")))
 
@@ -1275,7 +1276,7 @@ appen_f1b<-absolute_rel_income_ineq_long%>%
   scale_y_continuous(trans="log", sec.axis = dup_axis())+
   labs(x="",
        y="Value",
-       title="Relative Disparity")+
+       title="Top/Bottom Ratio")+
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
@@ -1289,12 +1290,72 @@ appen_f1b<-absolute_rel_income_ineq_long%>%
         strip.background = element_blank(),
         plot.title=element_text(size=18, hjust=0.5))
 appen_f1b
+
+
+
+appen_f1c<-absolute_rel_income_ineq_long%>%
+  filter(type=="Slope Index of Inequality")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  geom_hline(lty=2, yintercept=0)+
+  labs(x="",
+       y="Value",
+       title="Slope Index of Inequality")+
+  theme_bw() +
+  scale_y_continuous(breaks=my_breaks)+
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y=element_text(size=18, color="black"),
+        axis.title.y=element_text(face="bold", size=20),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+appen_f1c
+
+appen_f1d<-absolute_rel_income_ineq_long%>%
+  filter(type=="Relative Index of Inequality")%>%
+  ggplot(aes(x=Region_Name, y=value))+
+  geom_boxplot(aes(group=as.factor(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+
+  geom_jitter(aes(fill=as.factor(Region_Name), size=total_pop), 
+              width=0.1, height=0, alpha=1,
+              color="black", pch=21) +
+  guides(color=F, fill=F, size=F)+
+  scale_fill_discrete()+
+  scale_colour_discrete()+
+  geom_hline(lty=2, yintercept=1)+
+  scale_y_continuous(sec.axis = dup_axis())+
+  labs(x="",
+       y="Value",
+       title="Relative Index of Inequality")+
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(50, "points"),
+        panel.grid.major.x = element_blank(),
+        axis.text.x=element_text(size=18, color="black"),
+        axis.text.y.right=element_text(size=18, color="black"),
+        axis.text.y.left=element_blank(),
+        axis.title.y.right=element_text(face="bold", size=20),
+        axis.title.y.left=element_blank(),
+        strip.text =element_text(face="bold", size=20),
+        strip.background = element_blank(),
+        plot.title=element_text(size=18, hjust=0.5))
+appen_f1d
+
+
 library(gridExtra)
 
-figure1<-grid.arrange(appen_f1a,appen_f1b,
-                      ncol = 2, nrow = 1)
-g <- arrangeGrob(appen_f1a,appen_f1b,  nrow=1) #generates g
-ggsave(g, file="results/Appendix_figure2.pdf", width=15, height=10) #saves g
+figure1<-grid.arrange(appen_f1a,appen_f1b,appen_f1c, appen_f1d, 
+                      ncol = 2, nrow = 2)
+g <- arrangeGrob(appen_f1a,appen_f1b, appen_f1c, appen_f1d, nrow=1, ncol=2) #generates g
+ggsave(figure1, file="results/Appendix_figure2.pdf", width=15, height=10) #saves g
 
 #view specific MSAs
 ggplotly(f1a)
@@ -1330,18 +1391,18 @@ f1a_lt<-absolute_rel_ineq_long_lt1%>%
   geom_hline(lty=2, yintercept=0)+
   scale_y_continuous(breaks=my_breaks)+
   labs(x="",
-       y="Value",
+       y="Absolute Disparity",
        title="Absolute Disparity")+
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
         panel.grid.major.x = element_blank(),
         axis.text.x=element_text(size=18, color="black"),
-        axis.text.y=element_text(size=18, color="black"),
-        axis.title.y=element_text(face="bold", size=20),
+        axis.text.y=element_text(size=12, color="black"),
+        axis.title.y=element_text(size=18),
         strip.text =element_text(face="bold", size=20),
         strip.background = element_blank(),
-        plot.title=element_text(size=18, hjust=0.5))+
+        plot.title=element_text(face="bold",size=20, hjust=0.5))+
   facet_wrap(~age_grp)
 f1a_lt
 
@@ -1358,18 +1419,18 @@ f1b_lt<-absolute_rel_ineq_long_lt1%>%
   geom_hline(lty=2, yintercept=1)+
   scale_y_continuous(trans="log") +
   labs(x="",
-       y="Value",
+       y="Relative Disparity",
        title="Relative Disparity")+
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key.width = unit(50, "points"),
         panel.grid.major.x = element_blank(),
         axis.text.x=element_text(size=18, color="black"),
-        axis.text.y=element_text(size=18, color="black"),
-        axis.title.y=element_text(face="bold", size=20),
-        strip.text =element_text(face="bold", size=20),
+        axis.text.y=element_text(size=12, color="black"),
+        axis.title.y=element_text(size=18),
+        strip.text =element_text(face="bold", size=14),
         strip.background = element_blank(),
-        plot.title=element_text(size=18, hjust=0.5))+
+        plot.title=element_text(size=20, hjust=0.5, face="bold"))+
   facet_wrap(~age_grp)
 f1b_lt
 
