@@ -969,7 +969,7 @@ table2_app<-regresssions_pooled_cond %>%
   pivot_wider(id_cols=c(type, sd), names_from="age_grp", values_from = c(beta, r2)) %>% 
   select(type, sd, `beta_25-34`, `r2_25-34`, `beta_65-74`, `r2_65-74`)
 table2_app
-write_csv(table2, "Results/table2_app.csv")
+write_csv(table2_app, "Results/table2_app.csv")
 
 
 
