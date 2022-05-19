@@ -838,7 +838,7 @@ r_squared_pooled<-r_squared%>% group_by(type)%>%
 
 
 #find the estimate for a 10% larger population
-0.32943113*log(1.10)
+0.32*log(1.10)
 #CI
 0.1584489*log(1.10)
 0.50041339*log(1.10)
