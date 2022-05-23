@@ -1,10 +1,13 @@
-figure1_plotter = function(outcomeTmp,typeTmp){
+figure1_plotter = function(outcomeTmp,typeTmp, ageTmp){
   df_tmp = df_fig1 %>% 
     filter(outcome == outcomeTmp) %>% 
-    filter(type==typeTmp) 
+    filter(type==typeTmp) %>% 
+    filter(age_grp == ageTmp)
+  print(df_tmp)
   levelsTmp = unique(df_tmp$Region_Name)
   df_tmp = df_tmp %>% mutate(Region_Name=factor(Region_Name, levels = levelsTmp))
   title_tmp = ifelse(outcomeTmp =="Total","Total Life Expectancy Disparities by MSA","Income-based Life Expectancy Disparities by MSA")
+  title_tmp = paste0(title_tmp," (",ageTmp,")")
   yaxis_tmp = typeTmp
   plot1 = ggplot(df_tmp,aes(x=Region_Name, y=value))+
     geom_boxplot(aes(group=(Region_Name)), fill=NA, outlier.color = NA, width=0.5)+

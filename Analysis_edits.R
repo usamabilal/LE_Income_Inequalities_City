@@ -1905,10 +1905,12 @@ df_fig1_choices_type = df_fig1 %>%
   mutate(type2 = paste0(outcome,": ", type)) %>% 
   mutate(type = as.character(type)) %>% 
   select(-n)
+fig1_type_default =  df_fig1_choices_type %>% filter(outcome =='Total') %>% pull(type)
+df_fig1_choices_age = df_fig1 %>% pull(age_grp) %>% unique()
 
 df_intro_home = read.csv("App/introJS/df_intro_home.csv") %>% as.data.frame() %>% select(-X)
 ###  Save data for App
-save(df_fig1_choices_type,
+save(df_fig1_choices_type,fig1_type_default,df_fig1_choices_age,
      file= "App/cleaned_le_income_cities_UIelements.rdata" )
 save(
   df_table1,   ## Table 1 

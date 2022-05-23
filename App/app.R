@@ -17,8 +17,8 @@
   
   library(htmlwidgets)
   ### Load UI Components
-  source("appUI.R", local = T)
   load("cleaned_le_income_cities_UIelements.rdata")
+  source("appUI.R", local = T)
 }
 
 
@@ -56,16 +56,23 @@ server <- function(input, output, session) {
   })
   
   # Figure 1 ----
-  output$fig1_ui_input = renderUI({
+  fig1_inputs = reactive( list(ineq = input$fig1_ineq, type = input$fig1_type)  )
+  fig1_inputs_d = fig1_inputs %>% debounce(200) 
+  observeEvent(input$fig1_ineq, {
     choices_tmp = df_fig1_choices_type %>% filter(outcome == input$fig1_ineq) %>% pull(type)
-    pickerInput(inputId = "fig1_type", label = "Type" , choices = choices_tmp)
-  })
+    updatePickerInput(session = session, 
+                      inputId = "fig1_type",
+                      choices = choices_tmp)}, ignoreInit = TRUE)
+  
+  
   output$plot_fig1 = renderPlotly({
     w$show()
-    req(input$fig1_type)
-    outcomeTmp = input$fig1_ineq
-    typeTmp = input$fig1_type
-    figure1_plotter(outcomeTmp,typeTmp)
+    # req(input$fig1_type)
+    # req(input$fig1_ineq)
+    outcomeTmp = fig1_inputs_d()$ineq
+    typeTmp = fig1_inputs_d()$type
+    ageTmp = input$fig1_age
+    figure1_plotter(outcomeTmp,typeTmp, ageTmp)
   })
   output$plot_fig1_ui = renderUI({
     plotlyOutput("plot_fig1")

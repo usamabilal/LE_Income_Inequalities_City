@@ -75,11 +75,17 @@ ui_figure1 =  div(class = "figureTabContainer",
                     sidebarLayout(
                       sidebarPanel(width = 3,
                                    pickerInput(
+                                     inputId = "fig1_age",
+                                     label = "Age Group" ,
+                                     choices = df_fig1_choices_age),
+                                   pickerInput(
                                      inputId = "fig1_ineq",
                                      label = "Inequalities" ,
                                      choices = c("Total" ="Total",
                                                  "Income-based"="Income")),
-                                   uiOutput("fig1_ui_input")),
+                                   pickerInput(inputId = "fig1_type", 
+                                               label = "Type" , 
+                                               choices = fig1_type_default)),
                       mainPanel(uiOutput("plot_fig1_ui")) ) ) )
 
 
