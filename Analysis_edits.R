@@ -1360,6 +1360,7 @@ ggsave(figure1, file="results/Appendix_figure2.pdf", width=15, height=10) #saves
 #view specific MSAs
 ggplotly(f1a)
 
+
 medians_inc<-absolute_rel_income_ineq_long%>%
   filter(type%in%c("Top/Bottom Difference", "Top/Bottom Ratio"))%>%
   group_by(Region_Name, type)%>%
@@ -1368,6 +1369,14 @@ medians_inc<-absolute_rel_income_ineq_long%>%
             sd=sd(value), 
             cv=sd/mean*100)
 
+
+
+medians_inc<-income_ineq_long%>%
+  group_by(Region_Name, type)%>%
+  summarize(median=median(value), 
+            mean=mean(value),
+            sd=sd(value), 
+            cv=sd/mean*100)
 
 #################################################################################
 ####Conditional Life Expectancy
