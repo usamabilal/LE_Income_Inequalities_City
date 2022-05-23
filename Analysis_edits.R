@@ -1753,63 +1753,8 @@ ggplotly(figure3sd)
 
 # ___Table 1 ----
 {
-  top1<-summary_absolute %>% arrange(rank) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
-  bottom1<-summary_absolute %>% arrange(desc(rank)) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
-  top2<-summary_income %>% arrange(rank) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
-  bottom2<-summary_income %>% arrange(desc(rank)) %>% slice(1:10) %>% select(cbsa_name, Region_Name, rank)
-  table1<-bind_cols(bind_rows(top1%>% arrange(rank), 
-                              data.frame(cbsa_name="...", Region_Name="...", rank=NA),
-                              bottom1 %>% arrange(rank)) ,
-                    bind_rows(top2%>% arrange(rank), 
-                              data.frame(cbsa_name="...", Region_Name="...", rank=NA),
-                              bottom2 %>% arrange(rank)) )
-  
-  summary_large<-bind_rows(absolute_ineq_long, income_ineq_long) %>% 
-    # filter(total_pop>=1000000) %>% 
-    arrange(type, value) %>% 
-    group_by(type) %>% 
-    mutate(rank=row_number()) %>% 
-    group_by(cbsa_name, cbsa, total_pop, Region, Region_Name) %>% 
-    summarise(rank=mean(rank)) %>% 
-    arrange(desc(rank)) %>% 
-    ungroup() %>% 
-    mutate(rank=row_number())
-  df_table1<-full_join(absolute_ineq %>% 
-                         ungroup() %>%
-                         rename(total_dif=dif,
-                                total_ratio=ratio), 
-                       income_ineq) %>% left_join(total_pop_msa) %>% 
-    # filter(total_pop>=1000000) %>% 
-    left_join(summary_large %>% select(cbsa, rank)) %>% 
-    select(cbsa_name,total_pop, Region_Name, rank, 
-           total_dif, total_ratio, cv, gini,mld.wt,
-           dif, ratio, sii, rii) %>% arrange(rank) %>% 
-    mutate(Region_Name=sub(" Region", "", Region_Name)) %>% 
-    ### Formatting for dashboard table
-    rename(Name=cbsa_name,
-           Region=Region_Name,
-           Rank=rank,
-           abs_diff=total_dif,
-           abs_ratio=total_ratio,
-           abs_cv=cv,
-           abs_gini=gini,
-           abs_mld=mld.wt,
-           income_diff = dif,
-           income_ratio = ratio,
-           income_sii= sii,
-           income_rii = rii
-    ) %>% 
-    mutate(abs_mld =round(abs_mld,5),
-           income_rii = round(income_rii,3)) %>% 
-    mutate_at(vars(abs_diff,
-                   abs_ratio,
-                   abs_cv, abs_gini,
-                   income_diff, income_ratio,
-                   income_sii),
-              ~round(.x,2)) %>% 
-    select(-Rank) %>% 
-    arrange(desc(total_pop))
-  df_table1
+ source("App/r/data/table1_data_cleaning.R")
+ df_table1
 }
 
 
