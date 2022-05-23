@@ -1766,6 +1766,7 @@ ggplotly(figure3sd)
   df_income_ineq_long=income_ineq_long %>% ungroup() %>% 
     mutate(outcome = "income")
   df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)%>% 
+    filter(!str_detect(type,"%")) %>% 
     group_by(outcome,type) %>% 
     group_modify(~.x %>% 
                    mutate(value_rounded = round(value,3)) %>% 
@@ -1819,6 +1820,7 @@ ggplotly(figure3sd)
                         mutate(ineq="Total"),
                       income_ineq_long %>% select(cbsa, type, value) %>% 
                         mutate(ineq="Income")) %>% 
+    filter(!str_detect(type,"%")) %>% 
     mutate(type2=paste0(ineq, ": ", type)) %>% 
     arrange(desc(value)) %>%
     group_by(type2) %>%
