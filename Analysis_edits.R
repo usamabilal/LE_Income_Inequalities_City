@@ -1761,13 +1761,26 @@ ggplotly(figure3sd)
 # ___Figure 1 ----
 {
   library(glue)
-  df_absolute_ineq_long=absolute_ineq_long %>% ungroup()%>% 
-    mutate(outcome = "total")
-  df_income_ineq_long=income_ineq_long %>% ungroup() %>% 
-    mutate(outcome = "income")
-  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)%>% 
+
+  ## LE
+  df_absolute_ineq_long=absolute_ineq_long_lt %>% ungroup()%>% 
     filter(!str_detect(type,"%")) %>% 
-    group_by(outcome,type) %>% 
+    mutate(outcome = "total") %>% 
+    select(cbsa, cbsa_name,  Region, Region_Name, total_pop,
+           outcome, type, age_grp, value)
+  df_absolute_ineq_long %>% count(type)
+
+  ## Income
+  df_income_ineq_long=income_ineq_long_lt %>% ungroup() %>% 
+    filter(!str_detect(type,"%")) %>% 
+    mutate(outcome = "income")%>% 
+    select(cbsa, cbsa_name,  Region, Region_Name, total_pop,
+           outcome, type, age_grp, value)
+  df_income_ineq_long %>% count(type)
+
+  
+  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)%>% 
+    group_by(outcome,type,age_grp) %>% 
     group_modify(~.x %>% 
                    mutate(value_rounded = round(value,3)) %>% 
                    mutate(value = round(value,4)) %>% 
@@ -1778,11 +1791,12 @@ ggplotly(figure3sd)
     ungroup() %>% 
     mutate(tooltip = glue(
       '<b>{cbsa_name}</b>
+      Age Group: {age_grp} 
       {type}: {value_rounded} 
       Population: {format(total_pop, big.mark = ",")} 
       ',
     ) %>% as.character()) %>% 
-    select(outcome, type,Region_Name, value,total_pop, tooltip ) %>% 
+    select(outcome, type,age_grp, Region_Name, value,total_pop, tooltip ) %>% 
     mutate(outcome = str_to_title(outcome)) 
 }
 
