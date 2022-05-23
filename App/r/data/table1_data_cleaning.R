@@ -7,8 +7,8 @@
 #'    @seciont-3: pulls other Income metrics: 1) SII 2) RII
 #'    @seciont-4: compiles + formats table1 data structure for app
 #'################################################################################### 
-   
-    
+
+
 # # 1. Rank + CI -----
 # { 
 #   # __ 1.1 LE ----
@@ -145,7 +145,7 @@
       "2.5% Abs. Disparity" = "abs_diff_lci",
       "Rel. Disparity"="abs_ratio",
       "97th% Rel. Disparity"="abs_ratio_uci",
-      "2.5% Rel. Disparity"="abs_ratio_lcu",
+      "2.5% Rel. Disparity"="abs_ratio_lci",
       "Coefficient of Variation"="abs_cv",
       "97th% Coefficient of Variation"="abs_cv_uci",
       "2.5% Coefficient of Variation"="abs_cv_lci",
@@ -170,7 +170,7 @@
       "2.5% Top/Bottom Difference" = "income_diff_lci",
       "Top/Bottom Ratio"="income_ratio",
       "97th% Top/Bottom Ratio"="income_ratio_uci",
-      "2.5% Top/Bottom Ratio"="income_ratio_lcu",
+      "2.5% Top/Bottom Ratio"="income_ratio_lci",
       "Between Group Variance"="income_bgv",
       "97th% Between Group Variance"="income_bgv_uci",
       "2.5% Between Group Variance"="income_bgv_lci",
@@ -181,18 +181,37 @@
       "97th% RII"="income_sii_uci",
       "2.5% RII"="income_sii_lci"
     )) %>% 
-    select(Name = cbsa_name,type_short, value) %>% 
+    select(Name = cbsa_name,type_short, value)  %>% 
     pivot_wider(names_from = 'type_short', values_from = 'value')
 }
 
 # 4. Compile----
 { 
- df_table1 = df_table_le %>% 
-   left_join(df_table_income) %>% 
-   mutate_at(vars(contains('abs_mld')), ~round(.x,5)) %>% 
-   mutate_at(vars(contains('income_rii')), ~round(.x,3)) %>% 
-   mutate_at(vars(-c(Name, total_pop, Region, abs_mld,contains('abs_mld'),contains('income_rii'))),
-             ~round(.x,2)) %>% 
-   arrange(desc(total_pop))
-  }
+  df_table1_values = df_table_le %>% 
+    left_join(df_table_income) %>% 
+    mutate_at(vars(contains('abs_mld')), ~round(.x,5)) %>% 
+    mutate_at(vars(contains('income_rii')), ~round(.x,3)) %>% 
+    mutate_at(vars(-c(Name, total_pop, Region, abs_mld,contains('abs_mld'),contains('income_rii'))),
+              ~round(.x,2)) %>% 
+    arrange(desc(total_pop))
+  
+    ## Widen CI info
+  df_table1_formatted = df_table1_values %>% 
+    pivot_longer(cols = -c(Name, total_pop, Region), names_to = 'type') %>% 
+    mutate(value_type = case_when(
+      str_detect(type,'lci')~'lci',
+      str_detect(type,'uci')~'uci',
+      TRUE~'value'),
+      type = str_remove(type,"_uci") %>% str_remove('_lci')
+    ) %>% 
+    pivot_wider(names_from = 'value_type', values_from = 'value') %>% 
+    mutate(value_formatted = glue("{value} [{lci}-{uci}]"),
+           type = glue("{type}_formatted")) %>% 
+    select(Name, type, value_formatted) %>% 
+    pivot_wider(names_from = type, values_from = value_formatted)
+  
+  df_table1 = df_table1_values %>% left_join(df_table1_formatted) %>% 
+    select(-contains('uci'),
+           -contains('lci'))
+}
 
