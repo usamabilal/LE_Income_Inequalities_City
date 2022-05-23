@@ -1872,7 +1872,7 @@ ggplotly(figure3sd)
       decile_le<-.x %>% group_by(decile_income) %>% 
         summarise(le=weighted.mean(le, w=pop))
       decile_le
-    }) %>% left_join(total_pop_msa) %>% left_join(region) %>% ungroup() # %>%  filter(total_pop>=1000000)
+    }) %>% left_join(ungroup(total_pop_msa)) %>% left_join(xwalk_region) %>% ungroup() # %>%  filter(total_pop>=1000000)
   
   #Figure 3b
   
@@ -1894,7 +1894,22 @@ ggplotly(figure3sd)
   
   df_fig3 <-cv_decile%>%
     bind_rows(cv_decile_tot)%>%
-    mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall"))) 
+    ungroup() %>% 
+    mutate(Region=ordered(Region, levels=c(2, 3, 1, 4,5), labels=c("Midwest", "South", "Northeast", "West", "Overall")),
+           type_formatted =  type %>% 
+             dplyr::recode('mean'="Life Expectancy (Mean)",
+                           'sd'= "Life Expectany (SD)",
+                           'cv'="Life Expectany (CV)"),
+           type = type %>% 
+             dplyr::recode('mean'="Mean",
+                           'sd'= "Standard Deviation",
+                           'cv'="Coefficient of Variation"),
+           tooltip_HTML= glue('<div style="font-size: 17px; font-weight: 600">{Region}</div>
+<br />
+<p>Income Decile: {decile_income }</p>
+<br />
+<p>{type_formatted}: {round(value ,1) } years</p>
+')) 
   
 }
 
