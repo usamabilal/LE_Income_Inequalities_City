@@ -1,0 +1,13 @@
+name: LE_Income_Inequalities_City
+title: LE_Income_Inequalities_City
+username:
+account: drexel-uhc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6359104
+bundleId: 5937244
+url: https://drexel-uhc.shinyapps.io/LE_Income_Inequalities_City/
+when: 1653354405.84629
+lastSyncTime: 1653354405.84629
+asMultiple: FALSE
+asStatic: FALSE
