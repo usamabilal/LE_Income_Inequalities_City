@@ -174,12 +174,12 @@
       "Between Group Variance"="income_bgv",
       "97th% Between Group Variance"="income_bgv_uci",
       "2.5% Between Group Variance"="income_bgv_lci",
-      "Slope Index of Inequality"="income_rii",
-      "97th% SII"="income_rii_uci",
-      "2.4% SII"="income_rii_lci",
-      "Relative Index of Inequality"="income_sii",
-      "97th% RII"="income_sii_uci",
-      "2.5% RII"="income_sii_lci"
+      "Slope Index of Inequality"="income_sii",
+      "97th% SII"="income_sii_uci",
+      "2.4% SII"="income_sii_lci",
+      "Relative Index of Inequality"="income_rii",
+      "97th% RII"="income_rii_uci",
+      "2.5% RII"="income_rii_lci"
     )) %>% 
     select(Name = cbsa_name,type_short, value)  %>% 
     pivot_wider(names_from = 'type_short', values_from = 'value')

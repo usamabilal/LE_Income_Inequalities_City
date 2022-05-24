@@ -4,7 +4,7 @@ formatTable1Cell =JS("function(cellInfo) {return cellInfo.row[cellInfo.column.id
 table1_plotter = function(df_table1){
   min_width_scaler = 2.2
   width_2digit_rounding = 60*min_width_scaler
-  width_3digit_rounding = 60*min_width_scaler
+  width_3digit_rounding = 70*min_width_scaler
   width_5digit_rounding = 90*min_width_scaler
   df_table1 %>% 
     reactable(
@@ -36,7 +36,7 @@ table1_plotter = function(df_table1){
                            cell = formatTable1Cell),
         abs_ratio_formatted = colDef(show=F),
         abs_cv = colDef(name = "Coefficient of variation (CV)",
-                        minWidth = width_2digit_rounding,
+                        minWidth = width_3digit_rounding,
                         headerClass = "reactableMetricHeader",
                         align = 'center',
                         cell = formatTable1Cell),
@@ -77,14 +77,14 @@ table1_plotter = function(df_table1){
                             minWidth = width_5digit_rounding,
                             headerClass = "reactableMetricHeader",
                             align = 'center',
+                            style = list(borderRight = "1px solid #c7c7c7"),
+                            headerStyle = list(borderRight = "1px solid #c7c7c7"),
                             cell = formatTable1Cell),
         income_sii_formatted = colDef(show=F),
         income_rii = colDef(name = "Relative index of inequality (RII)",
                             minWidth = width_5digit_rounding,
                             headerClass = "reactableMetricHeader",
                             align = 'center',
-                            style = list(borderRight = "1px solid #c7c7c7"),
-                            headerStyle = list(borderRight = "1px solid #c7c7c7"),
                             cell = formatTable1Cell),
         income_rii_formatted = colDef(show=F)
         
