@@ -1,4 +1,4 @@
 ,element,intro,position
-1,#plot_fig2_ui,"Figure 2 shows the spatial distribution of disparity measures across the U.S. You can hover over the dots for details on each city.
+1,#plot_fig2_ui,"Figure 3 shows the spatial distribution of disparity measures across the U.S. You can hover over the dots for details on each city.
 <img src=""snipFigure2.PNG"" class = ""introImg"" alt=""""> ",left
 2,.wellFigure2,Users can select which disparity measure is plotted using the dropdown menus here. See Appendix Table 1 for details about the measures.,right

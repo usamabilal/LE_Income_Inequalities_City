@@ -17,8 +17,8 @@ ui <- function(){
       tabPanel("Home",ui_home),
       tabPanel("Table 1",ui_table1),
       tabPanel("Fig 1",ui_figure1),
-      tabPanel("Fig 2",ui_figure2),
-      tabPanel("Fig 3",ui_figure3)
+      tabPanel("Fig 2",ui_figure3),
+      tabPanel("Fig 3",ui_figure2)
     ),
     hr(),
     includeHTML("html/footerUHC.html"),
@@ -96,8 +96,8 @@ ui_figure1 =  div(class = "figureTabContainer",
 
 ## Figure 2 ----
 ui_figure2 = div(class = "figureTabContainer",
-                 div(class = "figureTitle", "Figure 2: Spatial distribution of Disparities by MSA in the US."),
-                 HTML(' <button id="tourButtonFigure2" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 2 Tour</i> </button>'),
+                 div(class = "figureTitle", "Figure 3: Spatial distribution of Disparities by MSA in the US."),
+                 HTML(' <button id="tourButtonFigure2" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 3 Tour</i> </button>'),
                  div(
                    class = "figureContainer",
                    sidebarLayout(
@@ -120,8 +120,8 @@ ui_figure2 = div(class = "figureTabContainer",
 
 ## Figure 3  ----
 ui_figure3  =  div(class = "figureTabContainer",
-                   div(class = "figureTitle", "Figure 3: Mean, Standard Deviation, and Coefficient of Variation for life expectancy by tract median household income decile for each US MSA by region"),
-                   HTML(' <button id="tourButtonFigure3" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 3 Tour</i> </button>'),
+                   div(class = "figureTitle", "Figure 2: Mean, Standard Deviation, and Coefficient of Variation for life expectancy by tract median household income decile for each US MSA by region"),
+                   HTML(' <button id="tourButtonFigure3" type="button" class="btn btn-default action-button tourButton"> <i class="fas fa-route"> Figure 2 Tour</i> </button>'),
                    div(
                      class = "figureContainer",
                      sidebarLayout(
