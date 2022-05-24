@@ -127,7 +127,8 @@ server <- function(input, output, session) {
   
   output$plot_fig3_ui = renderUI({
     w$show()
-    # metricTmp = input$fig3_metric
+    metricTmp = input$fig3_metric
+    ageTmp = input$fig3_age
     highchartOutput("plot_fig3", height = '450px')
   })
   
