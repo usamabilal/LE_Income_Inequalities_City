@@ -1763,7 +1763,8 @@ ggplotly(figure3sd)
   library(glue)
 
   ## LE
-  df_absolute_ineq_long=absolute_ineq_long_lt %>% ungroup()%>% 
+  df_absolute_ineq_long=absolute_ineq_long_lt %>% ungroup()  %>%
+    bind_rows(absolute_ineq_long %>% mutate(age_grp = "Birth")) %>% 
     filter(!str_detect(type,"%")) %>% 
     mutate(outcome = "total") %>% 
     select(cbsa, cbsa_name,  Region, Region_Name, total_pop,
@@ -1772,6 +1773,7 @@ ggplotly(figure3sd)
 
   ## Income
   df_income_ineq_long=income_ineq_long_lt %>% ungroup() %>% 
+    bind_rows(income_ineq_long %>% mutate(age_grp = "Birth")) %>% 
     filter(!str_detect(type,"%")) %>% 
     mutate(outcome = "income")%>% 
     select(cbsa, cbsa_name,  Region, Region_Name, total_pop,
@@ -1921,7 +1923,7 @@ df_fig1_choices_type = df_fig1 %>%
   mutate(type = as.character(type)) %>% 
   select(-n)
 fig1_type_default =  df_fig1_choices_type %>% filter(outcome =='Total') %>% pull(type)
-df_fig1_choices_age = df_fig1 %>% pull(age_grp) %>% unique()
+df_fig1_choices_age = c("Birth", "25-34", "65-74" )
 
 df_intro_home = read.csv("App/introJS/df_intro_home.csv") %>% as.data.frame() %>% select(-X)
 ###  Save data for App
