@@ -32,15 +32,15 @@ figure2_plotter = function(ineqTmp,typeTmp){
                   fillOpacity = 0,
                   opacity = 1,
                   color = "black")  %>%
-    addPolylines(data = sf_fig2_missing_hatched,
-                 color = c("black"),
-                 weight = 1.0,
-                 label="Data was not available for ME and WI") %>% 
-    addPolygons(data = sf_fig2_states_missing,
-                fillOpacity = 0,
-                weight = 1.0,
-                color = 'black',
-                label="Data was not available for ME and WI") %>% 
+    # addPolylines(data = sf_fig2_missing_hatched,
+    #              color = c("black"),
+    #              weight = 1.0,
+    #              label="Data was not available for ME and WI") %>% 
+    # addPolygons(data = sf_fig2_states_missing,
+    #             fillOpacity = 0,
+    #             weight = 1.0,
+    #             color = 'black',
+    #             label="Data was not available for ME and WI") %>% 
     setMaxBounds(bbox[1], bbox[2], bbox[3], bbox[4]) %>%
     addLegend("bottomright", pal = pal, values = sf_tmp$rank,
               title = "Rank",

@@ -1943,7 +1943,8 @@ save(
   df_table1,   ## Table 1 
   df_fig1,     ## Figure 1
   df_fig2,     ## Figure 2
-  df_fig3,sf_fig2_missing_hatched,sf_fig2_states_missing,     ## Figure 3
+  # sf_fig2_missing_hatched,sf_fig2_states_missing, ## misisng ME + WI  
+  df_fig3,   ## Figure 3
   sf_regions,sf_cbsa, ## Shape Files
   file= "App/cleaned_le_income_cities_appBundle.rdata")
 
