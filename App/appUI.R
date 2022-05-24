@@ -128,6 +128,10 @@ ui_figure3  =  div(class = "figureTabContainer",
                        sidebarPanel(width = 3,
                                     class = "wellFigure3",
                                     pickerInput(
+                                      inputId = "fig3_age",
+                                      label = "Age Group" ,
+                                      choices = df_fig1_choices_age),
+                                    pickerInput(
                                       inputId = "fig3_metric",
                                       label = "Select Statistic" ,
                                       choices = c("Mean",

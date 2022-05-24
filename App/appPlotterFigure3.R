@@ -1,9 +1,13 @@
-figure3_plotter = function(metricTmp){
-  dfTmp = df_fig3 %>% filter(type==metricTmp)  
+figure3_plotter = function(metricTmp, ageTmp){
+  dfTmp = df_fig3 %>% filter(type==metricTmp, age_grp == ageTmp)  
   dataShare =  highlight_key(dfTmp, ~Region )
   yAxisTitleTmp =metricTmp %>%  recode("mean"="",'sd'='SD of ','cv'='CV of ') %>%  paste0("Life Expectancy (years)")
   
-  titleTmp =paste( metricTmp, ifelse(metricTmp=="Mean",'','for'),'life expectancy by tract median household income decile for each US MSA by Region')
+  titleTmp =paste( metricTmp, 
+                   ifelse(metricTmp=="Mean",'','for'),
+                   'life expectancy ',
+                   "(",ageTmp,") ",
+                   'by tract median household income decile for each US MSA by Region')
   
   hchart(
     dfTmp,

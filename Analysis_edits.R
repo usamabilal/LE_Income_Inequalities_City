@@ -1866,7 +1866,16 @@ ggplotly(figure3sd)
 
 # ___Figure 3 ----
 { ## Figure 3 data
-  le_by_decile<-dta %>% group_by(cbsa) %>% 
+  
+ 
+  
+  dta_age = life_tables1 %>% 
+    select(  c('age_grp',names(dta))) %>% 
+    as_tibble() %>% 
+    bind_rows(dta %>% mutate(age_grp = "Birth"))
+  
+  
+  le_by_decile<-dta_age %>% group_by(cbsa, age_grp) %>% 
     group_modify(~{
       #.x<-dta %>% filter(cbsa==25940)
       .x<-.x %>% 
@@ -1878,7 +1887,7 @@ ggplotly(figure3sd)
   
   #Figure 3b
   
-  cv_decile<-le_by_decile %>% group_by(Region, decile_income) %>% 
+  cv_decile<-le_by_decile %>% group_by(Region, decile_income,age_grp) %>% 
     summarize(mean=mean(le), 
               sd=sd(le), 
               cv=sd/mean*100)%>%
@@ -1886,7 +1895,7 @@ ggplotly(figure3sd)
     mutate(Region=factor(Region)) %>% ungroup()
   
   cv_decile_tot<-le_by_decile%>%
-    group_by(decile_income)%>%
+    group_by(decile_income,age_grp)%>%
     summarize(mean=mean(le), 
               sd=sd(le), 
               cv=sd/mean*100)%>%
@@ -1910,6 +1919,7 @@ ggplotly(figure3sd)
 <br />
 <p>Income Decile: {decile_income }</p>
 <br />
+<p>Age Group: {age_grp }</p><br />
 <p>{type_formatted}: {round(value ,1) } years</p>
 ')) 
   
