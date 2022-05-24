@@ -1781,7 +1781,8 @@ ggplotly(figure3sd)
   df_income_ineq_long %>% count(type)
 
   
-  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long)%>% 
+  df_fig1 = bind_rows(df_absolute_ineq_long, df_income_ineq_long) %>% 
+    mutate(age_grp = age_grp %>%  dplyr::recode("25-34"="25", "65-74"="65")) %>% 
     group_by(outcome,type,age_grp) %>% 
     group_modify(~.x %>% 
                    mutate(value_rounded = round(value,3)) %>% 
@@ -1872,7 +1873,10 @@ ggplotly(figure3sd)
   dta_age = life_tables1 %>% 
     select(  c('age_grp',names(dta))) %>% 
     as_tibble() %>% 
-    bind_rows(dta %>% mutate(age_grp = "Birth"))
+    bind_rows(dta %>% mutate(age_grp = "Birth")) %>% 
+    mutate(age_grp = age_grp %>% dplyr::recode("25-34"="25",
+                            "65-74"="65"))
+  
   
   
   le_by_decile<-dta_age %>% group_by(cbsa, age_grp) %>% 
@@ -1933,7 +1937,7 @@ df_fig1_choices_type = df_fig1 %>%
   mutate(type = as.character(type)) %>% 
   select(-n)
 fig1_type_default =  df_fig1_choices_type %>% filter(outcome =='Total') %>% pull(type)
-df_fig1_choices_age = c("Birth", "25-34", "65-74" )
+df_fig1_choices_age = c("Birth", "25", "65" )
 
 df_intro_home = read.csv("App/introJS/df_intro_home.csv") %>% as.data.frame() %>% select(-X)
 ###  Save data for App

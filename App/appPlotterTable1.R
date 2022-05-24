@@ -90,11 +90,11 @@ table1_plotter = function(df_table1){
         
       ),
       columnGroups = list(
-        colGroup(name = "Life Expectancy Disparities", 
+        colGroup(name = "Total Disparities", 
                  headerClass = "reactableTopTierTitle reactableTopTierTitle1",
                  headerStyle =  "border-left: #c7c7c7 solid 1px;",
                  columns = c("abs_diff",  "abs_ratio", "abs_cv","abs_gini","abs_mld")),
-        colGroup(name = "Income-related Disparities", 
+        colGroup(name = "Income Based Disparities", 
                  headerClass = "reactableTopTierTitle reactableTopTierTitle2", 
                  columns = c("income_diff", "income_ratio","income_bgv","income_sii","income_rii"))
       ))
