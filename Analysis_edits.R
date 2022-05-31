@@ -430,7 +430,7 @@ f1a<-absolute_rel_ineq_long%>%
   scale_y_continuous(breaks=my_breaks)+
   geom_hline(lty=2, yintercept=0)+
   labs(x="",
-       y="Value",
+       y="Difference in Life Expectancy",
        title="Absolute Disparity")+
   theme_bw() +
   theme(legend.position = "bottom",
@@ -458,7 +458,7 @@ f1b<-absolute_rel_ineq_long%>%
   geom_hline(lty=2, yintercept=1)+
   scale_y_continuous(trans="log", sec.axis = dup_axis())+
   labs(x="",
-       y="Value",
+       y="Ratio of Life Expectancy",
        title="Relative Disparity")+
   theme_bw() +
   theme(legend.position = "bottom",
@@ -1247,7 +1247,7 @@ appen_f1a<-absolute_rel_income_ineq_long%>%
   scale_colour_discrete()+
   geom_hline(lty=2, yintercept=0)+
   labs(x="",
-       y="Value",
+       y="Difference in Life Expectancy",
        title="Top/Bottom Difference")+
   theme_bw() +
   scale_y_continuous(breaks=my_breaks)+
@@ -1275,7 +1275,7 @@ appen_f1b<-absolute_rel_income_ineq_long%>%
   geom_hline(lty=2, yintercept=1)+
   scale_y_continuous(trans="log", sec.axis = dup_axis())+
   labs(x="",
-       y="Value",
+       y="Ratio of Life Expectancy",
        title="Top/Bottom Ratio")+
   theme_bw() +
   theme(legend.position = "bottom",
@@ -1305,7 +1305,7 @@ appen_f1c<-absolute_rel_income_ineq_long%>%
   scale_colour_discrete()+
   geom_hline(lty=2, yintercept=0)+
   labs(x="",
-       y="Value",
+       y="Difference in Life Expectancy",
        title="Slope Index of Inequality")+
   theme_bw() +
   scale_y_continuous(breaks=my_breaks)+
@@ -1333,7 +1333,7 @@ appen_f1d<-absolute_rel_income_ineq_long%>%
   geom_hline(lty=2, yintercept=1)+
   scale_y_continuous(sec.axis = dup_axis())+
   labs(x="",
-       y="Value",
+       y="Ratio of Life Expectancy",
        title="Relative Index of Inequality")+
   theme_bw() +
   theme(legend.position = "bottom",
@@ -1400,7 +1400,7 @@ f1a_lt<-absolute_rel_ineq_long_lt1%>%
   geom_hline(lty=2, yintercept=0)+
   scale_y_continuous(breaks=my_breaks)+
   labs(x="",
-       y="Absolute Disparity",
+       y="Difference in Life Expectancy",
        title="Absolute Disparity")+
   theme_bw() +
   theme(legend.position = "bottom",
@@ -1428,7 +1428,7 @@ f1b_lt<-absolute_rel_ineq_long_lt1%>%
   geom_hline(lty=2, yintercept=1)+
   scale_y_continuous(trans="log") +
   labs(x="",
-       y="Relative Disparity",
+       y="Ratio of Life Expectancy",
        title="Relative Disparity")+
   theme_bw() +
   theme(legend.position = "bottom",
