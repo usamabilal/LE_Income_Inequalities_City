@@ -1744,8 +1744,6 @@ ggplotly(figure3cv)
 ggplotly(figure3sd)
 
 
-
-
 # App Data----
 
 #Note for RAN-- I've updated table 1 (and all calculations) to include the life expectancy SE's. So for Table 1 I'm now
