@@ -1171,14 +1171,14 @@ figure2<-ggplot()+
         panel.background = element_rect(fill = "grey", color=NA),
         legend.position="bottom")
 figure2
-ggsave("results/figure2.pdf", width=12, height=5)
+ggsave("results/efigure2.pdf", width=12, height=5)
 
 #just to view which areas have largest disparities 
 absolute_ineq_long1<-absolute_ineq_long%>%
   arrange(type, value)
 
 ############################################################################
-#Appendix eTable e -------
+#Appendix eTable 2 -------
 
 #create dataset of just the 25% and 97.5% of absolute disp and make wide format
 ci_abs<-absolute_rel_ineq_long%>%
@@ -1221,7 +1221,7 @@ summary_large_rel<-absolute_ineq_long %>%
   mutate(total_ratio=format(total_ratio, digits=2, nsmall=2))
 
 table1<-cbind(summary_large_abs, summary_large_rel)
-fwrite(table1, file="results/table1_ASM.csv")
+fwrite(table1, file="results/table2_ASM.csv")
 
 ###############################################################################
 #Appendix eFigure 4######
@@ -1355,7 +1355,7 @@ library(gridExtra)
 figure1<-grid.arrange(appen_f1a,appen_f1b,appen_f1c, appen_f1d, 
                       ncol = 2, nrow = 2)
 g <- arrangeGrob(appen_f1a,appen_f1b, appen_f1c, appen_f1d, nrow=1, ncol=2) #generates g
-ggsave(figure1, file="results/Appendix_figure2.pdf", width=15, height=10) #saves g
+ggsave(figure1, file="results/Appendix_figure4.pdf", width=15, height=10) #saves g
 
 #view specific MSAs
 ggplotly(f1a)
@@ -1450,7 +1450,7 @@ library(gridExtra)
 figure3_append<-grid.arrange(f1a_lt,f1b_lt,
                       ncol = 1, nrow = 2)
 g_lt <- arrangeGrob(f1a_lt,f1b_lt,  nrow=2) #generates g
-ggsave(g_lt, file="results/appendix_figure3_conditional.pdf", width=15, height=15)#saves g
+ggsave(g_lt, file="results/appendix_figure5_conditional.pdf", width=15, height=15)#saves g
 
 
 medians<-absolute_rel_ineq_long_lt1%>%group_by(age_grp, Region_Name, type)%>%
@@ -1596,7 +1596,7 @@ figure3cv_mhi<-figure3cv_mhi +guides(fill="none", color="none")
 ggarrange(ggarrange(figure3mean_mhi,figure3sd_mhi, figure3cv_mhi, ncol = 1, nrow=3 ), legend,
           ncol=1, nrow=2, heights = c(20, 1))
 
-ggsave("results/appen_figure5_mhi_nation.pdf", width=12, height=10)
+ggsave("results/appen_figure6_mhi_nation.pdf", width=12, height=10)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
@@ -1734,7 +1734,7 @@ ggarrange(ggarrange(figure3mean_con,figure3sd_con, figure3cv_con, ncol = 1, nrow
 
 
 
-ggsave("results/appendix_figure6_conditional.pdf", width=12,height=10)
+ggsave("results/appendix_figure7_conditional.pdf", width=12,height=10)
 ggplotly(figure3mean)
 ggplotly(figure3cv)
 ggplotly(figure3sd)
