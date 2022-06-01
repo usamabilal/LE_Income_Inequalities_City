@@ -550,109 +550,9 @@ medians<-absolute_rel_ineq_long%>%group_by(Region_Name, type)%>%
             sd=sd(value), 
             cv=sd/mean*100)
 
-############################################################################
-#Table 1 -------
-
-#create dataset of just the 25% and 97.5% of absolute disp and make wide format
-ci_abs<-absolute_rel_ineq_long%>%
-  filter(type %in% c( "97th% Abs. Disparity", "2.5% Abs. Disparity"))%>%
-  pivot_wider(names_from=type, values_from=value)%>%
-  rename(uci="97th% Abs. Disparity", lci="2.5% Abs. Disparity")%>%
-  select(cbsa_name, uci, lci)
-
-#join in the ci's, limit to cbsa w/ pop over 1 million, rank absolute disparities
-summary_large_abs<-absolute_ineq_long%>% 
-   filter(total_pop>=1000000) %>% 
-  filter( type %in%c("Abs. Disparity")) %>% 
-  arrange(desc(value)) %>% 
-  group_by(type) %>%
-  mutate(rank=row_number())%>%
-  ungroup()%>%
-  select(cbsa_name, Region_Name, rank, value)%>%
-  left_join(ci_abs, by='cbsa_name')%>%
-  rename(total_dif=value)%>%
-  mutate(Region_Name=sub(" Region", "", Region_Name))%>%
-  mutate(total_dif=format(total_dif, digits=1, nsmall=1))
-
-ci_rel<-absolute_rel_ineq_long%>%
-  filter(type %in% c( "97th% Rel. Disparity", "2.5% Rel. Disparity"))%>%
-  pivot_wider(names_from=type, values_from=value)%>%
-  rename(uci="97th% Rel. Disparity", lci="2.5% Rel. Disparity")%>%
-  select(cbsa_name, uci, lci)
-
-summary_large_rel<-absolute_ineq_long %>% 
-  filter(total_pop>=1000000) %>% 
-  filter( type=="Rel. Disparity") %>% 
-  arrange(desc(value)) %>% 
-  group_by(type) %>% 
-  mutate(rank=row_number())%>%
-  ungroup()%>%
-  select(cbsa_name,Region_Name, rank, value )%>%
-  left_join(ci_rel, by='cbsa_name')%>%
-  rename(total_ratio=value)%>%
-  mutate(Region_Name=sub(" Region", "", Region_Name))%>%
-  mutate(total_ratio=format(total_ratio, digits=2, nsmall=2))
-
-table1<-cbind(summary_large_abs, summary_large_rel)
-fwrite(table1, file="results/table1_ASM.csv")
-
-
-#################################################################################
-#Figure 2----
-
-#FINAL MAP NOT CREATED IN R- THE CODE BELOW IS  A SIMPLIFIED VERSION
-full_dta<-absolute_ineq_long %>% select(cbsa, type, value, Region_Name) %>% 
-  filter(type %in% c("Abs. Disparity", "Rel. Disparity"))%>%
-  mutate(ineq="Total") %>% 
-  mutate(type2=paste0(ineq, ": ", type)) %>% 
-  arrange(desc(value)) %>% 
-  group_by(type2) %>% 
-  mutate(rank=row_number()) %>% 
-  mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity")))
-shp<-read_sf("Data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
-  mutate(cbsa=as.numeric(GEOID))
-regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
-  states<-read_sf("Data/cb_2013_us_state_20m/cb_2013_us_state_20m.shp")
-  
-#export full_dta file as csv for map(but only absolute and relative)
-dta_abs_rel<-full_dta%>%
-  select(cbsa, Region_Name, type2, value)%>%
-  pivot_wider(names_from=type2, values_from=value)
-
-write.csv(dta_abs_rel,"Data/dta_abs_rel.csv", row.names = FALSE)
-
-  
-shp_with_data<-inner_join(shp, full_dta)
-bbox_temp<-st_bbox(shp_with_data)
-figure2<-ggplot()+
-  geom_sf(data=shp_with_data, size=0,
-          aes(geometry=geometry, color=rank, fill=rank))+
-  geom_sf(data=regions, size=0.5, color="black", 
-          fill=NA,
-          aes(geometry=geometry))+
-  scale_fill_binned(name="Rank", type="gradient",
-                    show.limits=T,n.breaks=5,labels=round,
-                    low="red", high="white")+
-  scale_color_binned(name="Rank", type="gradient",
-                     show.limits=T,n.breaks=5,labels=round,
-                     low="red", high="white")+
-  coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
-           ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T) +
-  guides(alpha=F, size=F, color=F)+
-  theme_void()+
-  theme(plot.title = element_blank(),
-        strip.text = element_text(size=10, face="bold", hjust=.5),
-        panel.background = element_rect(fill = "grey", color=NA),
-        legend.position="bottom")
-figure2
-ggsave("results/figure2.pdf", width=12, height=5)
-
-#just to view which areas have largest disparities 
-absolute_ineq_long1<-absolute_ineq_long%>%
-  arrange(type, value)
 
 ##############################################################################
-# Table 2
+# Table 1
 
 #Table 2- Univariate analysis 
 
@@ -974,7 +874,7 @@ write_csv(table2_app, "Results/table2_app.csv")
 
 
 ###############################################################################
-#-------Figure 3 ------
+#-------Figure 2 ------
 
 
 #use imputed data (iterations nsim) to find weighted mean, then take mean of that le by cbsa and decile income
@@ -1223,8 +1123,108 @@ corrs<-ggpairs(data=full_dta,
 corrs
 ggsave(filename="results/Appendix_figure1.pdf", corrs, width=20, height=15)
 
+#################################################################################
+#appendix eFigure 2 & 3----
+
+#FINAL MAP NOT CREATED IN R- THE CODE BELOW IS  A SIMPLIFIED VERSION
+full_dta<-absolute_ineq_long %>% select(cbsa, type, value, Region_Name) %>% 
+  filter(type %in% c("Abs. Disparity", "Rel. Disparity"))%>%
+  mutate(ineq="Total") %>% 
+  mutate(type2=paste0(ineq, ": ", type)) %>% 
+  arrange(desc(value)) %>% 
+  group_by(type2) %>% 
+  mutate(rank=row_number()) %>% 
+  mutate(type2=factor(type2, levels=c("Total: Abs. Disparity", "Total: Rel. Disparity")))
+shp<-read_sf("Data/cb_2013_us_cbsa_20m/cb_2013_us_cbsa_20m.shp") %>% 
+  mutate(cbsa=as.numeric(GEOID))
+regions<-read_sf("Data/cb_2013_us_region_20m/cb_2013_us_region_20m.shp")
+states<-read_sf("Data/cb_2013_us_state_20m/cb_2013_us_state_20m.shp")
+
+#export full_dta file as csv for map(but only absolute and relative)
+dta_abs_rel<-full_dta%>%
+  select(cbsa, Region_Name, type2, value)%>%
+  pivot_wider(names_from=type2, values_from=value)
+
+write.csv(dta_abs_rel,"Data/dta_abs_rel.csv", row.names = FALSE)
+
+
+shp_with_data<-inner_join(shp, full_dta)
+bbox_temp<-st_bbox(shp_with_data)
+figure2<-ggplot()+
+  geom_sf(data=shp_with_data, size=0,
+          aes(geometry=geometry, color=rank, fill=rank))+
+  geom_sf(data=regions, size=0.5, color="black", 
+          fill=NA,
+          aes(geometry=geometry))+
+  scale_fill_binned(name="Rank", type="gradient",
+                    show.limits=T,n.breaks=5,labels=round,
+                    low="red", high="white")+
+  scale_color_binned(name="Rank", type="gradient",
+                     show.limits=T,n.breaks=5,labels=round,
+                     low="red", high="white")+
+  coord_sf(xlim = c(bbox_temp["xmin"], bbox_temp["xmax"]),
+           ylim = c(bbox_temp["ymin"], bbox_temp["ymax"]), expand = T) +
+  guides(alpha=F, size=F, color=F)+
+  theme_void()+
+  theme(plot.title = element_blank(),
+        strip.text = element_text(size=10, face="bold", hjust=.5),
+        panel.background = element_rect(fill = "grey", color=NA),
+        legend.position="bottom")
+figure2
+ggsave("results/figure2.pdf", width=12, height=5)
+
+#just to view which areas have largest disparities 
+absolute_ineq_long1<-absolute_ineq_long%>%
+  arrange(type, value)
+
+############################################################################
+#Appendix eTable e -------
+
+#create dataset of just the 25% and 97.5% of absolute disp and make wide format
+ci_abs<-absolute_rel_ineq_long%>%
+  filter(type %in% c( "97th% Abs. Disparity", "2.5% Abs. Disparity"))%>%
+  pivot_wider(names_from=type, values_from=value)%>%
+  rename(uci="97th% Abs. Disparity", lci="2.5% Abs. Disparity")%>%
+  select(cbsa_name, uci, lci)
+
+#join in the ci's, limit to cbsa w/ pop over 1 million, rank absolute disparities
+summary_large_abs<-absolute_ineq_long%>% 
+  filter(total_pop>=1000000) %>% 
+  filter( type %in%c("Abs. Disparity")) %>% 
+  arrange(desc(value)) %>% 
+  group_by(type) %>%
+  mutate(rank=row_number())%>%
+  ungroup()%>%
+  select(cbsa_name, Region_Name, rank, value)%>%
+  left_join(ci_abs, by='cbsa_name')%>%
+  rename(total_dif=value)%>%
+  mutate(Region_Name=sub(" Region", "", Region_Name))%>%
+  mutate(total_dif=format(total_dif, digits=1, nsmall=1))
+
+ci_rel<-absolute_rel_ineq_long%>%
+  filter(type %in% c( "97th% Rel. Disparity", "2.5% Rel. Disparity"))%>%
+  pivot_wider(names_from=type, values_from=value)%>%
+  rename(uci="97th% Rel. Disparity", lci="2.5% Rel. Disparity")%>%
+  select(cbsa_name, uci, lci)
+
+summary_large_rel<-absolute_ineq_long %>% 
+  filter(total_pop>=1000000) %>% 
+  filter( type=="Rel. Disparity") %>% 
+  arrange(desc(value)) %>% 
+  group_by(type) %>% 
+  mutate(rank=row_number())%>%
+  ungroup()%>%
+  select(cbsa_name,Region_Name, rank, value )%>%
+  left_join(ci_rel, by='cbsa_name')%>%
+  rename(total_ratio=value)%>%
+  mutate(Region_Name=sub(" Region", "", Region_Name))%>%
+  mutate(total_ratio=format(total_ratio, digits=2, nsmall=2))
+
+table1<-cbind(summary_large_abs, summary_large_rel)
+fwrite(table1, file="results/table1_ASM.csv")
+
 ###############################################################################
-#Appendix Figure 2######
+#Appendix eFigure 4######
 #Figure 1 repeated with income disparity measure 
 
 absolute_rel_income_ineq_long<-income_ineq_long%>%
@@ -1380,7 +1380,7 @@ medians_inc<-income_ineq_long%>%
 
 #################################################################################
 ####Conditional Life Expectancy
-#APpendix Figure 3 
+#Appendix eFigure 5 
 #absolute and relative disparity 
 
 absolute_rel_ineq_long_lt1<-absolute_rel_ineq_long_lt%>%
@@ -1459,12 +1459,8 @@ medians<-absolute_rel_ineq_long_lt1%>%group_by(age_grp, Region_Name, type)%>%
             sd=sd(value), 
             cv=sd/mean*100)
 
-###############################################################################
-##Appendix figure 4
-#map but w/ relative disparity (in code for figure )
 
-
-#######APPENDIX Figure 5
+#######APPENDIX eFigure 6
 ##############################################################################
 #figure 3 repeated w/ mhi standardized across the full US, not MSA-- some cbsa's won't have observations in all deciles
 
@@ -1607,7 +1603,7 @@ ggplotly(figure3sd)
 
 
 ###############################################################################
-#APpendix Figure 6
+#APpendix eFigure 7
 #conditional life expectancies, repeating Figure 3 
 
 le_by_decile_lt<-imputed_lt %>% group_by(iteration, cbsa, decile_income1, age_grp) %>% 
